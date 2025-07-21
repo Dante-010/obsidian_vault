@@ -1,24 +1,60 @@
 {
   "recentFiles": [
     {
-      "basename": "readme_utils",
-      "path": "Tesis/READMES/readme_utils.md"
+      "basename": "Variables del Paper",
+      "path": "Tesis/Variables del Paper.md"
+    },
+    {
+      "basename": "Glosario",
+      "path": "Tesis/Glosario.md"
+    },
+    {
+      "basename": "Idea de la Tesis",
+      "path": "Tesis/Idea de la Tesis.md"
+    },
+    {
+      "basename": "TODO",
+      "path": "Tesis/TODO.md"
+    },
+    {
+      "basename": "Referencias",
+      "path": "Tesis/Referencias.md"
+    },
+    {
+      "basename": "readme_agent",
+      "path": "Tesis/READMES/readme_agent.md"
+    },
+    {
+      "basename": "README_main",
+      "path": "Tesis/READMES/README_main.md"
     },
     {
       "basename": "Evading Community Detection via Counterfactual Neighborhood Search",
       "path": "Tesis/Evading Community Detection via Counterfactual Neighborhood Search.pdf"
     },
     {
-      "basename": "Concepto del paper original",
-      "path": "Tesis/Concepto del paper original.md"
+      "basename": "readme_logs",
+      "path": "Tesis/READMES/readme_logs.md"
+    },
+    {
+      "basename": "readme_datasets",
+      "path": "Tesis/READMES/readme_datasets.md"
+    },
+    {
+      "basename": "readme_community_algs_baseline",
+      "path": "Tesis/READMES/readme_community_algs_baseline.md"
+    },
+    {
+      "basename": "readme_agent_a2c",
+      "path": "Tesis/READMES/readme_agent_a2c.md"
     },
     {
       "basename": "tesis.excalidraw",
-      "path": "Tesis/tesis.excalidraw.md"
+      "path": "Tesis/Excalidraw/tesis.excalidraw.md"
     },
     {
-      "basename": "Run times",
-      "path": "Tesis/Run times.md"
+      "basename": "readme_utils",
+      "path": "Tesis/READMES/readme_utils.md"
     }
   ],
   "omittedPaths": [],
