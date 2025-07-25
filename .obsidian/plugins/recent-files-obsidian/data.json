@@ -1,6 +1,38 @@
 {
   "recentFiles": [
     {
+      "basename": "a2c_framework",
+      "path": "Tesis/images/a2c_framework.png"
+    },
+    {
+      "basename": "uml_classes_background",
+      "path": "Tesis/images/uml_classes_background.png"
+    },
+    {
+      "basename": "uml_classes",
+      "path": "Tesis/images/uml_classes.png"
+    },
+    {
+      "basename": "node_deception_background",
+      "path": "Tesis/images/node_deception_background.png"
+    },
+    {
+      "basename": "node_deception_long",
+      "path": "Tesis/images/node_deception_long.png"
+    },
+    {
+      "basename": "TODO",
+      "path": "Tesis/TODO.md"
+    },
+    {
+      "basename": "Paper Original",
+      "path": "Tesis/Paper Original.md"
+    },
+    {
+      "basename": "readme_community_algs_baseline",
+      "path": "Tesis/READMES/readme_community_algs_baseline.md"
+    },
+    {
       "basename": "readme_utils",
       "path": "Tesis/READMES/readme_utils.md"
     },
@@ -15,10 +47,6 @@
     {
       "basename": "tesis.excalidraw",
       "path": "Tesis/tesis.excalidraw.md"
-    },
-    {
-      "basename": "Run times",
-      "path": "Tesis/Run times.md"
     }
   ],
   "omittedPaths": [],

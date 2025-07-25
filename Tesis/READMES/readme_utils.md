@@ -10,7 +10,7 @@ The key components of this module include:
 
 - `NodeHiding` class
 - Agent-related functionality
-- Baseline algorithms (Randome, Degree and Roam)
+- Baseline algorithms (Random, Degree and Roam)
 
 
 ## Community Deception
