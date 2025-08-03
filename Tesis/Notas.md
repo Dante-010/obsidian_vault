@@ -1,0 +1,29 @@
+- Community deception $\ne$ Community membership hiding.
+- ==Transferability== (propiedad del sistema).
+- Ver ==2. Related Work== -> ([15] Jin et. al).
+- Ver *overlapping communities* (concepto).
+- $f( .)$ es black box (en el paper).
+- Trabajamos con conocimiento ==completo== del grafo.
+- La [[Tesis/images/node_deception_background.png |figura 1]] es un buen resumen.
+- En el paper, únicamente busco que el nodo objetivo cambie de comunidad (no me importa qué pasa con los demás)
+	- Ver [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=3&selection=263,0,265,19|4.1 Problem Formulation]] 
+- Acciones posibles de $u$ (nodo objetivo):
+	- Eliminar aristas salientes a nodos **dentro de su comunidad**.
+	- Agregar aristas salientes a nodos **fuera de su comunidad**.
+- Acciones **NO** posibles de $u$:
+	- Eliminar aristas salientes a nodos **fuera de su comunidad**.
+	- Agregar aristas salientes a nodos **dentro de su comunidad**.
+- Ver [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=4&selection=346,0,348,30|4.2 Counterfactual Graph Objective]].
+- Ver [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=4&selection=665,0,667,23|4.3 Markov Decision Process]] para posibles variaciones (apenas arranca).
+	- Anotar el MDP.
+- Anotar valores de los parámetros (leer **TODO** el código).
+- "Entender" policy ($\pi_\theta$)
+- Ver [[Referencias#(26) Advantage Actor-Critic (A2C)]]  
+- Entender [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=5&selection=621,0,623,15|5. Proposed Method]] *(en particular, la ecuación (8))*.
+- Ver [[Referencias#(13) Node2Vec]] y [[Referencias#(18) GCNConv]].
+- Ver **bien** [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=5&selection=858,0,860,11|6. Experiments]].
+- Ver Transfer Learning (entreno sobre un dataset, y paso a otro).
+- Ver [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=9&selection=142,0,144,10|7. Discussion]] y consideraciones a futuro *(casos (i) y (ii)*.
+- **MARL** *(Multi-agent reinforcement learning)*.
+- Anotar "cómo cambiar" el código.
+- Ver **todas** las referencias (arranco por las más relevantes)

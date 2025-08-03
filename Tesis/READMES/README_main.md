@@ -11,7 +11,6 @@ Therefore, our primary focus is on making changes to the graph's structure, repr
 Let $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ be a graph and $f(\mathcal{G}) = \{\mathcal{C}_1,\ldots,\mathcal{C}_k\}$ denote the community arrangement derived from applying a detection algorithm $f(\cdot)$ to $\mathcal{G}$.
 Furthermore, suppose that $f$ has identified node $u \in \mathcal{V}$ as a member of the community $\mathcal{C}_i \in f(\mathcal{G})$, i.e., $i^*_u$ denoted as $u \in \mathcal{C}_i$.
 
-
 The aim of community membership hiding is to formulate a function $h_{\theta}(\cdot)$, parametrized by $\theta$, that takes as input the initial graph $\mathcal{G}$ and produces as output a *new* graph $h_{\theta}(\mathcal{G}) = \mathcal{G'} = (\mathcal{V}, \mathcal{E'})$. Among all the possible graphs, we seek the one which, when input to the community detection algorithm $f$, disassociates a target node $u$ from its original community $\mathcal{C}_i$. 
 
 To achieve that goal, suppose that the target node $u$ is associated with a new community $\mathcal{C}'_i \in f(\mathcal{G}')$.
@@ -36,13 +35,12 @@ UMl diagram of the classes used in the project.
 
 To learn the optimal policy for our agent defined above, we use the **Advantage Actor-Critic** (A2C) algorithm, a popular deep reinforcement learning technique that combines the advantages of both policy-based and value-based methods.
 Specifically, A2C defines two neural networks, one for the policy ($\pi_{\theta}$) and another for the value function estimator ($V_v$), such that:
-
-```math
+$$
 \nabla_{\theta} \mathcal{J} (\theta)  \sim \underset{t=0}{\overset{T-1}{\sum}} \nabla_{\theta} \text{log} \pi_{\theta} (a_t \vert s_t) A(s_t, a_t) 
-```
-```math
+$$
+$$
 \text{with } A(s_t, a_t) = r_{t+1} + \gamma \mathcal{V}_v(s_{t+1}) - \mathcal{V}_v (s_t)
-```
+$$
 where $\mathcal{J}(\theta)$ is the reward (objective) function, and the goal is to find the optimal policy parameters $\theta$ that maximize it. Instead, $A(s_t, a_t)$ is the advantage function, which quantifies how good or bad an action $a_t$ is compared to the expected value of taking actions according to the current policy.
 
 Below, we describe the policy network (*actor*) and value function network (*critic*) separately.
@@ -86,9 +84,6 @@ pip install -r requirements.txt
 # Optional dependencies
 pip install pyg_lib torch_scatter torch_sparse -f <https://data.pyg.org/whl/torch-${TORCH}.html>
 ```
-
-
-
 ## Run the code
 
 To train the model, run the following command:
