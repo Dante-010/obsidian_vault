@@ -12,5 +12,5 @@
 - **Community Deception** ([[Referencias#(8) Community Deception|8]]): Especialización de community membership hiding, donde el objetivo es esconder una comunidad entera de los algoritmos de detección de comunidades.
 ---
 ## Conceptos propios al paper
-- [[Community membership hiding]].
+- [[Community Membership Hiding]].
 - **Transferability:** La propiedad de la solución original de mantener su efectividad sin importar el algortimo utilizado (en especial, si el algoritmo no apareció en la fase de entrenamiento).

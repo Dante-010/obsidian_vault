@@ -69,7 +69,7 @@ DFxubXK9: [[Tesis/READMES/README_main.md]]
 
 2pnWK3eZ: [[Tesis/Paper/Referencias.md]]
 
-UHowAVIL: [[Tesis/Conceptos/Variables, parámetros y ecuaciones.md]]
+UHowAVIL: [[Variables, parámetros y ecuaciones]]
 
 %%
 ## Drawing

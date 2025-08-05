@@ -1,13 +1,12 @@
 [
+  "obsidian-excalidraw-plugin",
   "templater-obsidian",
   "obsidian-tasks-plugin",
   "obsidian-git",
   "obsidian-kanban",
   "recent-files-obsidian",
   "dataview",
-  "cycle-through-panes",
-  "obsidian-excalidraw-plugin",
-  "obsidian-hover-editor",
+  "obsidian-mind-map",
   "excalibrain",
-  "obsidian-mind-map"
+  "cycle-through-panes"
 ]

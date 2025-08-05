@@ -20,7 +20,7 @@ Nuestro proyecto de tesis toma de base el paper **Evading Community Detection vi
 [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=2&selection=56,0,82,43|Evading Community Detection via Counterfactual Neighborhood Search, page 2]]
 
 ---
-[[README_main]] explica de manera excelente el concepto de [[Community membership hiding]], [[Advantage Actor-Critic (A2C)]] y el código necesario para replicar los resultados que obtuvieron.
+[[README_main]] explica de manera excelente el concepto de [[Community Membership Hiding]], [[Advantage Actor-Critic (A2C)]] y el código necesario para replicar los resultados que obtuvieron.
 
 Ver [[Código]] para entender qué hace cada módulo y saber cómo determinar qué queremos correr y [[Experimentos]] para ver los resultados. 
 
@@ -31,7 +31,42 @@ En [[Glosario]], anoté brevemente términos importantes para entender el paper,
 -------
 
 ### Alternativas posibles
+
+#### Introducidas en el paper
+
 > However, the community deception task, as defined by Fionda and Pirrò [8] , does not have a binary outcome, unlike our community membership hiding goal. Instead, the authors intro- duce a smooth measure, the Deception Score, that combines three criteria for effective community masking: reachability, spreadness, and hiding. While it might seem plausible to extend our method for community deception by running multiple membership hiding tasks for each node in the target community, this straightforward strategy might be too aggressive due to our more stringent (i.e., binary) definition of deception goal. A more nuanced approach could involve leveraging the structural properties of each node in the community to mask (e.g., their degree) to cleverly select target nodes for membership hiding. Further exploration of this strategy is left for future research.
 
 [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=2&selection=22,11,46,28|Evading Community Detection via Counterfactual Neighborhood Search, page 2]]
 
+Hacemos el approach "naive" que realiza varias membership hiding tasks para cada nodo, y el approach más optimizado de considerar las propiedades estructurales de los nodos para elegir los más indicados.
+
+----
+
+> We leave the exploration of overlapping communities for future work.
+
+[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=3&selection=170,2,171,59|Evading Community Detection via Counterfactual Neighborhood Search, page 3]]
+
+Tenemos que adaptar el algoritmo para poder trabajar con overlapping communities (ver [[Variables, parámetros y ecuaciones]]).
+
+----
+> Anyway, the rationale behind how communities are found is irrelevant to our task, and, hereinafter, we will treat the community detection technique 𝑓 (·) as a "black box."
+
+[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=3&selection=218,3,226,17|Evading Community Detection via Counterfactual Neighborhood Search, page 3]]
+
+Observamos qué sucede si tenemos información del algoritmo (en teoría, esto nos permite aprovechar el funcionamiento del algoritmo, tomando ventaja de ciertas heurísticas o estructuras para lograr un resultado más óptimo).
+
+----
+
+> While altering node features holds potential interest, that aspect is reserved for future work.
+
+[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=3&selection=238,22,239,50|Evading Community Detection via Counterfactual Neighborhood Search, page 3]]
+
+Consideramos las variantes del algoritmo donde los nodos tienen features, y vemos qué sucede si modificamos las features.
+
+----
+
+>  Nevertheless, our method might work under more relaxed conditions (e.g., partial graph knowledge), as discussed in Section 7.1
+
+[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=3&selection=259,13,261,24|Evading Community Detection via Counterfactual Neighborhood Search, page 3]]
+
+Vemos qué sucede si no tenemos información completa sobre el grafo (por ejemplo, sólo los vecinos, sólo mi cluster, sólo clusters vecinos, etc...).
