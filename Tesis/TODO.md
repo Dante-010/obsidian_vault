@@ -10,3 +10,4 @@
 > - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
 > - [ ] Alterar node features
 > - [ ] Conocimiento parcial del grafo
+> - [ ] Ver referencia \[23\] ()

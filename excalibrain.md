@@ -55,7 +55,7 @@ Variables, parámetros... ^YFWEjZEq
 1 ^AJwxY8dp
 
 ## Element Links
-NHINSGMe: [[Tesis/Paper/New Perspectives on Counterfactual Community Evasion.md]]
+NHINSGMe: [[Taxonomy of Evasion Problems in Graphs]]
 
 DkIdwLWB: [[Tesis/General/Código.md]]
 
