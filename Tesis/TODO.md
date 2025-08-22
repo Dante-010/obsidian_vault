@@ -6,8 +6,8 @@
 > - [ ] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces.  
 > - [ ] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
 > - [ ] Overlapping communities.
-> - [ ] Multiple memerbship hiding.
+> - [ ] Multiple membership hiding.
 > - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
 > - [ ] Alterar node features
 > - [ ] Conocimiento parcial del grafo
-> - [ ] Ver referencia \[23\] ()
+> - [ ] Ver referencia \[23\]

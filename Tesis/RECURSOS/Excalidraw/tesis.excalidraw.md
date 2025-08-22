@@ -16,7 +16,7 @@ Counterfactual Neighborhood Search ^mATIuyno
 ## Element Links
 Qi3E7zF4: [[Evading Community Detection via Counterfactual Neighborhood Search.pdf]]
 
-YQXFk4rU: [[Taxonomy of Evasion Problems in Graphs]]
+YQXFk4rU: [[Taxonomía de Problemas de Evasión en Grafos]]
 
 %%
 ## Drawing

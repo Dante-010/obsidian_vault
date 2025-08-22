@@ -55,11 +55,11 @@ Variables, parámetros... ^YFWEjZEq
 1 ^AJwxY8dp
 
 ## Element Links
-NHINSGMe: [[Taxonomy of Evasion Problems in Graphs]]
+NHINSGMe: [[Taxonomía de Problemas de Evasión en Grafos]]
 
 DkIdwLWB: [[Tesis/General/Código.md]]
 
-TGlJKEJM: [[Tesis/Excalidraw/tesis.excalidraw.md]]
+TGlJKEJM: [[tesis.excalidraw]]
 
 jPi8nXiq: [[Tesis/General/Experimentos.md]]
 
@@ -69,7 +69,7 @@ DFxubXK9: [[Tesis/READMES/README_main.md]]
 
 2pnWK3eZ: [[Tesis/Paper/Referencias.md]]
 
-UHowAVIL: [[Variables, parámetros y ecuaciones]]
+UHowAVIL: [[Variables, Parámetros y Ecuaciones]]
 
 %%
 ## Drawing
