@@ -11,3 +11,8 @@
 > - [ ] Alterar node features
 > - [ ] Conocimiento parcial del grafo
 > - [ ] Ver referencia \[23\]
+> - [ ] Solo poner y/o sacar (pensar antes de hacerlo, y compar con resultados).
+> - [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
+> - [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
+> - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
+> - [ ] Hacer tabla 2 y tabla 3 para las otras variantes.
