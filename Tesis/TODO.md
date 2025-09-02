@@ -6,7 +6,13 @@
 > - [ ] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces.  
 > - [ ] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
 > - [ ] Overlapping communities.
-> - [ ] Multiple memerbship hiding.
+> - [ ] Multiple membership hiding.
 > - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
 > - [ ] Alterar node features
 > - [ ] Conocimiento parcial del grafo
+> - [ ] Ver referencia \[23\]
+> - [ ] Solo poner y/o sacar (pensar antes de hacerlo, y compar con resultados).
+> - [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
+> - [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
+> - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
+> - [ ] Hacer tabla 2 y tabla 3 para las otras variantes.

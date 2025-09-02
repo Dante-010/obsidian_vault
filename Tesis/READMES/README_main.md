@@ -11,7 +11,7 @@ Therefore, our primary focus is on making changes to the graph's structure, repr
 Let $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ be a graph and $f(\mathcal{G}) = \{\mathcal{C}_1,\ldots,\mathcal{C}_k\}$ denote the community arrangement derived from applying a detection algorithm $f(\cdot)$ to $\mathcal{G}$.
 Furthermore, suppose that $f$ has identified node $u \in \mathcal{V}$ as a member of the community $\mathcal{C}_i \in f(\mathcal{G})$, i.e., $i^*_u$ denoted as $u \in \mathcal{C}_i$.
 
-The aim of community membership hiding is to formulate a function $h_{\theta}(\cdot)$, parametrized by $\theta$, that takes as input the initial graph $\mathcal{G}$ and produces as output a *new* graph $h_{\theta}(\mathcal{G}) = \mathcal{G'} = (\mathcal{V}, \mathcal{E'})$. Among all the possible graphs, we seek the one which, when input to the community detection algorithm $f$, disassociates a target node $u$ from its original community $\mathcal{C}_i$. 
+The aim of community membership hiding is to formulate a function $h_{\theta}(\cdot)$, parameterized by $\theta$, that takes as input the initial graph $\mathcal{G}$ and produces as output a *new* graph $h_{\theta}(\mathcal{G}) = \mathcal{G'} = (\mathcal{V}, \mathcal{E'})$. Among all the possible graphs, we seek the one which, when input to the community detection algorithm $f$, disassociates a target node $u$ from its original community $\mathcal{C}_i$. 
 
 To achieve that goal, suppose that the target node $u$ is associated with a new community $\mathcal{C}'_i \in f(\mathcal{G}')$.
 Hence, we can define the objective of community membership hiding by establishing a threshold for the similarity between $\mathcal{C}'_i$ and $\mathcal{C}_i$, excluding the target node $u$, which, by definition, belongs to both communities. In other words, we set a condition: $sim(\mathcal{C}_i \setminus \{u\}, \mathcal{C}'_i \setminus \{u\}) \leq \tau$, where $\tau \in [0,1]$.
@@ -20,13 +20,13 @@ We assume $sim(\cdot, \cdot)$ ranges between $0$ and $1$.
 
 Several similarity measures can be used to measure $sim(\cdot, \cdot)$ depending on the application domain, e.g., the overlap coefficient (a.k.a. Szymkiewicz–Simpson coefficient), the Jaccard coefficient, and the Sorensen-Dice coefficient.
 
-![Community Detection](images/node_deception_background.png)
+![Community Detection](Tesis/READMES/images/node_deception_background.png)
 
 This diagram describes a simplification of the Node Deception process and its various phases. Given a graph $\mathcal{G}$, a node $u$ (in this case $u=E$), a budget of actions $\beta$, and the set of communities $\mathcal{C}$ identified by the community detection algorithm $f(\cdot)$ (including the community $\mathcal{C}_i$ to which the node belongs), the Node Deception process consists of adding inter-community edges $\mathcal{E}_{u,i}^+$ (green edges), or removing intra-community edges $\mathcal{E}_{u,i}^-$ (red edge), so that the value returned by the similarity function $sim(\cdot, \cdot)$, between the new community to which the node belongs after rewiring, and the original one, is lower than the $\tau$ constraint.
 
 ## Model
 
-![UML](images/uml_classes_background.png)
+![UML](Tesis/READMES/images/uml_classes_background.png)
 
 UMl diagram of the classes used in the project.
 
@@ -48,8 +48,7 @@ Below, we describe the policy network (*actor*) and value function network (*cri
 #### Actor
 
 The policy network is responsible for generating a probability distribution over possible actions based on the input, which consists of a list of nodes and the graph's feature matrix.
-However, some graphs may lack node features. In such cases, we can extract continuous node feature vectors (i.e., node embeddings) with graph representational learning frameworks like `node2vec`. These node embeddings serve as the feature matrix.
-%ensuring a consistent feature vector size, allowing the model to work with graphs of varying node counts.
+However, some graphs may lack node features. In such cases, we can extract continuous node feature vectors (i.e., node embeddings) with graph representational learning frameworks like `node2vec`. These node embeddings serve as the feature matrix, ensuring a consistent feature vector size, allowing the model to work with graphs of varying node counts.
 
 Our neural network implementation comprises a primary graph convolution layer (GCNConv) for updating node features. The output of this layer, along with skip connections, feeds into a block consisting of three hidden layers. Each hidden layer includes multi-layer perception (MLP) layers, ReLU activations, and dropout layers. The final output is aggregated using a sum-pooling function. 
 The policy is trained to predict the probability that node $v$ is the optimal choice for adding or removing the edge $(u, v)$ to hide the target node $u$ from its original community.
@@ -59,7 +58,7 @@ The feasible actions depend on the input node $u$ and are restricted to a subset
 
 This network closely resembles the one employed for the policy, differing only in one aspect: it incorporates a global sum-pooling operation on the convolution layer's output. This pooling operation results in an output layer with a size of 1, signifying the estimated value of the value function. The role of the value function is to predict the state value when provided with a specific action $a_t$ and state $s_t$
 
-![Model Architecture](images/model_architecture_background.png)
+![Model Architecture](Tesis/READMES/images/model_architecture_background.png)
 
 Network architecture overview of the **Actor** and **Critic**. Initially, the node's continuous feature vectors are acquired by employing `node2vec`, subsequently modified through the graph convolutions and processed through non-linearities to establish the concentration parameters $\xi \in R^{|\mathcal{V}|}_+$ (i.e. correlated with the probability density on the shares) and the estimated value function $V(s_t)$.
 
