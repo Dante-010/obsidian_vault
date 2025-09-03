@@ -1,18 +1,25 @@
-> [!todo]
-> - [x] Replicar paper ✅ 2025-06-06
-> - [x] Cambiar seed (random). ✅ 2025-07-17
-> - [ ] Ver los cambios individuales que hace un nodo una vez que se entrena la red.  
-> - [ ] Ver si hay prioridad de borrar sobre agregar/otros cambios.
-> - [ ] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces.  
-> - [ ] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
-> - [ ] Overlapping communities.
-> - [ ] Multiple membership hiding.
-> - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
-> - [ ] Alterar node features
-> - [ ] Conocimiento parcial del grafo
-> - [ ] Ver referencia \[23\]
-> - [ ] Solo poner y/o sacar (pensar antes de hacerlo, y compar con resultados).
-> - [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
-> - [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
-> - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
-> - [ ] Hacer tabla 2 y tabla 3 para las otras variantes.
+
+- [x] Replicar paper ✅ 2025-06-06
+- [x] Cambiar seed (random). ✅ 2025-07-17
+- [ ] Ver los cambios individuales que hace un nodo una vez que se entrena la red.  
+- [ ] Ver si hay prioridad de borrar sobre agregar/otros cambios.
+- [ ] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces.  
+- [ ] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
+- [ ] Overlapping communities.
+- [ ] Multiple membership hiding.
+- [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
+- [ ] Alterar node features
+- [ ] Conocimiento parcial del grafo
+- [ ] Ver referencia \[23\]
+- [ ] Solo poner y/o sacar (pensar antes de hacerlo, y comparar con resultados).
+- [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
+- [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
+- [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
+- [ ] Hacer tabla 2 y tabla 3 para las otras variantes.
+- [ ] Visualizar grafo antes y después  
+- [ ] Evaluar/graficar varios agentes a la vez  
+- [ ] Probar con datasets "triviales"  
+- [ ] Agregar una feature de "target_node"  
+- [ ] Pesos en los ejes  
+- [ ] Computar baselines una sola vez
+

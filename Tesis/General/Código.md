@@ -7,6 +7,8 @@ python main.py --mode "train"
 python main.py --mode "test"
 ```
 
+Lo utilizamos para elegir sobre qué datasets e hiperparámetros entrenar/testear.
+
 En `src/utils/utils.py` se encuentra el archivo con los parámetros del modelo.
 
 Los parámetros por defecto (por lo menos, los presentes en el [repositorio](https://github.com/AndreaBe99/community_membership_hiding/blob/main/main.py) al momento de escribrir esto) son:
@@ -103,12 +105,11 @@ class HyperParams(Enum):
     STEPS_EVAL = 100
 ```
 
+*(Se agregaron algunos más para tener mayor precisión en la configuración, y buen estándar de código)*
 ### utils.py
 En este archivo se encuentran la gran mayoría de parámetros e hiperparámetros a modificar del modelo, junto a sus explicaciones.
 
-Agregué algunos hiperparámetros que estaban hardcodeados, y saqué la necesidad de cambiar manualmente los hiperparámetros a la hora de testear (se guardan 
-
-automáticamente con el método `save_checkpoint()` del agente)
+Agregué algunos hiperparámetros que estaban hardcodeados, y saqué la necesidad de cambiar manualmente los hiperparámetros a la hora de testear (se guardan automáticamente con el método `save_checkpoint()` del agente)
 
 ### graph_env.py
 Define el entorno donde el agente interactúa y aprende. Se define el grafo, las acciones posibles, el algoritmos de detección utilizado, las funciones de similaridad, etc...
@@ -116,3 +117,18 @@ Define el entorno donde el agente interactúa y aprende. Se define el grafo, las
 ### agent.py
 Define el agente. En `a2c.py` está la red neuronal, que devuelve un vector de probabilidades de cuales son los nodos que mejor cumplen la función de ocultar, y un valor estimado de "qué tan bueno" es el grafo actual si seguimos aplicando la política actual.
 Hasta donde logré entender, no se marca directamente que un nodo es el nodo objetivo, sino que se deja que la red aprenda patrones por sí sola, y luego se restringe su actuar a un conjunto de nodos restringidos (en base al nodo objetivo).
+
+#### plots de entrenamiento
+Al finalizar el entrenamiento del agente, se generan los siguientes plots:
+- `training_a_loss`
+- `training_goal_reached`
+- `training_goal_reward`
+- `training_reward`
+- `training_steps`
+- `training_v_loss`
+
+----
+#### Cambios "importantes"
+Al correr los tests del agente, se estaba cargando el checkpoint (parámetros, pesos, hiperparámetros...) de forma repetida. Ahora se carga una única vez antes de testear.
+
+Además, en vez de computar los baselines cada vez que testeamos, los computo una única vez en todos los datasets para varios $\tau$ y $\beta$ (ahorra **mucho** tiempo de testing).

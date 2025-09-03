@@ -1,0 +1,4 @@
+- Una branch por agente (? Difícil para luego unir los datos de test: crear repo aparte, hacer el código más modular...)  
+- Grafos "especiales", cadenas, árboles, k-regulares  
+- Random graphs "Erdos"  
+- Barabasi-Albert model  

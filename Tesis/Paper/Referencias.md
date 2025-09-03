@@ -20,7 +20,7 @@
 
 ---
 ### (13) Node2Vec
-#### Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable Feature Learning for Networks. https://arxiv.org/abs/2101.01669 \[cs.SI\]
+#### Aditya Grover and Jure Leskovec. 2016. node2vec: Scalable Feature Learning for Networks. https://arxiv.org/abs/1607.00653 \[cs.SI\]
 > [!abstract] Abstracto
 >  Prediction tasks over nodes and edges in networks require careful
 effort in engineering features used by learning algorithms. Recent
@@ -48,6 +48,8 @@ of-the-art task-independent representations in complex networks.
 **node2vec** utiliza el hecho de que las caminatas aleatorias en un grafo pueden ser tratadas como oraciones en un corpus. Cada nodo es tratado como una palabra individual, y una caminata aleatoria es tratada como una oración. Si les damos estas oraciones a un modelo como **word2vec** (que define *embeddings* para palabras/tokens), los caminos encontrados por las caminatas, ahora oraciones, pueden ser analizados con técnicas tradicionales de data-mining para documentos.
 
 En el caso del paper, se puede utilizar node2vec para extraer feature vectors de los nodos en el caso que el grafo no tenga features propios (también existe la opción de simplemente asignar features aleatorias).
+
+Se mencionan dos conceptos interesantes para nodos en grafos (específicamente, la relación entre los nodos originales y su *embedding*): **homofilia** (nodos altamente interconectados y que pertenecen a clusters similares deben ser embedidos cerca), y **equivalencia estructural** (nodos con roles estructurales similares en las redes deben ser embedidos cerca, sin hacer énfasis en su conectividad "real").
 
 ---
 ### (18) GCNConv

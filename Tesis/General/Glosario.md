@@ -38,6 +38,8 @@
 	- $A^{t}_{i,j}$ es la entrada correspondiente para el grafo $\mathcal{G}^{t}$.  
 
   La distancia de Jaccard vale 0 cuando los dos grafos son idénticos y 1 cuando son completamente diferentes.
+  
+- **Homofilia y Equivalencia estructural**: ver [[Referencias#(13) Node2Vec]].
 
 ---
 ## Conceptos propios al paper

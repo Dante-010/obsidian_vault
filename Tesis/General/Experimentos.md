@@ -59,6 +59,9 @@ random.seed(time.time())
 ```
 *Probablemente* no vamos a obtener los mismos resultados, pero deberíamos observar algo considerablemente similar. Adaptando algunos parámetros para corresponderse con lo dicho en el paper, y dejando todo lo demás por defecto, obtenemos los siguientes resultados:
 
+![[allDatasets_tau_0.5_beta_1_sr_nmi_lineplot.png]]
+$(\tau = 0.5, \beta = 1)$
+
 
 ### 2. Agrego entropía
 En `agent.py` había un parámetro `self.entropy_coeff` sin utilizar. Lo agregué al paso de entrenamiento (función de loss) y reentrené los agentes sin cambiar nada.
