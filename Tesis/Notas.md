@@ -2,3 +2,4 @@
 - Grafos "especiales", cadenas, árboles, k-regulares  
 - Random graphs "Erdos"  
 - Barabasi-Albert model  
+- Mayor NMI => Mayor similitud entre grafo original y nuevo.

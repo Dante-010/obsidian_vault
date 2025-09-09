@@ -62,6 +62,14 @@ random.seed(time.time())
 ![[allDatasets_tau_0.5_beta_1_sr_nmi_lineplot.png]]
 $(\tau = 0.5, \beta = 1)$
 
+Como se esperaba, obtenemos resultados prácticamente idénticos, salvo cierto grado de aleatoriedad. Utilizamos esto como base para los próximos experimentos.
 
 ### 2. Agrego entropía
 En `agent.py` había un parámetro `self.entropy_coeff` sin utilizar. Lo agregué al paso de entrenamiento (función de loss) y reentrené los agentes sin cambiar nada.
+
+
+### 3. Grid search "general"
+Quiero saber cómo y qué parámetros influyen en el aprendizaje del agente.
+
+### 4. Modifico estructura de la red
+Ver [[Cambios en el agente]] para el motivo y explicación de los cambios
