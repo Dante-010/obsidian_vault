@@ -1,10 +1,10 @@
 
 - [x] Replicar paper ✅ 2025-06-06
 - [x] Cambiar seed (random). ✅ 2025-07-17
-- [ ] Ver los cambios individuales que hace un nodo una vez que se entrena la red.  
-- [ ] Ver si hay prioridad de borrar sobre agregar/otros cambios.
-- [ ] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces.  
-- [ ] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
+- [x] Ver los cambios individuales que hace un nodo una vez que se entrena la red. ✅ 2025-09-09
+- [x] Ver si hay prioridad de borrar sobre agregar/otros cambios. ✅ 2025-09-09
+- [x] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces. ✅ 2025-09-09
+- [x] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar). ✅ 2025-09-09
 - [ ] Overlapping communities.
 - [ ] Multiple membership hiding.
 - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
