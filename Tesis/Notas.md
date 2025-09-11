@@ -7,4 +7,4 @@
 ## Prioridades
 - Anotar el proceso del codigo.
 - Verficar verdaderamente que el caso de la comunidad mediana sea asi, y mostrarlo experimentalmente (con todos los datasets). Una vez hecho esto, escribir el correo electronico.
-- 
+- GUARDAR TODA LA INFORMACION DEL AGENTE Y ENTORNO AL ENTRENAR
