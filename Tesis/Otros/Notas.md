@@ -21,3 +21,8 @@ Entonces, la hipótesis original no está del todo mal, pero no está bien tampo
 - Verficar verdaderamente que el caso de la comunidad mediana sea asi, y mostrarlo experimentalmente (con todos los datasets). Una vez hecho esto, escribir el correo electronico.
 - GUARDAR TODA LA INFORMACION DEL AGENTE Y ENTORNO AL ENTRENAR
 - El agente original hace "trampa", pues les da preferencia a las comunidades con valor 
+
+
+- Tests 1-4: seeds 1-4, metodo 2 (fixed)
+- Tests 5-8: seeds 1-4, metodo 1 (random)
+- Tests 9 y 10: replicaciones de los tests 1 y 5, para ver que se puede hacer
