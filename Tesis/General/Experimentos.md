@@ -50,7 +50,7 @@ A la hora de testear, se prueban todas las combinaciones de los siguientes valor
 [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=7&selection=154,2,185,36|Evading Community Detection via Counterfactual Neighborhood Search, page 7]]
 
 --- 
-### 1. Replicar el paper
+### Replicar el paper
 La documentación existente es excelente, basta con correr `main.py` (luego de instalar las dependencias necesarias, corremos primero con `--mode "train"` y luego `--mode "test"`).
 
 Dado que en `graph_env.py` se utiliza:
@@ -64,12 +64,14 @@ $(\tau = 0.5, \beta = 1)$
 
 Como se esperaba, obtenemos resultados prácticamente idénticos, salvo cierto grado de aleatoriedad. Utilizamos esto como base para los próximos experimentos.
 
-### 2. Agrego entropía
+### "Testeo" la reproducibilidad
+
+
+### Agrego entropía
 En `agent.py` había un parámetro `self.entropy_coeff` sin utilizar. Lo agregué al paso de entrenamiento (función de loss) y reentrené los agentes sin cambiar nada.
 
-
-### 3. Grid search "general"
+### Grid search "general"
 Quiero saber cómo y qué parámetros influyen en el aprendizaje del agente.
 
-### 4. Modifico estructura de la red
+### Modifico estructura de la red
 Ver [[Cambios en el agente]] para el motivo y explicación de los cambios

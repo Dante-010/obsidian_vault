@@ -81,3 +81,10 @@ margin.
 ---
 
 ## Nuevas
+### (1) The Right to Hide: Masking Community Affiliation via Minimal Graph Rewiring
+
+####  https://doi.org/URL
+> [!abstract] Abstracto
+>  ABSTRACTO
+
+Ver [[The Right to Hide]].

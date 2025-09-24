@@ -15,8 +15,8 @@
 - [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
 - [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
 - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
-- [ ] Hacer tabla 2 y tabla 3 para las otras variantes.
-- [ ] Visualizar grafo antes y después  
+- [x] Hacer tabla 2 y tabla 3 para las otras variantes.
+- [x] Visualizar grafo antes y después  
 - [ ] Evaluar/graficar varios agentes a la vez  
 - [ ] Probar con datasets "triviales"  
 - [ ] Agregar una feature de "target_node"  

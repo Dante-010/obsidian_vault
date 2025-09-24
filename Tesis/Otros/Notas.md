@@ -26,3 +26,8 @@ Entonces, la hipótesis original no está del todo mal, pero no está bien tampo
 - Tests 1-4: seeds 1-4, metodo 2 (fixed)
 - Tests 5-8: seeds 1-4, metodo 1 (random)
 - Tests 9 y 10: replicaciones de los tests 1 y 5, para ver que se puede hacer
+
+- Elegir comunidades con probabilidad relativa a su tamaño
+- Loggear en el método random los tamaños (relativos) de las comunidades y hacer un post-análisis
+- Ablation study (Machine Learning)
+- Aplicar las mismas "variantes" al paper Right to Hide.
