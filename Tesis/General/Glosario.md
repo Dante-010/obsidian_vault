@@ -8,6 +8,7 @@
 - **(Condicional) Contrafactual:** Oraciones condicionales que discuten lo que podría haber sido verdad bajo circunstancias diferentes. Un **grafo contrafactual** es una versión hipotética de un grafo utilizada para responder preguntas de la forma: ¿qué pasaría con (una predicción, una comunidad, una clasificación, etc.) si cambiásemos parte del grafo?
 - [[Algoritmos Actor-Critic]].
 - **Episodios (en RL)**: Una corrida completa del agente. Comienza con el agente en un estado inicial, y termina cuando el agente llega a un estado "final" (cumplió el objetivo, falló, o se alcanzó un límite de tiempo/recursos). Aparte, una tarea puede ser *episódica*, donde se divide la interacción en episodios, y el entorno se reinicia cada vez, o *continua*, donde no hay estado terminal y el entorno evoluciona constantemente.
+- **Ablation study**: Aplicado a la Inteligencia Artificial, consta de remover partes de un sistema de inteligencia artificial, reentrenar y evaluar su rendimiento. Permite ver qué partes son importantes, y en un sistema bien diseñado el rendimiento no debería verse altamente afectado.
 
 ---
 ## Conceptos introducidos en las referencias

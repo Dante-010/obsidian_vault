@@ -67,11 +67,5 @@ Como se esperaba, obtenemos resultados prácticamente idénticos, salvo cierto g
 ### "Testeo" la reproducibilidad
 
 
-### Agrego entropía
-En `agent.py` había un parámetro `self.entropy_coeff` sin utilizar. Lo agregué al paso de entrenamiento (función de loss) y reentrené los agentes sin cambiar nada.
-
-### Grid search "general"
-Quiero saber cómo y qué parámetros influyen en el aprendizaje del agente.
-
 ### Modifico estructura de la red
 Ver [[Cambios en el agente]] para el motivo y explicación de los cambios

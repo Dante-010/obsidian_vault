@@ -83,8 +83,10 @@ margin.
 ## Nuevas
 ### (1) The Right to Hide: Masking Community Affiliation via Minimal Graph Rewiring
 
-####  https://doi.org/URL
+####  Matteo Silvestri et al. The Right to Hide: Masking Community Affilia-
+tion via Minimal Graph Rewiring. 2025. arXiv: 2502.00432 [cs.SI]. url:
+https://arxiv.org/abs/2502.00432.
 > [!abstract] Abstracto
->  ABSTRACTO
+>  Protecting privacy in social graphs may require obscuring nodes' membership in sensitive communities. However, doing so without significantly disrupting the underlying graph topology remains a key challenge. In this work, we address the community membership hiding problem, which involves strategically modifying the graph structure to conceal a target node's affiliation with a community, regardless of the detection algorithm used. We reformulate the original discrete, counterfactual graph search objective as a differentiable constrained optimisation task. To this end, we introduce \nabla-CMH, a new gradient-based method that operates within a feasible modification budget to minimise structural changes while effectively hiding a node's community membership. Extensive experiments on multiple datasets and community detection methods demonstrate that our technique outperforms existing baselines, achieving the best balance between node hiding effectiveness and graph rewiring cost, while preserving computational efficiency.
 
 Ver [[The Right to Hide]].

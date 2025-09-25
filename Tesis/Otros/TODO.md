@@ -17,9 +17,10 @@
 - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
 - [x] Hacer tabla 2 y tabla 3 para las otras variantes.
 - [x] Visualizar grafo antes y después  
-- [ ] Evaluar/graficar varios agentes a la vez  
+- [x] Elegir comunidades con probabilidad relativa a su tamaño
+- [x] Evaluar/graficar varios agentes a la vez  
 - [ ] Probar con datasets "triviales"  
 - [ ] Agregar una feature de "target_node"  
-- [ ] Pesos en los ejes  
-- [ ] Computar baselines una sola vez
+- [x] Pesos en los ejes  
+- [x] Computar baselines una sola vez
 
