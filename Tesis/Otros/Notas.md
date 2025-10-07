@@ -1,4 +1,3 @@
-- Una branch por agente (? Difícil para luego unir los datos de test: crear repo aparte, hacer el código más modular...)  
 - Grafos "especiales", cadenas, árboles, k-regulares  
 - Random graphs "Erdos"  
 - Barabasi-Albert model  
@@ -19,14 +18,15 @@ Entonces, la hipótesis original no está del todo mal, pero no está bien tampo
 ## Prioridades
 - Anotar el proceso del codigo.
 - GUARDAR TODA LA INFORMACION DEL AGENTE Y ENTORNO AL ENTRENAR
-- Loggear en el método random los tamaños (relativos) de las comunidades y hacer un post-análisis
-- Ablation study (Machine Learning)
-- Aplicar las mismas "variantes" al paper Right to Hide.
-
 ##### Mini TODO
-- Preguntarle a Esteban o Gabriel el tema del testing (estadísticamente hablando, cuántas corridas necesito?).
+- Loggear en el método random los tamaños (relativos) de las comunidades y hacer un post-análisis
 - Terminar lo pendiente en variables, parametros y ecuaciones.
 - Escribir el "paso a paso" del testing y training.
-- Probar el agente original reentrenado con el metodo 1
+- Probar el agente original reentrenado con el metodo 1.
 - Entrenar un agente permitiendo TODAS las operaciones en ejes (es decir, agregar/sacar con cualquiera).
-- Ver cómo calculo la varianza en steps_needed
+- Ver cómo calculo la varianza en steps_needed.
+
+VARIANTES (HACER FABRICA DE VARIANTES?)
+	- Ver la variante geometrica (definir un "backend"? Adaptar a Reinforcement Learning?)
+	- SOLO SACAR/SOLO PONER (problema original)
+	- CAMBIO EL PROBLEMA (Join C1 and C2)

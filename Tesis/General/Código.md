@@ -117,7 +117,7 @@ Define el entorno donde el agente interactúa y aprende. Se define el grafo, las
 ### agent.py
 Define el agente. En `a2c.py` está la red neuronal, que devuelve un vector de probabilidades de cuales son los nodos que mejor cumplen la función de ocultar, y un valor estimado de "qué tan bueno" es el grafo actual si seguimos aplicando la política actual.
 
-Hasta donde logré entender, no se marca directamente que un nodo es el nodo objetivo, sino que se deja que la red aprenda patrones por sí sola, y luego se restringe su actuar a un conjunto de nodos restringidos (ver [[Cambios en el agente]]).
+Hasta donde logré entender, no se marca directamente que un nodo es el nodo objetivo, sino que se deja que la red aprenda patrones por sí sola, y luego se restringe su actuar a un conjunto de nodos restringidos.
 
 #### plots de entrenamiento
 Al finalizar el entrenamiento del agente, se generan los siguientes plots:
@@ -133,5 +133,3 @@ Al finalizar el entrenamiento del agente, se generan los siguientes plots:
 Al correr los tests del agente, se estaba cargando el checkpoint (parámetros, pesos, hiperparámetros...) de forma repetida. Ahora se carga una única vez antes de testear.
 
 Además, en vez de computar los baselines cada vez que testeamos, los computo una única vez en todos los datasets para varios $\tau$ y $\beta$ (ahorra **mucho** tiempo de testing).
-
-Un gran cambio fue cómo operan el agente y la red neuronal. Detalles en [[Cambios en el agente]].

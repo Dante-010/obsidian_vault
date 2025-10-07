@@ -1,2 +1,0 @@
-Algo que me llamó la atención fue que en ningún momento se le "muestra" a la red qué nodo es el nodo objetivo, sino que simplemente se le pase el grafo completo, y la red aprende qué acciones "esconden un nodo". Como el entorno siempre aplica acciones en base al nodo objetivo, técnicamente funciona, pero no me parece que sea la forma más óptima ni extendible posible.
-

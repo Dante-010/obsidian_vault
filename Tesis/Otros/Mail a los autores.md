@@ -1,3 +1,8 @@
+(Ver [[A tener en cuenta]] para un resumen)
+Nos dimos cuenta de una "incongruencia" o posible error en la forma de entrenar y testear el agente, por lo que enviamos el siguiente correo a los autores originales:
+
+---
+
 To: Andrea Bernini (andreabe99@gmail.com), Fabrizio Silvestri (fsilvestri@diag.uniroma1.it), Gabriele Tolomei (tolomei@di.uniroma1.it).
 
 Hello, my name is Dante Culaciati, I am a Computer Science student at the University of Buenos Aires, currently doing my undergraduate thesis with a former colleague of yours, Prof. and Dr. Esteban Feuerstein, and Prof. and Dr. Gabriel Tolosa, based on your paper "Evading Community Detection via Counterfactual Neighborhood Search".
@@ -37,3 +42,7 @@ Should testing be done with the same community changing method as training, or i
 
 Thank you in advance for your time and attention, and sorry for the long email.
 Best regards.
+
+--- 
+
+Obtuvimos las siguientes respuestas:

@@ -8,7 +8,7 @@
 
 ## Originales
 ### (8) Community Deception
-####  Valeria Fionda and Giuseppe Pirrò. 2018. Community Deception or: How to Stop Fearing Community Detection Algorithms. IEEE Transactions on Knowledge and Data Engineering 30, 4 (2018), 660–673. https://doi.org/10.1109/TKDE.2017. 2776133
+####  Valeria Fionda and Giuseppe Pirrò. 2018. Community Deception or: How to Stop Fearing Community Detection Algorithms. IEEE Transactions on Knowledge and Data Engineering 30, 4 (2018), 660–673. https://ieeexplore.ieee.org/document/8118127. 2776133
 > [!abstract] Abstracto
 >  In this paper, we research the community deception problem. Tackling this problemconsists in developing techniques to hide a target community (C) fromcommunity detection algorithms. This need emerges whenever a group (e.g., activists, police enforcements, or network participants in general) want to observe and cooperate in a social networkwhile avoiding to be detected. We introduce and formalize the community deception problemand devise an efficient algorithmthat allows to achieve deception by identifying a certain number (beta) of C's members connections to be rewired. Deception can be practically achieved in social networks like Facebook by friending or unfriending networkmembers as indicated by our algorithm. We compare our approachwith another technique based onmodularity. By considering a variety of (large) real networks, we provide a systematic evaluation of the robustness of community detection algorithms to deception techniques. Finally, we open some challenging research questions about the design of detection algorithms robust to deception techniques.
 

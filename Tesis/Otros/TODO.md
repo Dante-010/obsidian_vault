@@ -1,26 +1,20 @@
 
-- [x] Replicar paper ✅ 2025-06-06
-- [x] Cambiar seed (random). ✅ 2025-07-17
-- [x] Ver los cambios individuales que hace un nodo una vez que se entrena la red. ✅ 2025-09-09
-- [x] Ver si hay prioridad de borrar sobre agregar/otros cambios. ✅ 2025-09-09
-- [x] Repetir los experimentos con una política donde no se permitan borrar enlaces, y otra donde no se permitan agregar enlaces. ✅ 2025-09-09
-- [x] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar). ✅ 2025-09-09
+- [x] Replicar paper 
+- [x] Cambiar seed (random).
+- [x] Crear datasets sintéticos (o no, lo importante es que tengan ciertas estructuras/patrones), y tratar de predecir el resultado (hay herramientas en el código para hacer esto, investigar).
+- [x] Elegir comunidades con probabilidad relativa a su tamaño
+- [x] Pesos en los ejes  
+- [x] Computar baselines una sola vez
+- [x] Evaluar/graficar varios agentes a la vez  
 - [ ] Overlapping communities.
 - [ ] Multiple membership hiding.
 - [ ] Trabajar con $f(\cdot)$ white-box (conociendo el algoritmo)
 - [ ] Alterar node features
 - [ ] Conocimiento parcial del grafo
-- [ ] Ver referencia \[23\]
 - [ ] Solo poner y/o sacar (pensar antes de hacerlo, y comparar con resultados).
 - [ ] Asegurarse de que en cada instancia se mantenga (o no) la transferabilidad.
 - [ ] Hacer algoritmos *naive* o *especiales* y ver si sigue la transferabilidad (white-box y black-box)
 - [ ] Ver convergencia en base a modelo (solo agregar, solo borrar).
-- [x] Hacer tabla 2 y tabla 3 para las otras variantes.
-- [x] Visualizar grafo antes y después  
-- [x] Elegir comunidades con probabilidad relativa a su tamaño
-- [x] Evaluar/graficar varios agentes a la vez  
 - [ ] Probar con datasets "triviales"  
 - [ ] Agregar una feature de "target_node"  
-- [x] Pesos en los ejes  
-- [x] Computar baselines una sola vez
 

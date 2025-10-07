@@ -4,15 +4,16 @@
 - **[Deep reinforcement learning](https://en.wikipedia.org/wiki/Deep_reinforcement_learning):** Reinforcement learning implementado con deep learning. Los agentes aprenden a realizar decisiones interactuando con su entorno con el objetivo de maximizar recompensas acumulativas, utilizando redes neuronales profundas para representar reglas, funciones de valor, o modelos del entorno.
   Utilizar redes neuronales profundas permitió que métodos de reinforcement learning puedan ser utilizados con espacios de entrada continuos o de alta dimensionalidad.
 - **Community detection (ver [[Algoritmos de detección de comunidades]]):** Los algoritmos de detección de comunidades se utilizan para particionar un grafo en clusters. Se pueden categorizar en dos grandes tipos: **overlapping** y **non-overlapping** (superpuestos y no supuerpuestos), donde la principal diferencia es si un nodo puede pertenecer a varios clusters al mismo tiempo, o no, respectivamente.
-- **Community** *(dentro de community detection)*: No hay una definición universalmente aceptada, pero en general se busca que una comunidad exhiba fuertes conexiones intra-cluster, y relativamente débiles conexiones inter-cluster.
+- **Community** *(dentro de community detection)*: No hay una definición universalmente  aceptada, pero en general se busca que una comunidad exhiba fuertes conexiones intra-cluster, y relativamente débiles conexiones inter-cluster.
 - **(Condicional) Contrafactual:** Oraciones condicionales que discuten lo que podría haber sido verdad bajo circunstancias diferentes. Un **grafo contrafactual** es una versión hipotética de un grafo utilizada para responder preguntas de la forma: ¿qué pasaría con (una predicción, una comunidad, una clasificación, etc.) si cambiásemos parte del grafo?
 - [[Algoritmos Actor-Critic]].
 - **Episodios (en RL)**: Una corrida completa del agente. Comienza con el agente en un estado inicial, y termina cuando el agente llega a un estado "final" (cumplió el objetivo, falló, o se alcanzó un límite de tiempo/recursos). Aparte, una tarea puede ser *episódica*, donde se divide la interacción en episodios, y el entorno se reinicia cada vez, o *continua*, donde no hay estado terminal y el entorno evoluciona constantemente.
-- **Ablation study**: Aplicado a la Inteligencia Artificial, consta de remover partes de un sistema de inteligencia artificial, reentrenar y evaluar su rendimiento. Permite ver qué partes son importantes, y en un sistema bien diseñado el rendimiento no debería verse altamente afectado.
+- **Ablation study**: Aplicado a la Inteligencia Artificial, consta de remover partes de un  sistema de inteligencia artificial, reentrenar y evaluar su rendimiento. Permite ver qué partes son importantes, y en un sistema bien diseñado el rendimiento no debería verse altamente afectado.
+- **Funciones de similaridad/distancia (entre grafos y comunidades):** ver [[Funciones de similaridad (grafos y comunidades)]]
 
 ---
 ## Conceptos introducidos en las referencias
-- **Deception score** ([[Referencias#(8) Community Deception|8]]):
+- **Deception score** ([[Referencias#(8) Community Deception|8]]): Evalúa el nivel de ocultamiento de una comunidad $\mathcal{C}$ dentro de una estructura de comunidad $\overline{C}$ encontrada por algún algoritmo (ver referencia para definición formal, tiene sentido casi que únicamente dentro del contexto del paper).
 - **Community Deception** ([[Referencias#(8) Community Deception|8]]): Especialización de community membership hiding, donde el objetivo es esconder una comunidad entera de los algoritmos de detección de comunidades.
 - **Coeficiente Dice-Sørensen (DSC)**:  $$\operatorname{DSC}(C_i, C_i^{t}) = \frac{2 \left| C_i \cap C_i^{t} \right|}{\left| C_i \right| + \left| C_i^{t} \right|}$$
   Devuelve un valor entre $0$ (no hay similaridad) y $1$ (fuerte similaridad).

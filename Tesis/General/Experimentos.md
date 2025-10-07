@@ -50,7 +50,7 @@ A la hora de testear, se prueban todas las combinaciones de los siguientes valor
 [[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=7&selection=154,2,185,36|Evading Community Detection via Counterfactual Neighborhood Search, page 7]]
 
 --- 
-### Replicar el paper
+## Replicar el paper
 La documentación existente es excelente, basta con correr `main.py` (luego de instalar las dependencias necesarias, corremos primero con `--mode "train"` y luego `--mode "test"`).
 
 Dado que en `graph_env.py` se utiliza:
@@ -59,13 +59,25 @@ random.seed(time.time())
 ```
 *Probablemente* no vamos a obtener los mismos resultados, pero deberíamos observar algo considerablemente similar. Adaptando algunos parámetros para corresponderse con lo dicho en el paper, y dejando todo lo demás por defecto, obtenemos los siguientes resultados:
 
-![[allDatasets_tau_0.5_beta_1_sr_nmi_lineplot.png]]
-$(\tau = 0.5, \beta = 1)$
+![[allDatasets_greedy_tau_0.5_beta_1_sr_nmi_multiAgents.png]]
+![[allDatasets_louvain_tau_0.5_beta_1_sr_nmi_multiAgents.png]]
+![[allDatasets_walktrap_tau_0.5_beta_1_sr_nmi_multiAgents.png]]
+*(no arranqué testeando con fb-75, es muy grande y lleva mucho tiempo cada ejecución)*
 
-Como se esperaba, obtenemos resultados prácticamente idénticos, salvo cierto grado de aleatoriedad. Utilizamos esto como base para los próximos experimentos.
+Claramente los resultados no coinciden con lo esperado. Luego de analizar el código, encontramos que los autores utilizaban cierto método de elección de comunidades a la hora de testear (y erróneamente, creímos que también aplicaba al entrenamiento). Les enviamos un [[Mail a los autores|correo]] para aclarar las dudas. En resumen, utilizan el método 1 para entrenar, y el método 2 para testear (ver [[Métodos de selección de comunidad]]).
 
-### "Testeo" la reproducibilidad
+Una vez solucionado esto, volvemos a correr los experimentos, ahora sí con el modelo apropiado:
 
+## Reproducibilidad
+Por fuera de todo lo anterior, quería asegurarme que efectivamente se podían setear las semillas correspondientes para tener reproducibilidad en los experimentos. Tuve que agregar las siguientes líneas:
+```python
+# Make it reproducible (use time.time() if it doesn't matter)
+SEED = int(time.time())
+random.seed(SEED) # in "prod", use something like time.time()
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+torch.cuda.manual_seed(SEED)
+# torch.backends.cudnn.deterministic = True # Slows down training
+```
 
-### Modifico estructura de la red
-Ver [[Cambios en el agente]] para el motivo y explicación de los cambios
+Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, se obtienen los mismos resultados.
