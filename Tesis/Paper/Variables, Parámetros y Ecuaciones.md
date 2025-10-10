@@ -110,7 +110,7 @@ donde $T$ es el máximo número de pasos por episodio tomados por el agente, y p
 Tenemos muchos hiperparámetros para cambiar y elegir, pero hacemos grid search sobre los siguientes:
 - $\eta$ **learning rate**: qué tan rápido aprende el algoritmo, valores razonables entre $1 \times 10^{-4}$ y $1 \times 10^{-3}$.
 - $\gamma$ **discount factor**: qué tan importante son las recompensas futuras, en comparación a las más "próximas".
-- $\lambda$ **peso en la función de recompensa** :
+- $\lambda$ **peso en la función de pérdida**: 
 - $\alpha$ **peso en $\ell_{dist}$:**
 - $\epsilon$ **probabilidad de cambio de comunidad/nodo objetivo al entrenar**:
 - $\mathrm{c}_{entropy}$ **coeficiente de entropía**:
