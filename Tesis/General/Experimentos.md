@@ -64,10 +64,17 @@ random.seed(time.time())
 ![[allDatasets_walktrap_tau_0.5_beta_1_sr_nmi_multiAgents.png]]
 *(no arranqué testeando con fb-75, es muy grande y lleva mucho tiempo cada ejecución)*
 
-Claramente los resultados no coinciden con lo esperado. Luego de analizar el código, encontramos que los autores utilizaban cierto método de elección de comunidades a la hora de testear (y erróneamente, creímos que también aplicaba al entrenamiento). Les enviamos un [[Mail a los autores|correo]] para aclarar las dudas. En resumen, utilizan el método 1 para entrenar, y el método 2 para testear (ver [[Métodos de selección de comunidad]]).
+Claramente los resultados no coinciden con lo esperado. Luego de analizar el código, encontramos que los autores utilizaban cierto método de elección de comunidades a la hora de testear (y erróneamente, creímos que también aplicaba al entrenamiento). Les enviamos un [[Correos a los autores#1er correo|correo]] para aclarar las dudas. En resumen, utilizan el método 1 para entrenar, y el método 2 para testear (ver [[Métodos de selección de comunidad]]).
 
-Una vez solucionado esto, volvemos a correr los experimentos, ahora sí con el modelo apropiado:
+Una vez solucionado esto, volvemos a correr los experimentos, ahora sí con el modelo apropiado (en teoría):
 
+![[F1_allDatasets_evaluation_node_hiding_greedy_multiAgents.png]]
+
+Manteniendo los hiperparámetros exactamente como se describe en el paper (y como están en el código de GitHub en caso de no figurar en el paper), no logro obtener los mismos resultados. Lo curioso es que al descargar directamente los modelos (archivos `.pth`) presentes en el repositorio, los resultados son prácticamente identicos, lo que me lleva a pensar que el modelo del paper tiene alguna diferencia en hiperparámetros, dataset, o forma de evaluación.
+
+Por ahora trato de obtener un buen modelo "a mano", pero considero escribir otro correo para verificar esto.
+
+De igual forma, utilizo estos datos originales para realizar las comparaciones a futuro (al menos por ahora).
 ## Reproducibilidad
 Por fuera de todo lo anterior, quería asegurarme que efectivamente se podían setear las semillas correspondientes para tener reproducibilidad en los experimentos. Tuve que agregar las siguientes líneas:
 ```python
@@ -81,3 +88,9 @@ torch.cuda.manual_seed(SEED)
 ```
 
 Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, se obtienen los mismos resultados.
+
+## Solo agregar/solo sacar ejes
+Como primer caso de estudio interesante, se nos ocurrió ver el comportamiento del agente si únicamente permitimos una de estas operaciones.
+### Solo agregar
+
+### Solo sacar

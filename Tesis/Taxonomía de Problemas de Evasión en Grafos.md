@@ -8,19 +8,12 @@ Nuestro proyecto de tesis toma de base el paper **Evading Community Detection vi
 
 > The core challenge of this problem lies in determining how to strategically modify the structural properties of a network graph, effectively excluding one or more nodes from being identified by a given community detection algorithm. 
 
-[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=1&selection=188,0,191,37|Evading Community Detection via Counterfactual Neighborhood Search, page 1]]
-
-> Our main contributions are summarized below. 
-> • We formulate the community membership hiding problem as a constrained counterfactual graph objective. 
-> • We cast this problem within an MDP framework and solved it via DRL. 
-> • We utilize a graph neural network (GNN) representation to capture the structural complexity of the input graph, which in turn is used by the DRL agent to make its decisions. 
-> • We validate the performance of our method in comparison with existing baselines using standard quality metrics. 
-> • We publicly release both the source code and the data utilized in this study to encourage reproducibility.
-
-[[Evading Community Detection via Counterfactual Neighborhood Search.pdf#page=2&selection=56,0,82,43|Evading Community Detection via Counterfactual Neighborhood Search, page 2]]
+Es importante notar que nuestro proyecto no solo explora el problema de [[Community Membership Hiding]], sino que utilizamos el framework definido por los autores originales para trabajar sobre diversos problemas sobre grafos (y posiblemente comunidades).
 
 ---
-[[README_main]] explica de manera excelente el concepto de [[Community Membership Hiding]], [[README_main|Advantage Actor-Critic (A2C)]] y el código necesario para replicar los resultados que obtuvieron.
+Ver [[A tener en cuenta]] para algunos datos y conceptos importantes a la hora de trabajar/entender este proyecto de tesis.
+
+[[README_main]] explica de manera excelente el concepto de [[Community Membership Hiding]], [[README_main|Advantage Actor-Critic (A2C)]] y los comandos necesarios para replicar los resultados que obtuvieron.
 
 Ver [[Código]] para entender qué hace cada módulo y saber cómo determinar qué queremos correr y [[Experimentos]] para ver alternativas explorados junto a sus resultados. 
 
@@ -28,6 +21,4 @@ En [[Variables, Parámetros y Ecuaciones]], hay breves explicaciones de las part
 
 En [[Glosario]], anoté brevemente términos importantes para entender el paper, ya sean conceptos "comunes" o conocidos, como conceptos obtenidos de las [[Referencias]].
 
-En [[Alternativas]] se explican los distintos escenarios para variar el problema.
-
--------
+En [[Alternativas]] se explican los distintos escenarios para variar el problema original.

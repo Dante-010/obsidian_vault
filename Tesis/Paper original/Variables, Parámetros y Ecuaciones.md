@@ -110,11 +110,11 @@ donde $T$ es el máximo número de pasos por episodio tomados por el agente, y p
 Tenemos muchos hiperparámetros para cambiar y elegir, pero hacemos grid search sobre los siguientes:
 - $\eta$ **learning rate**: qué tan rápido aprende el algoritmo, valores razonables entre $1 \times 10^{-4}$ y $1 \times 10^{-3}$.
 - $\gamma$ **discount factor**: qué tan importante son las recompensas futuras, en comparación a las más "próximas".
-- $\lambda$ **peso en la función de pérdida**: 
-- $\alpha$ **peso en $\ell_{dist}$:**
-- $\epsilon$ **probabilidad de cambio de comunidad/nodo objetivo al entrenar**:
-- $\mathrm{c}_{entropy}$ **coeficiente de entropía**:
+- $\lambda$ **peso en la función de pérdida**: determina el balance entre la recompensa y la penalización por la diferencia entre un grafo $t$ y $t-1$ en base a la diferencia entre $\ell_\text{dist}$. En resumen, fija la importancia de que los grafos sucesivos se "parezcan".
+- $\alpha$ **peso en $\ell_{dist}$**: tradeoff entre considerar las distancias entre grafos y estructuras de comunidades al calcular $\ell_\text{dist}$.
+- $\epsilon$ **probabilidad de cambio de comunidad/nodo objetivo al entrenar**: al entrenar, con probabilidad $\epsilon$, se cambia de comunidad (y por lo tanto, de nodo objetivo).
+- $\mathrm{c}_{entropy}$ **coeficiente de entropía**: determina si el agente prioriza la exploración (encontrar nuevas políticas, posiblemente mejores) o la explotación (maximizar recompensa con la política actual). 
 
 Además, al testear iteramos sobre estos dos parámetros:
-- $\beta$:
-- $\tau$:
+- $\beta$ (ver [[#$ beta$ (presupuesto) |presupuesto]])
+- $\tau$ (ver [[#$sim( cdot, cdot)$|sim(.,.)]])

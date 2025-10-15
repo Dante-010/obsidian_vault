@@ -8,9 +8,7 @@ python main.py --mode "test"
 ```
 
 Lo utilizamos para elegir sobre qué datasets e hiperparámetros entrenar/testear.
-
 En `src/utils/utils.py` se encuentra el archivo con los parámetros del modelo.
-
 Los parámetros por defecto (por lo menos, los presentes en el [repositorio](https://github.com/AndreaBe99/community_membership_hiding/blob/main/main.py) al momento de escribrir esto) son:
 
 ```python
@@ -114,10 +112,11 @@ Agregué algunos hiperparámetros que estaban hardcodeados, y saqué la necesida
 ### graph_env.py
 Define el entorno donde el agente interactúa y aprende. Se define el grafo, las acciones posibles, el algoritmos de detección utilizado, las funciones de similaridad, etc...
 
+Funciona como el "backend" del código, puesto que se encarga de la "simulación" del grafo, lo que implica llevar a cabo las acciones sobre el grafo, calcular las recompensas, definir las acciones posibles, y demás.
 ### agent.py
 Define el agente. En `a2c.py` está la red neuronal, que devuelve un vector de probabilidades de cuales son los nodos que mejor cumplen la función de ocultar, y un valor estimado de "qué tan bueno" es el grafo actual si seguimos aplicando la política actual.
 
-Hasta donde logré entender, no se marca directamente que un nodo es el nodo objetivo, sino que se deja que la red aprenda patrones por sí sola, y luego se restringe su actuar a un conjunto de nodos restringidos.
+Hasta donde logré entender, no se marca directamente que un nodo es el nodo objetivo, sino que se deja que la red aprenda patrones por sí sola, y luego se restringe su actuar a un conjunto de nodos restringidos. Mi idea es cambiar esto para ver si obtengo alguna mejora.
 
 #### plots de entrenamiento
 Al finalizar el entrenamiento del agente, se generan los siguientes plots:
@@ -129,7 +128,26 @@ Al finalizar el entrenamiento del agente, se generan los siguientes plots:
 - `training_v_loss`
 
 ----
+## Proceso de entrenamiento y testeo
+### Entrenamiento
+Primero, se establecen los hiperparámetros, datasets, algoritmos, etc...
+Luego se hace grid search sobre los hiperparámetros (ver [[Variables, Parámetros y Ecuaciones]])
+
+El entrenamiento es como cualquier otro de RL, donde se asignan los parámetros de las redes neuronales, se computan las pérdidas y se aplica backpropagation.
+
+La cantidad de pasos de entrenamiento está determinada por `MAX_EPISODES` en `utils.py`, y utilizo el método 1 ([[Métodos de selección de comunidad#1. `RANDOM_COMMUNITY`|RANDOM_COMMUNITY]]) para garantizar que el agente se entrene sobre varios tipos de nodos/comunidades (notar que si $\epsilon = 0$ no va a haber cambio de nodo/comunidad).
+
+### Testeo
+El agente se pone en modo de evaluación, los hiperparámetros son cargados directamente del archivo `.pth` (para mayor comodidad y reproducibilidad), y se testea sobre uno o varios betas y taus.
+
+Para pruebas "chicas" se puede utilizar el método 2 ([[Métodos de selección de comunidad#2. `CLOSEST_SIZE_PERCENTAGE`|CLOSEST_SIZE_PERCENTAGE]]), ya que actúa sobre distintos tamaños de comunidades. Si se quiere probar el rendimiento "real" del agente, es más recomendable el método 1.
+
+Cabe aclarar que para cada test se define un "entorno" de testing, siendo el principal para el paper original `hiding_node.py` que define baselines (medidas para comparar) y demás funciones útiles
+
+--- 
 #### Cambios "importantes"
 Al correr los tests del agente, se estaba cargando el checkpoint (parámetros, pesos, hiperparámetros...) de forma repetida. Ahora se carga una única vez antes de testear.
 
 Además, en vez de computar los baselines cada vez que testeamos, los computo una única vez en todos los datasets para varios $\tau$ y $\beta$ (ahorra **mucho** tiempo de testing).
+
+Como la idea es ir más allá del problema original, modularizamos el código para poder reutilizar el mismo agente y entorno para modelar distintos problemas.
