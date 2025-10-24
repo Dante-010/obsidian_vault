@@ -17,7 +17,6 @@ En testing, en base a Utils.PREFERRED_COMMUNITY_SIZE, se prueban con comunidades
 Entonces, la hipótesis original no está del todo mal, pero no está bien tampoco.
 ##### Mini TODO
 - GUARDAR TODA LA INFORMACION DEL AGENTE Y ENTORNO AL ENTRENAR
-- Escribir el "paso a paso" del testing y training.
 - Entrenar un agente permitiendo TODAS las operaciones en ejes (es decir, agregar/sacar con cualquiera).
 - Ver cómo calculo la varianza en steps_needed.
 

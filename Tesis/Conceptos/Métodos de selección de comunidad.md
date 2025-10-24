@@ -16,6 +16,9 @@ De este modo, las comunidades más grandes tienen una mayor probabilidad de ser 
 Primero elige un nodo al azar del grafo, y luego selecciona la comunidad a la que pertenece ese nodo.  
 Como la probabilidad de elegir un nodo de una comunidad grande es mayor, este método también tiende a favorecer comunidades grandes, de manera similar al método proporcional.
 
+## 5. `CURRICULUM_LEARNING`
+Ver [[Glosario]].
+
 ---
 
 `RANDOM_COMMUNITY` es el más apropiado para el entrenamiento, mientras que `CLOSEST_SIZE_PERCENTAGE` se utiliza normalmente en la evaluación para asegurar la cobertura de distintos tamaños de comunidad. Sin embargo, repetir múltiples ejecuciones con `RANDOM_COMMUNITY` es lo que realmente permite medir el desempeño general del agente.
