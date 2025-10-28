@@ -90,10 +90,10 @@ torch.cuda.manual_seed(SEED)
 Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, se obtienen los mismos resultados.
 
 ## Mejoro el agente
-Lo que más me llamó la atención fue que en ningún momento se le dice a la red explícitamente cuál es el nodo objetivo, sino que el entorno se encarga de aplicar las operaciones de forma "automática" sobre éste nodo.
+Ver [[Cambios Importantes sobre la Red Neuronal]]
 
-Entonces, el agente no aprende una política de cómo ocultar un nodo seleccionado, sino operaciones "generales" que causan que la estructura de comunidades en general cambie, lo que implica que es probable que el nodo objetivo cambie de comunidad (aunque no muy efectivo para $\tau$ y $\beta$ pequeños).
 
+(rehacer con agente nuevo)
 ## Solo agregar/solo sacar ejes
 Como primer caso de estudio interesante, se nos ocurrió ver el comportamiento del agente si únicamente permitimos una de estas operaciones.
 ### Solo agregar

@@ -23,6 +23,7 @@ Comunidad asignada a $u$ luego de correr $f(\mathcal{G})$.
 Función de similaridad entre dos comunidades $\mathcal{C}$ y  $\mathcal{C}'$. 
 La idea es considerar $sim(\mathcal{C}_i - u, \mathcal{C}_i' - u) \leq \tau$, donde $\tau \in [0, 1]$. Se excluye $u$ puesto que por definición, pertenece a ambas comunidades. $\tau = 0$ representa el escenario más estricto, donde ambas comunidades deben ser **completamente** distintas. $\tau = 1$ es más tolerante, permitiendo un **solapamiento máximo** entre $\mathcal{C}$ y $\mathcal{C}'$. Sin embargo, tomar $\tau = 1$ puede ocasionar que ambas comunidades sean totalmente idénticas, contradiciendo el objetivo principal del problema, por lo que se suele considerar $\tau \in [0,1)$.
 
+Se utiliza el DSC en el paper (ver [[Glosario]]), pero en el código hay varias métricas para elegir.
 ### $$ \begin{equation} \tag{1}
   \mathcal{L}(h_\theta; \mathcal{G}, f, u) = \ell_{\text{decept}}(\mathcal{G}, h_\theta(\mathcal{G});f,u) + \lambda \ell_{\text{dist}}(\mathcal{G},h_\theta(\mathcal{G});f)
   \end{equation} $$

@@ -151,3 +151,5 @@ Al correr los tests del agente, se estaba cargando el checkpoint (parámetros, p
 Además, en vez de computar los baselines cada vez que testeamos, los computo una única vez en todos los datasets para varios $\tau$ y $\beta$ (ahorra **mucho** tiempo de testing).
 
 Como la idea es ir más allá del problema original, modularizamos el código para poder reutilizar el mismo agente y entorno para modelar distintos problemas.
+
+Ver [[Cambios Importantes sobre la Red Neuronal]].
