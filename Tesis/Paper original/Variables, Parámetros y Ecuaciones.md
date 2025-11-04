@@ -23,6 +23,7 @@ Comunidad asignada a $u$ luego de correr $f(\mathcal{G})$.
 Función de similaridad entre dos comunidades $\mathcal{C}$ y  $\mathcal{C}'$. 
 La idea es considerar $sim(\mathcal{C}_i - u, \mathcal{C}_i' - u) \leq \tau$, donde $\tau \in [0, 1]$. Se excluye $u$ puesto que por definición, pertenece a ambas comunidades. $\tau = 0$ representa el escenario más estricto, donde ambas comunidades deben ser **completamente** distintas. $\tau = 1$ es más tolerante, permitiendo un **solapamiento máximo** entre $\mathcal{C}$ y $\mathcal{C}'$. Sin embargo, tomar $\tau = 1$ puede ocasionar que ambas comunidades sean totalmente idénticas, contradiciendo el objetivo principal del problema, por lo que se suele considerar $\tau \in [0,1)$.
 
+Se utiliza el DSC en el paper (ver [[Glosario]]), pero en el código hay varias métricas para elegir.
 ### $$ \begin{equation} \tag{1}
   \mathcal{L}(h_\theta; \mathcal{G}, f, u) = \ell_{\text{decept}}(\mathcal{G}, h_\theta(\mathcal{G});f,u) + \lambda \ell_{\text{dist}}(\mathcal{G},h_\theta(\mathcal{G});f)
   \end{equation} $$
@@ -112,6 +113,8 @@ Tenemos muchos hiperparámetros para cambiar y elegir, pero hacemos grid search 
 - $\gamma$ **discount factor**: qué tan importante son las recompensas futuras, en comparación a las más "próximas".
 - $\lambda$ **peso en la función de pérdida**: determina el balance entre la recompensa y la penalización por la diferencia entre un grafo $t$ y $t-1$ en base a la diferencia entre $\ell_\text{dist}$. En resumen, fija la importancia de que los grafos sucesivos se "parezcan".
 - $\alpha$ **peso en $\ell_{dist}$**: tradeoff entre considerar las distancias entre grafos y estructuras de comunidades al calcular $\ell_\text{dist}$.
+  Por ejemplo, $\alpha = 1$, prioriza completamente **romper la estructura de comunidad**, aún si eso conlleva cambiar el grafo de forma drástica. $\alpha = 0$ se encarga de **preservar la estructura original del grafo**, sin importarle qué tanto cambian las comunidades.
+  $\alpha \approx 0.5$ logra un balance, donde se busca cambiar las comunidades sin distorsionar demasiado el grafo.
 - $\epsilon$ **probabilidad de cambio de comunidad/nodo objetivo al entrenar**: al entrenar, con probabilidad $\epsilon$, se cambia de comunidad (y por lo tanto, de nodo objetivo).
 - $\mathrm{c}_{entropy}$ **coeficiente de entropía**: determina si el agente prioriza la exploración (encontrar nuevas políticas, posiblemente mejores) o la explotación (maximizar recompensa con la política actual). 
 

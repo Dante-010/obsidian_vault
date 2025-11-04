@@ -88,15 +88,9 @@ torch.cuda.manual_seed(SEED)
 ```
 
 Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, se obtienen los mismos resultados.
-
 ## Cambio "proceso" del agente
 En el código original, el agente no tiene información sobre quién es el nodo objetivo a ocultar, sino que está implícitamente acoplado al entorno de interacción con el grafo.
 Por lo tanto, el agente no está aprendiendo a ocultar un nodo en particular, sino que está desarrollando una política que "mezcla" o cambia todos los nodos de comunidad.
 
+Ver [[Cambios Importantes sobre la Red Neuronal]]
 
-
-## Solo agregar/solo sacar ejes
-Como primer caso de estudio interesante, se nos ocurrió ver el comportamiento del agente si únicamente permitimos una de estas operaciones.
-### Solo agregar
-
-### Solo sacar
