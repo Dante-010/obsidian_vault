@@ -45,8 +45,7 @@ in several real-world networks from diverse domains. Taken to-
 gether, our work represents a new way for efficiently learning state-
 of-the-art task-independent representations in complex networks.
 
-Ver [[nod￼￼Evading Community Detection via￼￼
-￼￼Counterfactual Neighborhood Search￼￼ ￼￼(Andrea Bernini, Fabrizio Silvestri y Gabriele Tolomei)￼￼e2vec]].
+Ver [[node2vec]].
 
 ---
 ### (18) GCNConv

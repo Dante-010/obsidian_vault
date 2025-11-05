@@ -101,6 +101,11 @@ En `utils.py` (archivo de parámetros, hiperparámetros y configuración general
     PREFERRED_COMMUNITY_SIZE = [0.2, 0.5, 0.8]
 ```
 
+Volviendo a lo mencionado anteriormente, en ningún momento se aclara ni qué método usar tanto al entrenar como al testear, ni el por qué de estas elecciones.
+Utilizar el método 2 al entrenar introduce un sesgo, ya que solo testea con esos tamaños de comunidades (y en particular, por cómo está implementado el método, siempre con las mismas comunidades).
+
+**Solución:** Utilizo el método 1 al entrenar, y al testear puedo utilizar el método 2 para pocas corridas, o un nuevo método "proporcional" (donde la probabilidad de elegir la comunidad es proporcional a su tamaño) para un testeo más general (también lo puedo utilizar para entrenar).
+
 ```python
  """ Graph Encoder Parameters """ ""
     RANDOM_NODE2VEC = True  # If True, use Random features instead of Node2Vec
@@ -109,20 +114,10 @@ En `utils.py` (archivo de parámetros, hiperparámetros y configuración general
     WALK_LENGTH = 40  # 40, 80```
 ```
 
+No sólo que se utilizan features aleatorias en vez de utilizar **node2vec** (a mi parecer, gravísimo, puesto que node2vec es una parte clave del proceso. Es un gran encargado de codificar la información )
+
 ```python
     # Change target community and target node with a probability of EPSILON
     EPSILON = [0]  # Between 0 and 100
 ```
 
-
-
-#### Reflexión personal
-Verdaderamente estoy muy contento con este proyecto de tesis (prometo que no lo digo para quedar bien). Son excelentes el entorno de trabajo, los profesores, los compañeros y los temas tratados. Siento que tener el enfoque sobre algoritmos e inteligencia artificial me permite aprender sobre conceptos que a futuro me pueden servir para mi vida profesional (o académica, si decido seguir estudiando).
-
-Tengo muchos temas en la cabeza y me cuesta "bajarlos a tierra", y la mitad del tiempo ni siquiera entiendo lo que estoy haciendo (por lo menos a nivel fundamental, obviamente tengo una idea de alto nivel).
-Me cuesta balancear el tiempo entre "trabajar" (que en mi caso sería escribir código) y estudiar sobre el tema (leer bibliografía, papers, conceptos, etc...).
-Siento que todavía no logré nada concreto, y tareas que estimo que me llevarán uno o dos días me terminan llevando una semana.
-
-De igual manera estoy feliz de tener estos problemas. La experiencia en sí me hizo dar cuenta de muchas cosas, y estoy aprendiendo herramientas muy útiles, completamente distintas a lo que uno aprende cursando y rindiendo las materias.
-
-Les agradezco mucho a Gabriel y Esteban las charlas y los consejos para continuar con la investigación y no perder el enfoque.
