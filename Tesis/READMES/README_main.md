@@ -46,7 +46,6 @@ where $\mathcal{J}(\theta)$ is the reward (objective) function, and the goal is 
 Below, we describe the policy network (*actor*) and value function network (*critic*) separately.
 
 #### Actor
-
 The policy network is responsible for generating a probability distribution over possible actions based on the input, which consists of a list of nodes and the graph's feature matrix.
 However, some graphs may lack node features. In such cases, we can extract continuous node feature vectors (i.e., node embeddings) with graph representational learning frameworks like `node2vec`. These node embeddings serve as the feature matrix, ensuring a consistent feature vector size, allowing the model to work with graphs of varying node counts.
 
@@ -55,7 +54,6 @@ The policy is trained to predict the probability that node $v$ is the optimal ch
 The feasible actions depend on the input node $u$ and are restricted to a subset of the graph's edges. Hence, not all nodes $v \in \mathcal{V}$ are viable options for the policy.
 
 #### Critic
-
 This network closely resembles the one employed for the policy, differing only in one aspect: it incorporates a global sum-pooling operation on the convolution layer's output. This pooling operation results in an output layer with a size of 1, signifying the estimated value of the value function. The role of the value function is to predict the state value when provided with a specific action $a_t$ and state $s_t$
 
 ![Model Architecture](Tesis/READMES/images/model_architecture_background.png)

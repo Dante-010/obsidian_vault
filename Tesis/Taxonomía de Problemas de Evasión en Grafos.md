@@ -21,4 +21,4 @@ En [[Variables, Parámetros y Ecuaciones]], hay breves explicaciones de las part
 
 En [[Glosario]], anoté brevemente términos importantes para entender el paper, ya sean conceptos "comunes" o conocidos, como conceptos obtenidos de las [[Referencias]].
 
-En [[Alternativas]] se explican los distintos escenarios para variar el problema original.
+En [[Alternativas del problema original]] se explican los distintos escenarios para variar el problema original.
