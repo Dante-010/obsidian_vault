@@ -2,9 +2,9 @@
 
 En el caso del paper, se puede utilizar node2vec para extraer feature vectors de los nodos en el caso que el grafo no tenga features propios (también existe la opción de simplemente asignar features aleatorias).
 
-Se mencionan dos conceptos interesantes para nodos en grafos (específicamente, la relación entre los nodos originales y su *embedding*): **homofilia** (nodos altamente interconectados y que pertenecen a clusters similares deben ser embedidos cerca), y **equivalencia estructural** (nodos con roles estructurales similares en las redes deben ser embedidos cerca, sin hacer énfasis en su conectividad "real").
+Se mencionan dos conceptos interesantes para nodos en grafos (específicamente, la relación entre los nodos originales y su *embedding*): **homofilia** (nodos altamente interconectados y que pertenecen a clusters similares deben ser embebidos cerca), y **equivalencia estructural** (nodos con roles estructurales similares en las redes deben ser embebidos cerca, sin hacer énfasis en su conectividad "real").
 
-Como resumen general, el algoritmos node2vec es un proceso de dos partes: 
+Como resumen general, el algoritmo node2vec es un proceso de dos partes: 
 - Primero, utiliza caminatas aleatorias sesgadas de segundo orden para generar secuencias de nodos u "oraciones".
 - Una vez generadas las secuencias, se utilizan como entrada para un modelo skip-gram con negative sampling
 

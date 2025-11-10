@@ -92,5 +92,13 @@ Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, s
 En el código original, el agente no tiene información sobre quién es el nodo objetivo a ocultar, sino que está implícitamente acoplado al entorno de interacción con el grafo.
 Por lo tanto, el agente no está aprendiendo a ocultar un nodo en particular, sino que está desarrollando una política que "mezcla" o cambia todos los nodos de comunidad.
 
-Ver [[Cambios Importantes sobre la Red Neuronal]]
+Ver [[Cambios Importantes sobre la Red Neuronal]].
+
+A partir de ahora, realizamos los experimentos con este nuevo agente.
+
+--------
+## Comparo agente nuevo vs. original
+
+
+
 
