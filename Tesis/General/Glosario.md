@@ -13,6 +13,9 @@
 - **Funciones de similaridad/distancia (entre grafos y comunidades):** ver [[Funciones de similaridad (grafos y comunidades)]]
 - **Curriculum learning:** Técnica en Machine Learning basada en entrenar un modelo con ejemplos de dificultad incremental, donde la definición de "dificultad" puede ser provista externamente o descubierta como parte del proceso de entrenamiento.
   La idea es obtener un buen rendimiento de forma "rápida", o converger a un mejor óptimo local si el óptimo global no es encontrado.
+- **Atención (en ML):** Método que determina la importancia de cada componente en una secuencia relativo a los demás componentes de esa secuencia.
+  Funcionan como "soft weights" que existen solo en el forward pass de la red, y por lo tanto cambian con cada paso del input.
+  Permite a las redes darle "la misma" importancia a información en las últimas partes de una oración, que a información en las primeras partes (o en cualquier parte).
   
 
 

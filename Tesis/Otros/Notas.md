@@ -2,11 +2,10 @@
 - Random graphs "Erdos"  
 - Barabasi-Albert model  
 - Mayor NMI => Mayor similitud entre grafo original y nuevo.
+- Batch normalization es útil e importante, no se sabe bien por qué.
 
 $\text{(similaridad)} \, sim(\mathcal{G}, \mathcal{G}) \leq \tau \implies \checkmark \text{(objetivo cumplido)}$
-##### Mini TODO
-- GUARDAR TODA LA INFORMACION DEL AGENTE Y ENTORNO AL ENTRENAR
-- Entrenar un agente permitiendo TODAS las operaciones en ejes (es decir, agregar/sacar con cualquiera).
+
 
 VARIANTES (HACER FABRICA DE VARIANTES?)
 	- Ver la variante geometrica (definir un "backend"? Adaptar a Reinforcement Learning?)

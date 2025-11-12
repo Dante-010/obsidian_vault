@@ -1,5 +1,5 @@
 ### Mail con los autores
-Efectivamente, a la hora de entrenar el agente lo apropiado es utilizar el método 1 (ver [[Métodos de selección de comunidad]]), y al testear utilizan el método 2 para evitar un sesgo experimental (puesto que es muy distinto ocultar un nodo en una comunidad pequeña que en una comunidad grande).
+A la hora de entrenar el agente lo apropiado es utilizar el método 1 (ver [[Métodos de selección de comunidad]]), y al testear utilizan el método 2 para evitar un sesgo experimental (puesto que es muy distinto ocultar un nodo en una comunidad pequeña que en una comunidad grande).
 
 Como nota aparte, mencionan el concepto de **hard nodes** y **soft nodes**, según si son difíciles o fáciles de ocultar (va a depender de sus propiedades). (INVESTIGAR ESTO?) 
 

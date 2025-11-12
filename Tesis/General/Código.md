@@ -1,3 +1,4 @@
+## Estructura original
 ### main.py
 Lógicamente, el archivo principal es `main.py`. Como bien se aclara en [[README_main]], utilizamos los siguientes comandos para entrenar y probar el modelo, respectivamente:
 ```shell

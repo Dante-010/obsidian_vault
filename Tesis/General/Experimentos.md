@@ -92,6 +92,12 @@ Efectivamente, al correr varias veces las mismas pruebas con la misma semilla, s
 En el código original, el agente no tiene información sobre quién es el nodo objetivo a ocultar, sino que está implícitamente acoplado al entorno de interacción con el grafo.
 Por lo tanto, el agente no está aprendiendo a ocultar un nodo en particular, sino que está desarrollando una política que "mezcla" o cambia todos los nodos de comunidad.
 
+> Para verificar esto, volví a bajar el código original y verifiqué los outputs del actor y el crítico para la primer iteración del proceso, con semillas fijas, variando únicamente el nodo objetivo.
+> 
+> Independientemente del nodo seleccionado, tanto las probabildades del actor como el escalar del crítico eran iguales, lo que implica que no tienen en cuenta este nodo al realizar las estimaciones (en las iteraciones siguientes, como los ejes agregados/eliminados dependen del nodo objetivo, obtengo grafos distintos por cada nodo, por lo que lógicamente los valores estimados también difieren. Esto no invalida lo que planteo).
+
+(extraído del [[Informe general]])
+
 Ver [[Cambios Importantes sobre la Red Neuronal]].
 
 A partir de ahora, realizamos los experimentos con este nuevo agente.

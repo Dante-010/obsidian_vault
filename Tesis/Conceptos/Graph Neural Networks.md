@@ -1,0 +1,2 @@
+Redes neuronales especializadas para trabajar sobre grafos.c
+El elemento clave de su diseño es el uso de *pasaje de mensajes de a pares*, de modo que los nodos del grafo iterativamente actualizan sus representaciones a través del intercambio de información con sus vecinos.
