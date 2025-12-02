@@ -97,3 +97,9 @@ Thanks again for your questions, and please feel free to share any further thoug
 
 Best regards,  
 M.
+
+-----
+### 2do correo
+Preguntamos sobre agregar el nodo objetivo como entrada a la red, y sobre el uso de **node2vec**:
+
+TODO

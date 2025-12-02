@@ -96,7 +96,7 @@ Por lo tanto, el agente no está aprendiendo a ocultar un nodo en particular, si
 > 
 > Independientemente del nodo seleccionado, tanto las probabildades del actor como el escalar del crítico eran iguales, lo que implica que no tienen en cuenta este nodo al realizar las estimaciones (en las iteraciones siguientes, como los ejes agregados/eliminados dependen del nodo objetivo, obtengo grafos distintos por cada nodo, por lo que lógicamente los valores estimados también difieren. Esto no invalida lo que planteo).
 
-(extraído del [[Informe general]])
+(extraído del [[Informe General]])
 
 Ver [[Cambios Importantes sobre la Red Neuronal]].
 

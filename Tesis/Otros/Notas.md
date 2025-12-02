@@ -12,7 +12,7 @@ VARIANTES (HACER FABRICA DE VARIANTES?)
 	- SOLO SACAR/SOLO PONER (problema original) (semi resuelto, ver con nuevo modelo)
 	- CAMBIO EL PROBLEMA (Join C1 and C2)
 
-
+Ver notebook 4. Scaling GNNs
 
 Este "TODO" no es tan importante, son ideas.
 - [x] Replicar paper 
