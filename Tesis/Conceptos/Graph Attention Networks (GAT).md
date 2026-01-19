@@ -63,23 +63,3 @@ $$
 \alpha_{ij} = \frac{\exp\left(\vec{a}^T \text{LeakyReLU}\left(\mathbf{W}[\vec{h}_i \mathbin\| \vec{h}_j]\right)\right)}{\sum_{k \in \mathcal{N}_i} \exp\left(\vec{a}^T \text{LeakyReLU}\left(\mathbf{W}[\vec{h}_i \mathbin\| \vec{h}_k]\right)\right)}
 $$
 *Ojo*: La diferencia es que $\mathbf{W}$ se aplica *antes* de la no linealidad, y $\vec{a}$ después, haciendo que toda la función sea un MLP de 2 capas sobre las características concatenadas.
-
----
-
-## Nota Práctica en Obsidian
-
-En la práctica (ej: PyTorch Geometric), podés usar:
-```python
-from torch_geometric.nn import GATv2Conv
-
-conv_layer = GATv2Conv(in_channels, out_channels, heads=num_heads)
-```
-
-**Conclusión**: GATv2 es casi siempre un reemplazo directo de GAT con un costo computacional similar pero mucho mayor poder expresivo.
-
----
-
-**Referencias**
-
-- GAT original: Veličković et al., 2017
-- GATv2: Brody et al., _How Attentive are Graph Attention Networks?_, ICLR 2022
