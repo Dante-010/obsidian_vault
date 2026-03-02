@@ -33,3 +33,17 @@ Este "TODO" no es tan importante, son ideas.
 - [x] Ver convergencia en base a modelo (solo agregar, solo borrar).
 - [ ] Probar con datasets "triviales"  
 - [x] Agregar una feature de "target_node"  
+
+---
+1a, 1b, y 2 principales.
+
+1. Original
+2. Original con GATV2
+3. Original con GatV2 con target node
+4. Original node2vec con target node
+(en resumen, ver lo que aporta agregar target node SOLO y agregar GATv2 solo)
+
+- Probar sacando TODAS las features (o agregar de a una, probar de poco)
+- Agregar feature de la comunidad a la que pertenece cada nodo.
+
+Ejemplos para el 4: Olvidarse de comunidades y meter caminos mas cortos? (o cosas asi, pero olvidarse de comunidades).
