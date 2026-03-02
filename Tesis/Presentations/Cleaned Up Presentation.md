@@ -310,17 +310,22 @@ Capture the evolving relationship between nodes and the target.
 
 Performance comparison against previous approaches.
 
----
+&nbsp;
 
-![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/images/F1_allDatasets_evaluation_node_hiding_greedy_multiAgents.png)
-
----
-
-![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/images/F1_allDatasets_evaluation_node_hiding_louvain_multiAgents.png)
+Agent was trained on the `words` dataset, using the `greedy` algorithm (same as original paper) for 1000 episodes.
+The plots show which algorithm was used at test time (`greedy`, `louvain`, `walktrap`.)
 
 ---
 
-![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/images/F1_allDatasets_evaluation_node_hiding_walktrap_multiAgents.png)
+![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/figures/F1_allDatasets_evaluation_node_hiding_greedy_multiAgents.png)
+
+---
+
+![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/figures/F1_allDatasets_evaluation_node_hiding_louvain_multiAgents.png)
+
+---
+
+![Image](file:///home/dante/Documents/obsidian_vault/Tesis/RECURSOS/figures/F1_allDatasets_evaluation_node_hiding_walktrap_multiAgents.png)
 
 ---
 
