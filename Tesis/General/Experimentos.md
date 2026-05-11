@@ -68,7 +68,7 @@ Claramente los resultados no coinciden con lo esperado. Luego de analizar el có
 
 Una vez solucionado esto, volvemos a correr los experimentos, ahora sí con el modelo apropiado (en teoría):
 
-![[F1_allDatasets_evaluation_node_hiding_greedy_multiAgents 1.png]]
+![[F1_allDatasets_evaluation_node_hiding_greedy_multiAgents.png]]
 
 Manteniendo los hiperparámetros exactamente como se describe en el paper (y como están en el código de GitHub en caso de no figurar en el paper), no logro obtener los mismos resultados. Lo curioso es que al descargar directamente los modelos (archivos `.pth`) presentes en el repositorio, los resultados son prácticamente identicos, lo que me lleva a pensar que el modelo del paper tiene alguna diferencia en hiperparámetros, dataset, o forma de evaluación.
 
@@ -105,7 +105,7 @@ A partir de ahora, realizamos los experimentos con este nuevo agente.
 --------
 ## Comparo agente nuevo vs. original (+ Nabla de [[The Right to Hide]])
 
-![[F1_allDatasets_evaluation_node_hiding_greedy_multiAgents 1.png]]
+![[F1_allDatasets_evaluation_node_hiding_greedy_multiAgents.png]]
 ![[F1_allDatasets_evaluation_node_hiding_walktrap_multiAgents.png]]
 ![[F1_allDatasets_evaluation_node_hiding_louvain_multiAgents.png]]
 

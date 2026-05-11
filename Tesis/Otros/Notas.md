@@ -48,6 +48,9 @@ Este "TODO" no es tan importante, son ideas.
 
 Ejemplos para el 4: Olvidarse de comunidades y meter caminos mas cortos? (o cosas asi, pero olvidarse de comunidades).
 
-----=
+-----
 Dedicarle  MUCHO a la introduccion
 Usar datasets originales + 1 o 2 nuevos
+
+VER EGO GRAPH
+
