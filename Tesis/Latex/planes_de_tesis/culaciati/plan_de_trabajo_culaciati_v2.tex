@@ -1,0 +1,173 @@
+\documentclass[11pt,a4paper]{article}
+
+%----------------------------------------------------------------------------------------
+%   PAQUETES Y CONFIGURACIÓN GENERAL
+%----------------------------------------------------------------------------------------
+
+% --- Configuración de idioma y codificación ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{csquotes} % Para comillas tipográficas correctas con biblatex
+
+% --- Tipografía y diseño ---
+\usepackage{lmodern} % Usa la fuente Latin Modern
+\usepackage{microtype} % Mejoras tipográficas sutiles (espaciado, justificación)
+\usepackage[a4paper, margin=1cm]{geometry} % Márgenes más equilibrados
+\usepackage{setspace} % Permite ajustar el interlineado, ej. \onehalfspacing
+\usepackage{parskip} % Párrafos separados por espacio vertical en lugar de sangría
+
+% --- Colores y gráficos ---
+\usepackage[dvipsnames]{xcolor} % Permite definir y usar colores
+\usepackage{graphicx}
+
+% --- Encabezados y pies de página ---
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % Limpia todos los campos de encabezado y pie de página
+\renewcommand{\headrulewidth}{0pt} % Sin línea en el encabezado
+\renewcommand{\footrulewidth}{0pt} % Sin línea en el encabezado
+
+% --- Títulos de sección ---
+\usepackage{titlesec}
+\definecolor{AccentColor}{HTML}{2A52BE} % Un azul profesional (e.g., Cerulean Blue)
+\titleformat{\section}
+  {\Large\bfseries\color{AccentColor}}
+  {\thesection}
+  {0.1cm}
+  {}
+  [\color{AccentColor}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries}
+  {\thesubsection}
+  {0.1cm}
+  {}
+
+\titlespacing*{\section}{0pt}{0.1em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.6em}{0.3em}
+
+% --- Listas ---
+\usepackage{enumitem}
+\usepackage{multicol}
+
+% --- Hipervínculos y referencias ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=AccentColor,
+    urlcolor=AccentColor,
+    citecolor=AccentColor,
+    pdftitle={Extensión del Marco de Community Membership Hiding mediante Deep Reinforcement Learning},
+    pdfauthor={Dante Culaciati}
+}
+\usepackage[style=numeric, backend=biber, sorting=none]{biblatex}
+\renewcommand*{\bibfont}{\footnotesize}
+\addbibresource{referencias.bib}
+
+% --- Bookmarks PDF ---
+\usepackage{bookmark}
+
+%----------------------------------------------------------------------------------------
+%   INFORMACIÓN DEL DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\title{
+    \vspace{-1.5cm} % Ajuste para subir el título
+    \hrule
+    \vspace{0.05cm}
+    \textbf{Extensión del Marco de \textit{Community Membership Hiding} mediante Deep Reinforcement Learning}
+    \vspace{0.2cm}
+    \hrule
+    \vspace{-0.5cm}
+}
+
+\author{
+    \begin{tabular}{lll}
+        \textbf{Alumno:} Dante Culaciati & \textbf{Co-Director:} Gabriel Tolosa & \textbf{Director:} Esteban Feuerstein \\[0.1cm]
+        \multicolumn{3}{l}{\textbf{Lugar de trabajo:} Grupo Algoritmos, Instituto de Ciencias de la Computación,}\\
+        \multicolumn{3}{l}{Facultad de Ciencias Exactas y Naturales, Universidad de Buenos Aires}
+    \end{tabular}
+}
+
+\date{\vspace{-0.2cm} 6 de Agosto 2025} % Usa la fecha de compilación actual
+
+%----------------------------------------------------------------------------------------
+%   DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.2cm}
+
+\section*{Introducción}
+
+Los algoritmos de \textit{community detection} permiten identificar \textit{clusters} o comunidades en un grafo: grupos de nodos densamente conectados entre sí y comparativamente poco conectados con el resto de la red \cite{Fortunato-2010}.
+En plataformas de redes sociales, esta funcionalidad se emplea para descubrir grupos de usuarios con intereses afines, pero puede vulnerar deseos de privacidad y confidencialidad al revelar afiliaciones o patrones de comportamiento.
+
+Para mitigar estos efectos surge el problema de \textit{community membership hiding} (CMH): dado un grafo, un algoritmo de \textit{community detection} $f(\cdot)$ y un nodo objetivo $u$, proponer una cantidad mínima de modificaciones estructurales (agregados o eliminaciones de aristas) de modo que $u$ sea asignado a una comunidad distinta por $f(\cdot)$ \cite{bernini-2024}.
+El trabajo de \textcite{bernini-2024} formula CMH como un objetivo contrafactual restringido y lo resuelve mediante \textit{deep reinforcement learning} (Actor-Critic A2C), usando embeddings de nodos obtenidos con node2vec y una red de atención sobre grafos (GAT) para representar el estado del entorno.
+
+Trabajos previos abordan problemas relacionados mediante algoritmos genéticos \cite{LIU2022123}, heurísticas \cite{Waniek_2018}, métodos \textit{greedy} \cite{9377481}, optimización por gradiente \cite{silvestri2025communitymembershiphidinggradientbased} y autoencoders de grafos \cite{LIU2022109495}.
+A diferencia de estos, la formulación de \textcite{bernini-2024} es flexible y extensible: el agente aprende una política que se puede transferir entre grafos y algoritmos de detección, tratando $f(\cdot)$ como \textbf{caja negra}.
+Nuestra investigación parte de esta base y busca extenderla en direcciones tanto arquitectónicas como conceptuales.
+
+\section*{Objetivos}
+
+Habiendo replicado exitosamente los experimentos del paper base \cite{bernini-2024} y validado su comportamiento sobre los datasets originales (\textit{words}, \textit{kar}, \textit{vote}, \textit{pow}, \textit{fb-75}), el objetivo principal de este proyecto es extender el marco de CMH en las siguientes direcciones concretas:
+
+\begin{itemize}[leftmargin=*, label=\textbullet, itemsep=0.3em, topsep=0pt]
+
+    \item \textbf{Mejoras arquitectónicas al agente.}
+    Analizar el impacto de reemplazar la GAT original por GATv2 \cite{brody2022attentivegraphattentionnetworks}, e incorporar la identidad del nodo objetivo $u$ como \textit{feature} explícita del estado para evitar que el agente aprenda una política genérica de ``mezclar comunidades''.
+
+    \item \textbf{Extensión a múltiples nodos objetivo.}
+    Inspirándonos en \textcite{8118127}, extender CMH para ocultar simultáneamente a un subconjunto de nodos de la comunidad objetivo, redefiniendo la función de recompensa y analizando el escalado del presupuesto $\beta$.
+
+    \item \textbf{Análisis de transferibilidad.}
+    Diseñar experimentos con grafos sintéticos de estructura controlada (grafos $k$-regulares, Barabási-Albert, Erdős-Rényi) para caracterizar qué propiedades estructurales favorecen o dificultan la transferencia de la política aprendida.
+
+    \item \textbf{Comunidades solapadas y variantes del espacio de acciones.}
+    Explorar algoritmos de detección con solapamiento \cite{Xie_2013} y restricciones alternativas al espacio de acciones (\textit{add-only}, \textit{remove-only}, perturbación de atributos de nodos \cite{Yang_2013}).
+
+\end{itemize}
+
+\section*{Factibilidad}
+
+Esteban Feuerstein, director propuesto, es un reconocido investigador y profesor en Diseño y Análisis de Algoritmos, con especialización en grafos y redes sociales.
+El Dr.\ Gabriel Tolosa, propuesto como co-director, es profesor asociado e investigador en Ciencias de la Computación en la Universidad Nacional de Luján, con trayectoria en recuperación de información, redes sociales y ciencia de datos a gran escala.
+
+La factibilidad técnica es sólida: el código del paper original (\url{https://github.com/AndreaBe99/community_membership_hiding}) ha sido replicado exitosamente, incluyendo correcciones de reproducibilidad (semillas fijas en \texttt{random}, \texttt{numpy} y \texttt{torch}) y optimizaciones al cómputo de baselines.
+Contamos con un entorno de experimentación funcional sobre los datasets originales y con resultados preliminares sobre las modificaciones arquitectónicas propuestas en el objetivo 1.
+Tenemos además contacto directo con los autores del paper base, quienes han manifestado disposición a colaborar.
+Los datasets adicionales necesarios para los experimentos de transferibilidad (objetivo 3) son generables sintéticamente con bibliotecas estándar (\texttt{NetworkX}).
+
+\section*{Plan de Trabajo}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{T\arabic*.}, itemsep=0.2ex]
+    \item \textbf{Revisión de la literatura y replicación del paper base.}
+    Estudio de los trabajos relacionados en \textit{community detection} \cite{Fortunato-2010, Su_2024}, \textit{community hiding} \cite{Waniek_2018, 8118127, 9377481} y reinforcement learning aplicado a grafos \cite{Chen_2022}.
+    Replicación de los experimentos de \textcite{bernini-2024} sobre los cinco datasets originales (\textit{words}, \textit{kar}, \textit{vote}, \textit{pow}, \textit{fb-75}), corrección de problemas de reproducibilidad y validación de los resultados reportados.
+    \item \textbf{Modificaciones arquitectónicas al agente.}
+    Implementación de GATv2 \cite{brody2022attentivegraphattentionnetworks} en reemplazo de la GAT original, e incorporación de la identidad del nodo objetivo $u$ como \textit{feature} explícita del estado.
+    Evaluación comparativa de las cuatro configuraciones resultantes (arquitectura $\times$ feature) sobre todos los datasets y algoritmos de detección (\textit{greedy}, \textit{louvain}, \textit{walktrap}), midiendo SR, NMI y F1.
+    \item \textbf{Análisis de transferibilidad con grafos sintéticos.}
+    Generación de grafos sintéticos con propiedades estructurales controladas (grafos $k$-regulares, modelos de Barabási-Albert y Erdős-Rényi) y evaluación del agente entrenado sobre \textit{words} para caracterizar qué propiedades favorecen o dificultan la transferencia de la política aprendida.
+    \item \textbf{Extensión a múltiples nodos objetivo.}
+    Reformulación del problema CMH para un conjunto de nodos $U \subseteq V$, inspirada en \textcite{8118127}.
+    Rediseño de la función de recompensa y del criterio de éxito, y análisis del comportamiento del agente en función del tamaño de $U$ y del presupuesto de rewiring $\beta$.
+    \item \textbf{Variantes del espacio de problema.}
+    Adaptación del entorno para soportar comunidades solapadas \cite{Xie_2013}, exploración de restricciones alternativas al espacio de acciones (\textit{add-only}, \textit{remove-only}) y perturbación de atributos de nodos \cite{Yang_2013}.
+    \item \textbf{Análisis comparativo y redacción del informe final.}
+    Comparación sistemática de todas las variantes sobre un conjunto unificado de benchmarks, elaboración de conclusiones y redacción del informe de tesis.
+\end{enumerate}
+
+\begingroup
+\tiny
+\printbibliography[title={Referencias}]
+\endgroup
+
+\end{document}

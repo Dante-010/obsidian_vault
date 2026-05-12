@@ -1,0 +1,124 @@
+Propuesta de Tesis de Licenciatura
+Director: Esteban Feuerstein (efeuerst@gmail.com)
+Co-Director: Federico Albanese (ffalbanese@gmail.com)
+Alumno: María Victoria Zolezzi (zolezzivic@gmail.com) | LU: 222/19
+Título tentativo: Inferencia causal en series de tiempo sobre debates controversiales en
+redes sociales.
+Introducción y Antecedentes
+En la actualidad, las redes sociales se han transformado en espacios en donde individuos
+dialogan y comparten opiniones sobre una gran variedad de temas. Debido a su creciente
+popularidad a lo largo de los años y a la amplia gama de información que circula en ellas, se
+han convertido en un área muy atractiva para el estudio de diversos comportamientos
+sociales. En particular, la disciplina Computational Social Science se ocupa de modelar y
+analizar computacionalmente estos fenómenos sociales, como por ejemplo la polarización y
+las cámaras de eco [1-4], la controversia [8-10], la toxicidad [11-13], entre otros. Para llevar
+a cabo estas investigaciones, se utilizan distintas herramientas, como ser algoritmos sobre
+grafos, técnicas de procesamiento de lenguaje natural, técnicas de aprendizaje automático,
+por nombrar algunas.
+Si bien existen numerosos trabajos que investigan estas temáticas, hasta donde sabemos,
+no son muchos los que estudian la evolución temporal de estos aspectos. Garimella et. al
+2015 [5] proponen investigar si la polarización en Twitter ha aumentado en un período de
+ocho años; Flamino et al. 2023 [6] analizan el cambio en el panorama de Twitter entre las
+elecciones presidenciales de EEUU de 2016 y las de 2020. Garimella et al. 2017 [7] en su
+paper The Effect of Collective Attention on Controversial Debates on Social Media buscan
+analizar las interacciones entre usuarios que participan de discusiones controversiales, y ver
+cómo cambian determinadas propiedades estructurales de la red de interacción cuando
+aumenta la popularidad de un tema en la red social Twitter. Inspirados en este último
+trabajo, nos proponemos analizar ciertas características en debates controversiales que se
+dan cuando aumenta la popularidad de los mismos, pero en este caso en Reddit. La
+elección de esta red social se debió principalmente a la facilidad de acceso a sus datos,
+sumado a que sus subreddits (subforos de debate) permiten identificar rápidamente la
+temática, o al menos el área, sobre el que se discute en los mismos. Nos ocuparemos
+principalmente del contenido de los debates y en el engagement que generan.
+Por otra parte, el estudio de relaciones causales ha tomado relevancia en los últimos años,
+principalmente en sectores como la medicina [14], el marketing [15] y las ciencias sociales
+[16]. Su objetivo radica en identificar relaciones de tipo causa-efecto entre dos o más
+variables. En nuestro caso, buscaremos estudiar relaciones causales entre eventos que
+incrementen la atención colectiva y posibles cambios que se observen en las discusiones a
+raíz de ellos.Actividades y Metodología a Realizar
+En esta tesis nos proponemos analizar la evolución de debates controversiales en Reddit,
+centrándonos en aquellos momentos en donde aumenta la atención colectiva, como
+respuesta a algún evento de la realidad.
+Comenzaremos por construir un dataset compuesto por los posteos que se hayan realizado
+en Reddit en un período de varios años, concentrándonos en aquellos que se relacionen
+con dos debates controversiales particulares en Estados Unidos: el debate del aborto y el
+debate sobre el control de armas. Para clasificar su contenido según sentimiento se
+analizarán varios metodos de NLP como son los modelos basados BERT [17], RoBERTa
+[18] y Perspective API [19]. A partir de los resultados obtenidos, se construirán series de
+tiempo con los mismos. Con el objetivo de analizar qué sucede cuando aumenta el interés
+en los debates con respecto al contenido y al engagement de los mismos, se analizará la
+correlación y la información mutua entre las distintas series, y se contemplarán distintas
+técnicas para identificar relaciones causales entre ellas, y también entre ellas y eventos
+externos (por ejemplo, el debate del control de armas suele ganar popularidad cuando
+ocurre un tiroteo). Algunos ejemplos de las mismas son la causalidad de Granger [20] y a la
+herramienta CausalImpact [15].
+Factibilidad de Realización
+El Director propuesto, Esteban Feuerstein, es un investigador de reconocida trayectoria en
+el campo del Diseño y Análisis de Algoritmos, en particular sobre grafos y redes. En los
+últimos años ha enfocado su atención al área de Grandes Datos, centrándose tanto en la
+investigación (produciendo resultados en el área de Recuperación de la Información), como
+en el desarrollo de software y aplicaciones, y la definición e implementación de políticas
+públicas.
+El Co-Director propuesto, Federico Albanese, es estudiante doctoral en ciencias de la
+computación de la Universidad de Buenos Aires (U.B.A.) con beca doctoral CONICET y
+docente auxiliar de la Maestría en Explotación de Datos y Descubrimiento del Conocimiento
+de la UBA en la materia de Análisis de Series Temporales. Su investigación se centra en
+modelos de aprendizaje automático (machine learning) aplicados a grafos de origen social
+(redes sociales) en contextos políticos. Su aporte en la dirección de esta tesis cubrirá las
+distintas facetas que la problemática exhibe.
+La tesista, dada su formación en ciencias de la computación posee el perfil adecuado, tanto
+en el ámbito teórico como en el práctico, para ejecutar con éxito el plan propuesto. En su
+experiencia profesional, ha trabajado con modelos de machine learning y con series
+temporales, herramientas fundamentales para el desarrollo de la presente tesis. Además, ha
+participado en la iniciativa BIIC, donde ha estado investigando las temáticas que se
+abordarán en este proyecto.
+En cuanto al plazo de realización, estimamos que esta tesis debería poder realizarse en un
+plazo de 6 meses.Referencias:
+[1] Cinelli, M., De Francisci Morales, G., Galeazzi, A., Quattrociocchi, W., & Starnini, M. (2021). The
+echo chamber effect on social media. Proceedings of the National Academy of Sciences, 118(9),
+e2023301118.
+[2] Morini, V., Pollacci, L., & Rossetti, G. (2021). Toward a standard approach for echo chamber
+detection: Reddit case study. Applied Sciences, 11(12), 5390.
+[3] Bliuc, A. M., Smith, L. G., & Moynihan, T. (2020). “You wouldn’t celebrate September 11”: Testing
+online polarisation between opposing ideological camps on YouTube. Group Processes & Intergroup
+Relations, 23(6), 827-844.
+[4] De Francisci Morales, G., Monti, C., & Starnini, M. (2021). No echo in the chambers of political
+interactions on Reddit. Scientific reports, 11(1), 2818.
+[5] Garimella, V. R. K., & Weber, I. (2017, May). A long-term analysis of polarization on Twitter. In
+Proceedings of the International AAAI Conference on Web and social media (Vol. 11, No. 1, pp.
+528-531).
+[6] Flamino, J., Galeazzi, A., Feldman, S., Macy, M. W., Cross, B., Zhou, Z., ... & Szymanski, B. K.
+(2023). Political polarization of news media and influencers on Twitter in the 2016 and 2020 US
+presidential elections. Nature Human Behaviour, 1-13.
+[7] Garimella, K., De Francisci Morales, G., Gionis, A., & Mathioudakis, M. (2017, June). The effect of
+collective attention on controversial debates on social media. In Proceedings of the 2017 ACM on
+Web Science Conference (pp. 43-52).
+[8] Garimella, K., Morales, G. D. F., Gionis, A., & Mathioudakis, M. (2018). Quantifying controversy on
+social media. ACM Transactions on Social Computing, 1(1), 1-27.
+[9] Adamic, L. A., & Glance, N. (2005, August). The political blogosphere and the 2004 US election:
+divided they blog. In Proceedings of the 3rd international workshop on Link discovery (pp. 36-43).
+[10] Mejova, Y., Zhang, A. X., Diakopoulos, N., & Castillo, C. (2014). Controversy and sentiment in
+online news. arXiv preprint arXiv:1409.8152.
+[11] Badjatiya, P., Gupta, S., Gupta, M., & Varma, V. (2017, April). Deep learning for hate speech
+detection in tweets. In Proceedings of the 26th international conference on World Wide Web
+companion (pp. 759-760).
+[12] Aroyo, L., Dixon, L., Thain, N., Redfield, O., & Rosen, R. (2019, May). Crowdsourcing subjective
+tasks: the case study of understanding toxicity in online discussions. In Companion proceedings of the
+2019 world wide web conference (pp. 1100-1105).
+[13] Georgakopoulos, S. V., Tasoulis, S. K., Vrahatis, A. G., & Plagianakos, V. P. (2018, July).
+Convolutional neural networks for toxic comment classification. In Proceedings of the 10th hellenic
+conference on artificial intelligence (pp. 1-6).
+[14] Imbens, G. W., & Rubin, D. B. (2015). Causal inference in statistics, social, and biomedical
+sciences. Cambridge University Press.
+[15] Brodersen, K. H., Gallusser, F., Koehler, J., Remy, N., & Scott, S. L. (2015). Inferring causal
+impact using Bayesian structural time-series models.
+[16] Smith, S. T., Kao, E. K., Shah, D. C., Simek, O., & Rubin, D. B. (2018, June). Influence estimation
+on social media networks using causal inference. In 2018 IEEE Statistical Signal Processing
+Workshop (SSP) (pp. 328-332). IEEE.
+[17] Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018). Bert: Pre-training of deep bidirectional
+transformers for language understanding. arXiv preprint arXiv:1810.04805.
+[18] Liu, Y., Ott, M., Goyal, N., Du, J., Joshi, M., Chen, D., ... & Stoyanov, V. (2019). Roberta: A
+robustly optimized bert pretraining approach. arXiv preprint arXiv:1907.11692.
+[19] Google Jigsaw. 2017. Perspective API. https://www.perspectiveapi.com/.
+[20] Granger, C. W. (1969). Investigating causal relations by econometric models and cross-spectral
+methods. Econometrica: journal of the Econometric Society, 424-438.

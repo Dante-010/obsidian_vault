@@ -1,0 +1,115 @@
+Universidad de Buenos Aires
+Facultad de Ciencias Exactas y Naturales
+Departamento de Computación
+¿Capturan los embeddings de los LLMs
+información sobre temporalidad y relaciones
+espaciales?
+Propuesta de Tesis de Licenciatura en Ciencias de la Computación
+Octubre 2024
+Federico Hernán Suaiter
+fsuaiter@dc.uba.ar - LU 37/19
+Director: Esteban Zindel Feuerstein
+efeuerst@dc.uba.ar
+Co-director: Juan Manuel Ortiz de Zárate
+jmoz@dc.uba.ar
+Esta propuesta está basada en la presentada al programa de Becas de
+Iniciación a la Investigación en Ciencias de la Computación (BIICC) - Lla-
+mado de Febrero 2024. Dicha beca fue otorgada en abril de 2024, donde se
+llevó a cabo el inicio de actividades de investigación.
+1
+Introducción
+Un gran modelo de lenguaje o LLM (Large Language Model) es un
+modelo de lenguaje que consta de una red neuronal con muchos parámetros
+(normalmente miles de millones o más), entrenado en grandes cantidades
+de texto sin etiquetar. Estos surgieron alrededor de 2018 y se desempeñan
+bien en una amplia variedad de tareas. Algunos de los más notables son la
+serie de modelos GPT de OpenAI (por ejemplo, GPT-3 y GPT-4), PaLM y
+Gemini de Google, entre otros.
+En los últimos años, los LLMs han revolucionado el procesamiento del
+lenguaje natural (NLP), permitiendo avances en tareas que van desde la tra-
+ducción automática hasta el razonamiento semántico complejo. Si bien solo
+han sido entrenados para predecir el siguiente token, estos han demostradograndes resultados al ser aplicados en diferentes dominios y tareas [1, 2] de-
+bido a su capacidad para generar, comprender y transformar lenguaje con
+un nivel de sofisticación sin precedentes.
+Una de las claves del éxito de los LLMs radica en el uso de los em-
+beddings. Un embedding es un vector de números reales que representa
+un texto o palabra en espacios vectoriales de alta dimensionalidad. Estos
+números capturan parte de la semántica de la entrada, colocando aquel-
+las que son semánticamente similares juntas en el espacio vectorial. Di-
+cho espacio permite realizar operaciones vectoriales que capturan relaciones
+lingüı́sticas y semánticas. Por ejemplo, la analogı́a “Rey - Hombre + Mujer
+≈ Reina” [3] es una demostración de cómo las operaciones lineales en el espa-
+cio de embeddings pueden representar dichas transformaciones semánticas.
+A pesar de que los LLMs son entrenados de manera explı́cita con grandes
+cantidades de datos (supervisados y no supervisados), existen varias hipótesis
+sobre cómo los LLMs aprenden de manera abstracta o conceptual. Entre
+ellas se encuentra la idea de que los LLMs desarrollan “capacidades emer-
+gentes” [2]. Por otro lado se encuentra lo opuesto, que no existen dichas
+“capacidades emergentes” sino que son una combinación de aprendizaje en
+contexto, memoria de modelos y conocimiento lingüı́stico [4]. Una hipótesis
+alternativa es que los LLMs al comprimir los datos, aprenden modelos más
+compactos, coherentes e interpretables del proceso generativo subyacente a
+los datos de entrenamiento, es decir, un “world model”.
+Gurnee et al. [5] halló que los LLMs efectivamente modelan el tiempo y
+el espacio internamente. Mediante la información sobre las activaciones de
+las neuronas de los modelos al recibir textos relacionados a tiempo y espacio
+entrenaron una regresión que fue capaz de predecir el tiempo y espacio de
+un texto, lo que señala que efectivamente esta información está embebida
+internamente en los modelos. Esto abre una nueva pregunta: si el tiempo y
+espacio están internamente modelados en los LLMs ¿Puede ser que también
+estén embebidos en sus outputs?
+2
+Objetivos
+En este proyecto, buscamos examinar los embeddings de temas diversos,
+tales como batallas, literatura, discursos presidenciales, fragmentos de diar-
+ios (en un análisis temporal) y ubicaciones geográficas como monumentos o
+paı́ses (en un análisis espacial). A su vez se busca analizar si el agregado o
+no de información extra entorpece o ayuda al modelo en cuestión.
+El análisis de estos embeddings se basa en una metodologı́a similar a
+la utilizada por Waller et al. [6]. En su enfoque, se emplean “semillas”
+que, ajustadas según la particularidad a analizar, generan un vector de rep-
+2resentación (cuando se incorporan múltiples pares de semillas, se calcula el
+promedio de las diferencias entre los vectores resultantes). Una vez obtenido
+el vector, se asignan puntuaciones al resto de los valores proyectándolos so-
+bre dicho vector mediante la similitud coseno. Si bien esta técnica no otorga
+valores con precisión exacta, devuelve un orden relativo de los elementos, lo
+cual permite evaluar si el modelo mantiene una noción consistente de orden
+tanto temporal como espacial.
+Una de las diferencias distintivas con la técnica presentada en [5] es
+que sólo requerimos de los embeddings generados por el modelo de lenguaje
+como entrada. En otras palabras, no se utilizan modelos adicionales para
+realizar el análisis sobre el modelo de lenguaje, ni se necesita acceder a la red
+neuronal. Esto permite evaluar las capacidades intrı́nsecas de los modelos
+de lenguaje para capturar las dimensiones temporales y espaciales de una
+manera rápida, sencilla y transparente, sin depender de modelos adicionales
+o entrenamiento especı́fico.
+3
+Factibilidad
+El Director propuesto, Esteban Zindel Feuerstein, es un investigador de
+reconocida trayectoria en el campo del Diseño y Análisis de Algoritmos, en
+particular sobre grafos y redes sociales. El co-director, Juan Manuel Ortiz
+de Zárate es licenciado y Dr. en Ciencias de la Computación de la UBA. Su
+tesis de doctorado se enfocó en el estudio de las redes sociales a través del
+procesamiento del lenguaje natural (NLP), análisis de grafos y aprendizaje
+automático.
+References
+[1] S. Bubeck, V. Chandrasekaran, R. Eldan, J. Gehrke, E. Horvitz, E. Ka-
+mar, P. Lee, Y. T. Lee, Y. Li, S. Lundberg, et al., “Sparks of artifi-
+cial general intelligence: Early experiments with gpt-4” arXiv preprint
+arXiv:2303.12712, 2023.
+[2] J. Wei, Y. Tay, R. Bommasani, C. Raffel, B. Zoph, S. Borgeaud, D. Yo-
+gatama, M. Bosma, D. Zhou, D. Metzler, et al., “Emergent abilities of
+large language models” arXiv preprint arXiv:2206.07682, 2022.
+[3] T. Mikolov, W.-t. Yih, and G. Zweig, “Linguistic regularities in contin-
+uous space word representations” in Proceedings of the 2013 conference
+of the north american chapter of the association for computational lin-
+guistics: Human language technologies, pp. 746–751, 2013.
+3[4] S. Lu, I. Bigoulaeva, R. Sachdeva, H. T. Madabushi, and I. Gurevych,
+“Are emergent abilities in large language models just in-context learn-
+ing?” arXiv preprint arXiv:2309.01809, 2023.
+[5] W. Gurnee and M. Tegmark, “Language models represent space and
+time” arXiv preprint arXiv:2310.02207, 2023.
+[6] I. Waller and A. Anderson, “Quantifying social organization and political
+polarization in online platforms” Nature, vol. 600, no. 7888, pp. 264–268,
+2021.
+4

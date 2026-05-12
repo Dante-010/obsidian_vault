@@ -1,0 +1,148 @@
+Título: Cómo el tiempo y el espacio son modelados en los embeddings de los LLMs
+Alumno: Federico Suaiter Mentor: Juan Manuel Ortiz de Zarate Director: Esteban Feuerstein
+Lugar de Trabajo: Grupo Algoritmos, Instituto de Ciencias de la Computación, FCEyN,
+UBA.
+Introducción: A pesar de haber sido entrenados solo para predecir el siguiente token, los grandes modelos de
+lenguaje (LLM) modernos han demostrado un impresionante conjunto de capacidades [1,2], lo que genera
+preguntas e inquietudes sobre lo que dichos modelos realmente han aprendido. Una hipótesis es que los LLM
+aprenden una colección masiva de correlaciones, pero carecen de cualquier modelo coherente o
+“comprensión” del proceso de generación de datos subyacente gracias a una capacitación basada únicamente
+en texto [3,4]. Una hipótesis alternativa es que los LLM, al comprimir los datos, aprenden modelos más
+compactos, coherentes e interpretables del proceso generativo subyacente a los datos de entrenamiento, es
+decir, un world model. Por ejemplo, Li et al.[5] han demostrado que los transforms entrenados con la
+predicción del siguiente token para jugar el juego de mesa Othello aprenden representaciones explícitas del
+estado del juego, además [6] muestran posteriormente que estas representaciones son lineales. Otros han
+demostrado que los LLM rastrean los estados booleanos de los sujetos dentro del contexto [7]y tienen
+representaciones que reflejan la estructura perceptual y conceptual en dominios espaciales y de color [8,9].
+Para razonar sobre la solidez, la equidad y la seguridad de los sistemas de IA actuales y futuros es
+fundamental comprender mejor si los LLM modelan el mundo y cómo lo hacen [10,11,12,13,14].
+En este sentido Gurnee et al [17], halló que los LLMs efectivamente modelan el tiempo y el espacio
+internamente. Mediante la información sobre las activaciones de las neuronas de los modelos al recibir textos
+relacionados a tiempo y espacio entrenaron una regresión que fue capaz de predecir el tiempo y espacio de un
+un texto (nunca antes visto), lo que señala que efectivamente esta información está embebida internamente en
+los modelos. Esto nos abre una nueva pregunta: si el tiempo y espacio están internamente modelados en los
+LLMs, ¿puede ser que también estén embebidos en sus outputs?
+Objetivos: En este proyecto, nos propondremos analizar si (y de ser así, cómo) los LLMs modelan el tiempo y
+el espacio en sus outputs. Utilizando la técnica desarrollada junto a Franco Demarco en el marco de la BICC
+2023 [15] nos propondremos estimar las dimensiones correspondientes al espacio y al tiempo en los
+embeddings producidos por los LLMs. Nuestra técnica es una variación de lo desarrollado por Waller et al.
+[16], donde desarrollan un método para cuantificar el posicionamiento de las comunidades en línea a lo largo
+de las dimensiones sociales a través de las interacciones de los usuarios con sus comunidades. Descargando
+todo el historial de posteos y comentarios de Reddit entre los años 2012 y 2018, crean embeddings de
+comunidades (subreddits) a partir de dichas interacciones, para luego proyectarlos en direcciones
+unidimensionales que representan “dimensiones ideológicas”. Por ejemplo, calculan la dirección entre los
+embeddings de las comunidades de los demócratas y republicanos y proyectan sobre esa dirección al resto de
+las comunidades. Obtienen así scores para cada comunidad que las posicionan coherentemente en el espectro
+político-ideológico, logrando resultados que coinciden con lo percibido cualitativamente. Nosotros hacemos
+algo similar pero sobre embeddings producidos en base al texto de los posteos en lugar de las interacciones.
+En el trabajo que publicamos en NL4AI[15] hallamos que también es posible mediante esta técnica estimar la
+dimensión ideológica de los embeddings de los posteos de las comunidades de Reddit. Experimentos
+preliminares nos señalan que variando la forma en la que calculamos estas dimensiones también sería posible
+estimar, si es que existen, las dimensiones del tiempo y el espacio.
+Finalmente, nos propondremos analizar esto en un diverso set de datos para analizar así esta idea de forma
+más holística. Los datasets propuestos a priori son los siguientes: las discusiones en Reddit1, los discursos
+anuales de los presidentes de EEUU2, los discursos presidenciales argentinos en las aperturas de sesiones del
+congreso de cada año3 y las descripciones de Wikipedia de diversas ciudades/estados del mundo.
+Factibilidad: El Director propuesto, Esteban Feuerstein, es un investigador de reconocida trayectoria en el
+campo del Diseño y Análisis de Algoritmos, en particular sobre grafos y redes sociales. El mentor, Juan
+Manuel Ortiz de Zarate, es estudiante doctoral en Ciencias de la Computación de la UBA próximo a finalizar
+(ya presentó la tesis al jurado). Su investigación se centra en modelos de aprendizaje automático aplicados a
+texto y grafos de origen social (redes sociales) en contextos políticos. Los LLMs a estudiar y utilizar se
+encuentran disponibles en formato open source4 y mediante API56, al igual que la API oficial de Reddit para
+descargar información. Adicionalmente, Esteban y Juan Manuel ya han publicado diversos trabajos en el área
+del procesamiento del lenguaje natural sobre redes sociales [15,18,19], en los mismos desarrollan técnicas
+mediante modelos de NLP para cuantificar la polarización en discusiones en redes sociales y estimar la
+dimensión de la ideología política de los embeddings. Variaciones de esas técnicas serán utilizadas para este
+trabajo.
+1
+https://huggingface.co/datasets/fddemarco/pushshift-reddit
+https://millercenter.org/the-presidency/presidential-speeches
+3
+https://www.casarosada.gob.ar/informacion/discursos
+4
+https://huggingface.co/models?other=LLM
+5
+https://openai.com/blog/openai-api
+6
+https://docs.cohere.com/reference/about
+2Cronograma
+1er trimestre:
+Revisión de la literatura
+Acceso a los datos de Reddit
+Pruebas sobre modelado del tiempo y del espacio en los datos de Reddit
+2do trimestre:
+Acceso a y preparación de las otras fuentes de datos propuestas
+Pruebas experimentales sobre las otras fuentes de datos
+Conclusiones preliminares
+3er trimestre:
+Propuesta de nuevas ideas a partir de las conclusiones
+Prueba de las nuevas ideas sobre los datos existentes
+4to trimestre:
+Revisión y prueba sobre nuevos sets de datos
+Nuevas conclusiones
+Referencias:
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+8.
+9.
+10.
+11.
+12.
+13.
+14.
+15.
+16.
+17.
+18.
+19.
+Sebastien Bubeck, Varun Chandrasekaran, Ronen Eldan, Johannes Gehrke, Eric Horvitz, Ece Kamar, Peter Lee, Yin
+Tat Lee, Yuanzhi Li, Scott Lundberg, et al. Sparks of artificial general intelligence: Early experiments with gpt-4. arXiv
+preprint arXiv:2303.12712, 2023.
+Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian Borgeaud, Dani Yogatama, Maarten
+Bosma, Denny Zhou, Donald Metzler, et al. Emergent abilities of large language models. arXiv preprint
+arXiv:2206.07682, 2022.
+Emily M Bender and Alexander Koller. Climbing towards nlu: On meaning, form, and understanding in the age of
+data. In Proceedings of the 58th annual meeting of the association for computational linguistics, pp. 5185–5198,
+2020.
+Yonatan Bisk, Ari Holtzman, Jesse Thomason, Jacob Andreas, Yoshua Bengio, Joyce Chai, Mirella Lapata, Angeliki
+Lazaridou, Jonathan May, Aleksa
+Kenneth Li, Aspen K Hopkins, David Bau, Fernanda Viegas, Hanspeter Pfister, and Martin Wattenberg. Emergent
+world representations: Exploring a sequence model trained on a synthetic task. arXiv preprint arXiv:2210.13382,
+2022.
+Neel Nanda, Andrew Lee, and Martin Wattenberg. Emergent linear representations in world models of
+self-supervised sequence models. arXiv preprint arXiv:2309.00941, 2023
+Belinda Z Li, Maxwell Nye, and Jacob Andreas. Implicit representations of meaning in neural language models. arXiv
+preprint arXiv:2106.00737, 2021.
+Roma Patel and Ellie Pavlick. Mapping language models to grounded conceptual spaces. In International Conference
+on Learning Representations, 2021.
+Mostafa Abdou, Artur Kulmizev, Daniel Hershcovich, Stella Frank, Ellie Pavlick, and Anders Søgaard. Can language
+models encode perceptual structure without grounding? a case study in color. arXiv preprint arXiv:2109.06129, 2021.
+Emily M Bender, Timnit Gebru, Angelina McMillan-Major, and Shmargaret Shmitchell. On the dangers of stochastic
+parrots: Can language models be too big? In Proceedings of the 2021 ACM conference on fairness, accountability,
+and transparency, pp. 610–623, 2021.
+Laura Weidinger, Jonathan Uesato, Maribeth Rauh, Conor Griffin, Po-Sen Huang, John Mellor, Amelia Glaese, Myra
+Cheng, Borja Balle, Atoosa Kasirzadeh, et al. Taxonomy of risks posed by language models. In Proceedings of the
+2022 ACM Conference on Fairness, Accountability, and Transparency, pp. 214–229, 2022.
+Rishi Bommasani, Drew A Hudson, Ehsan Adeli, Russ Altman, Simran Arora, Sydney von Arx, Michael S Bernstein,
+Jeannette Bohg, Antoine Bosselut, Emma Brunskill, et al. On the opportunities and risks of foundation models. arXiv
+preprint arXiv:2108.07258, 2021.
+Dan Hendrycks, Mantas Mazeika, and Thomas Woodside. An overview of catastrophic ai risks. arXiv preprint
+arXiv:2306.12001, 2023.
+Richard Ngo, Lawrence Chan, and Soren Mindermann. The alignment problem from a deep learning perspective,
+2023.
+Demarco, F., de Zarate, J. M. O., & Feuerstein, E. (2023). Measuring Ideological Spectrum Through NLP. In
+Proceedings of the Seventh Workshop on Natural Language for Artificial Intelligence (NL4AI 2023) co-located with
+22th International Conference of the Italian Association for Artificial Intelligence (AI* IA 2023).
+Waller, I., & Anderson, A. (2021). Quantifying social organization and political polarization in online platforms. Nature,
+600(7888), 264-268.
+Gurnee, W., & Tegmark, M. (2023). Language models represent space and time. arXiv preprint arXiv:2310.02207.
+de Zarate, J. M. O., & Feuerstein, E. (2020). Vocabulary-Based Method for Quantifying Controversy in Social Media.
+In ICCS (pp. 161-176).
+de Zarate, J. M. O., Di Giovanni, M., Feuerstein, E. Z., & Brambilla, M. (2020). Measuring controversy in social
+networks through nlp. In String Processing and Information Retrieval: 27th International Symposium, SPIRE 2020,
+Orlando, FL, USA, October 13–15, 2020, Proceedings 27 (pp. 194-209). Springer International Publishing.

@@ -1,0 +1,67 @@
+Título: Análisis de redes sociales: relaciones entre toxicidad, polarización y diversidad cultural a través de modelos de
+machine learning y técnicas de procesamiento del lenguaje natural.
+Alumno: Victoria Klimkowski​
+​
+Mentor: Juan Manuel Ortiz de Zarate​ ​
+Director: Esteban Feuerstein
+Lugar de Trabajo: Grupo Algoritmos, Instituto de Ciencias de la Computación, FCEyN, UBA.
+Introducción: ​
+Las redes sociales han cambiado la forma en que las personas interactúan. La mayoría de los usuarios tienden a
+agruparse en espacios donde solo se exponen a contenido que refuerza sus creencias, aislándolos de perspectivas
+opuestas [1]. Este fenómeno, conocido como "cámaras de eco", contribuye a la polarización política y a la propagación de
+discursos de odio [2], lo que a su vez amplifica sesgos ideológicos [3] y fomenta la difusión de noticias falsas [4]. Para
+comprender mejor estas dinámicas, diversos estudios han desarrollado métricas que permiten caracterizar las
+comunidades digitales y los textos publicados en ellas [5]. Por ejemplo, el trabajo de Waller & Anderson [6] utiliza redes
+neuronales y word2vec en redes sociales [7] para determinar la diversidad de intereses de las comunidades de usuarios
+en Reddit.​
+Además, el procesamiento del lenguaje natural (PLN) ofrece herramientas complementarias para analizar el texto
+compartido en redes sociales. Técnicas como el análisis de tópicos permiten identificar automáticamente los temas de
+discusión en los textos [8], mientras que el análisis de sentimiento evalúa si un mensaje expresa una opinión positiva o
+negativa sobre un asunto [9]. Asimismo, modelos de detección de toxicidad permiten medir el nivel de agresividad de los
+mensajes [10], lo que resulta clave para el estudio de discursos de odio en línea. Trabajos como el de Oppenheim et al.
+[11] combinan el análisis de las comunidades con el procesamiento del lenguaje natural, encontrando una relación entre la
+toxicidad y la presencia de emociones como la tristeza, el enojo o la alegría y las características de diversidad de una
+comunidad.
+​
+Objetivos:
+Este proyecto tiene como objetivo analizar cómo la composición de las comunidades en Reddit influye en la toxicidad y la
+presencia de discursos de odio. Para ello, primero se replicarán estudios del estado del arte que emplean redes
+neuronales profundas y graph learning para medir el nivel de generalidad o especialización de los subreddits [6] y
+clasificarlos en distintos ejes temáticos según los intereses de sus usuarios [7]. Luego, se diseñarán nuevas métricas para
+cuantificar la diversidad direccional de estas comunidades en términos políticos, de género, edad e intereses.
+Posteriormente, se analizarán los textos de posts y comentarios aplicando diversos métodos de procesamiento del
+lenguaje natural (PLN), comparando sus ventajas y limitaciones. Finalmente, se evaluará la relación entre diversidad y
+toxicidad mediante análisis estadísticos y técnicas de inferencia causal, con el fin de determinar si ciertos niveles de
+diversidad pueden predecir o mitigar la presencia de hatespeech en estas comunidades.​
+​
+El cronograma propuesto es el siguiente: Primer trimestre: Revisión bibliográfica y replicación de estudios previos sobre
+generalidad/especialización de subreddits y caracterización temática mediante graph learning y redes neuronales.
+Recopilación y preprocesamiento de datos de Reddit. Segundo trimestre: Diseño e implementación de métricas para
+cuantificar la diversidad direccional en términos políticos, de género, edad e intereses. Validación de estas métricas en
+diferentes comunidades. Tercer trimestre: Aplicación y comparación de distintos métodos de PLN para analizar el
+contenido de posts y comentarios, con un enfoque en la detección de toxicidad y discursos de odio. Evaluación de la
+efectividad de cada enfoque. Cuarto trimestre: Análisis de correlación y causalidad entre diversidad y toxicidad utilizando
+modelos estadísticos e inferencia causal. Elaboración de conclusiones y redacción del informe final.
+Factibilidad: El Director propuesto, Esteban Feuerstein, es un investigador de reconocida trayectoria en el campo del
+Diseño y Análisis de Algoritmos, en particular sobre grafos y redes. El mentor, Juan Manuel Ortiz de Zarate, recientemente
+se doctoró en ciencias de la computación de la UBA, y su investigación se centra en modelos de aprendizaje automático
+aplicados a redes sociales en contextos políticos. Los algoritmos a estudiar y utilizar se encuentran disponibles en sus
+respectivos repositorios, al igual que los datos de Reddit.Referencias:
+[1] Quattrociocchi, W., Scala, A., & Sunstein, C. R. (2016). Echo chambers on Facebook. Available at SSRN 2795110.
+[2] DEL VICARIO, Michela, et al. Echo chambers: Emotional contagion and group polarization on facebook.Scientific reports,2016,vol.6,no1, p.1-12.
+[3] Barbera, P.; Jost, J. T.; Nagler, J.; Tucker, J. A.; and Bonneau, R. 2015. Tweeting from left to right: Is online political communication more than an echo
+chamber? Psychological science 26(10): 1531–1542.
+[4] DEL VICARIO, Michela, et al.The spreading of misinformation online.Proceedings of the National Academy of Sciences,2016,vol.113,p.554-559.
+[5] Albanese, F., & Feuerstein, E. (2021, October). Improved Topic Modeling in Twitter Through Community Pooling. In International Symposium on String
+Processing and Information Retrieval (pp. 209-216). Springer, Cham.
+[6] Isaac Waller and Ashton Anderson. 2019. Generalists and specialists: Using community embeddings to quantify activity diversity in online platforms. In
+The World Wide Web Conference, pages 1954–1964.
+[7] Isaac Waller and Ashton Anderson. 2021. Quantifying social organization and political polarization in
+online platforms. Nature, 600(7888):264–268.
+[8] Agarwal, A., Xie, B., Vovsha, I., Rambow, O., & Passonneau, R. J. (2011, June). Sentiment analysis of twitter data. In Proceedings of the workshop on
+language in social media (LSM 2011) (pp. 30-38).
+[9] “https://www.perspectiveapi.com/,”
+[10] Albanese, F., Lombardi, L., Feuerstein, E., & Balenzuela, P. (2020). Breaking the Communities: Characterizing community changing users using text
+mining and graph machine learning on Twitter. arXiv e-prints, arXiv-2008.​
+[11] Oppenheim, A., Albanese, F., & Feuerstein, E. (2024). Investigating the Relationship Between User Specialization and Toxicity on Reddit: A Sentiment
+Analysis Approach. arXiv preprint arXiv:2406.03443.

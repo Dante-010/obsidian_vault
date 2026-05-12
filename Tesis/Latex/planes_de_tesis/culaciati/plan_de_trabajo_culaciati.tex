@@ -1,0 +1,172 @@
+\documentclass[11pt,a4paper]{article}
+
+%----------------------------------------------------------------------------------------
+%   PAQUETES Y CONFIGURACIÓN GENERAL
+%----------------------------------------------------------------------------------------
+
+% --- Configuración de idioma y codificación ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{csquotes} % Para comillas tipográficas correctas con biblatex
+
+% --- Tipografía y diseño ---
+\usepackage{lmodern} % Usa la fuente Latin Modern
+\usepackage{microtype} % Mejoras tipográficas sutiles (espaciado, justificación)
+\usepackage[a4paper, margin=1cm]{geometry} % Márgenes más equilibrados
+\usepackage{setspace} % Permite ajustar el interlineado, ej. \onehalfspacing
+\usepackage{parskip} % Párrafos separados por espacio vertical en lugar de sangría
+
+% --- Colores y gráficos ---
+\usepackage[dvipsnames]{xcolor} % Permite definir y usar colores
+\usepackage{graphicx}
+
+% --- Encabezados y pies de página ---
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % Limpia todos los campos de encabezado y pie de página
+\renewcommand{\headrulewidth}{0pt} % Sin línea en el encabezado
+\renewcommand{\footrulewidth}{0pt} % Sin línea en el encabezado
+
+% --- Títulos de sección ---
+\usepackage{titlesec}
+\definecolor{AccentColor}{HTML}{2A52BE} % Un azul profesional (e.g., Cerulean Blue)
+\titleformat{\section}
+  {\Large\bfseries\color{AccentColor}}
+  {\thesection}
+  {0.1cm}
+  {}
+  [\color{AccentColor}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries}
+  {\thesubsection}
+  {0.1cm}
+  {}
+
+\titlespacing*{\section}{0pt}{0.1em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.6em}{0.3em}
+
+% --- Listas ---
+\usepackage{enumitem}
+\usepackage{multicol}
+
+% --- Hipervínculos y referencias ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=AccentColor,
+    urlcolor=AccentColor,
+    citecolor=AccentColor,
+    pdftitle={Taxonomía de Problemas de Evasión en Grafos},
+    pdfauthor={Dante Culaciati}
+}
+\usepackage[style=numeric, backend=biber, sorting=none]{biblatex}
+\renewcommand*{\bibfont}{\footnotesize}
+\addbibresource{referencias.bib}
+
+% --- Bookmarks PDF ---
+\usepackage{bookmark}
+
+%----------------------------------------------------------------------------------------
+%   INFORMACIÓN DEL DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\title{
+    \vspace{-1.5cm} % Ajuste para subir el título
+    \hrule
+    \vspace{0.05cm}
+    \textbf{Taxonomía de Problemas de Evasión en Grafos}
+    \vspace{0.2cm}
+    \hrule
+    \vspace{-0.5cm}
+}
+
+\author{
+    \begin{tabular}{lll}
+        \textbf{Alumno:} Dante Culaciati & \textbf{Mentor:} Tomás Delvechio & \textbf{Director:} Esteban Feuerstein \\[0.1cm]
+        \multicolumn{3}{l}{\textbf{Lugar de trabajo:} Grupo Algoritmos, Instituto de Ciencias de la Computación,}\\
+        \multicolumn{3}{l}{Facultad de Ciencias Exactas y Naturales, Universidad de Buenos Aires}
+    \end{tabular}
+}
+
+\date{\vspace{-0.2cm} \today} % Usa la fecha de compilación actual
+
+%----------------------------------------------------------------------------------------
+%   DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.2cm}
+
+\section*{Introducción}
+Los algoritmos de \textit{community detection} permiten identificar  \textit{clusters} o comunidades, o sea grupos de nodos en un grafo relacionados entre sí  a través de muchas aristas, y comparativamente pocas aristas a nodos de otras comunidades \cite{Fortunato-2010}. 
+Entre muchas otras aplicaciones, el concepto es utilizado en plataformas de uso masivo, asociado a la identificación de patrones de información de los usuarios, potencialmente vulnerando sus derechos o deseos de privacidad y confidencialidad.
+
+Para mitigar parcial o completamente estos efectos, aparece la idea de \textit{evasión de comunidades}.
+La idea general es intentar modificar, engañar, saturar o evadir los resultados del algoritmo de community detection (CD) por medio de la alteración estratégica de las propiedades estructurales del grafo de entrada. Es decir, agregar, eliminar o modificar arcos o atributos de los elementos de la red. 
+El nombre ``evasión'' revela de por sí un cierto sesgo, pues veremos que muchos otros problemas pueden ser vistos desde esta misma perspectiva,
+en particular \textbf{\emph{\citetitle{bernini-2024}}} planteado por \textcite{bernini-2024} y principal motivación para nuestra propuesta.
+
+Trabajos previos resuelven el problema de \textit{hiding} o \textit{community deception} (planteado originalmente por \textcite{8118127}) a través de algoritmos genéticos \cite{LIU2022123}, heurísticas \cite{Waniek_2018},
+algoritmos \textit{greedy} \cite{9377481}, métodos de optimización por gradiente \cite{silvestri2025communitymembershiphidinggradientbased}, autocodificadores de grafos \cite{LIU2022109495}, entre otros. \textcite{Su_2024} exploran ampliamente sobre los conceptos de \textit{detection} y \textit{deception}.
+En el paper de Bernini, Silvestri y Tolomei, se formula el problema de \textit{Community Membership Hiding} como un objetivo contrafactual
+restringido en grafos, se plantea un proceso de decisión de Márkov y se lo resuelve con deep reinforcement learning (basado en \cite{Chen_2022}).
+
+En ese trabajo, se imponen algunas ``restricciones'', como ser la elección de un \textbf{único} nodo objetivo $u$ que será ocultado, la asignación de una  \textbf{única} comunidad a cada nodo (\textit{non-overlapping communities}), el algoritmo $f(\cdot)$ de CD es considerado una ``\textbf{caja negra}'', entre otras.
+
+\section*{Objetivos}
+% (muy abstracto? falta definir CLARAMENTE lo que vamos a hacer?)
+
+El objetivo principal de este proyecto es expandir el espacio de problemas de evasión y analizar escenarios alternativos en el marco de \textit{community evasion}, partiendo de
+la base determinada por \textcite{bernini-2024}.
+En particular, nos proponemos analizar diversas variantes de la idea. Algunas de ellas son las siguientes (no necesariamente serán analizadas todas durante el trabajo de esta beca):
+
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=*, label=\textbullet, itemsep=0em, topsep=0pt]
+    \item Inspirado por \cite{8118127}, extendemos el método de \textit{community membership hiding} y lo corremos para cada nodo en la comunidad objetivo.
+    \item Trabajamos con \textit{overlapping communities} \cite{Xie_2013}.
+    \item Consideramos $f(\cdot)$ como ``white-box'' \cite{jin2021surveycommunitydetectionapproaches}.
+    \item Implementamos \textit{node attributes} \cite{Yang_2013}.
+    \item Trabajamos con información parcial sobre el grafo.
+    \item Consideramos distintos conjuntos de acciones posibles.
+    \item Cambiamos el ``scope'' de \textit{community membership hiding} (por ejemplo, buscamos que $u$ no sólo forme parte de otra comunidad, sino que no comparta comunidad con un conjunto selecto de nodos).
+    \item Probamos diferentes métodos de optimización \cite{lucic2022, trappolini2022sparseviciousattacksgraph}.
+    \item Implementamos \textit{multi-agent reinforcement learning} (MARL) \cite{4445757}.
+    \item Variamos las métricas utilizadas para medir distancia entre entrada y salida a $f(\cdot)$.
+\end{itemize}
+\end{multicols}
+
+\section*{Factibilidad}
+% (Charlar bien con Esteban y el mentor. Además, dónde o cómo lo meto a Gabriel? Como co-director?)
+
+Esteban Feuerstein, propuesto como director, es un reconocido investigador y profesor en el área de Diseño y Análisis de Algoritmos
+particularmente en el área de grafos y redes, y en la actualidad especializándose en aplicaciones a redes sociales. El Esp. Tomás Delvechio, propuesto como mentor, es integrante de un grupo de investigación de la Universidad Nacional de Luján, trabajando en problemas de búsqueda a gran escala en la intersección de la recuperación de información, las redes sociales y la ciencia de datos.
+Cabe destacar que del trabajo a encarar será partícipe también el Dr. Gabriel Tolosa, profesor asociado e investigador en Ciencias de la Computación en la Universidad Nacional de Luján, y supervisor del grupo de investigación del Esp. Tomás Delvechio.
+
+Disponemos del código del paper original (\url{https://github.com/AndreaBe99/community_membership_hiding}) que incluye, entre otros recursos,
+varios datasets públicamente disponibles sobre los cuales testear. Además, tenemos contacto directo con los autores originales del paper,
+que pueden darnos las herramientas necesarias para resolver ciertos problemas si surgiese la necesidad.
+
+\section*{Cronograma}
+% (muy ambiguo?? Repasar. Definir cuales serían los conceptos simples y complejos. Está mal listar MARL explícitamente? Quizás es muy complicado y me termina jugando en contra)
+\begin{itemize}[leftmargin=*, label=\textbullet, itemsep=0.5ex]
+    \item \textbf{1\textsuperscript{er} trimestre:} Revisión de la literatura, replicación de estudios previos.
+    \item \textbf{2\textsuperscript{do} trimestre:} Experimentación inicial. Implementación de conceptos ``simples'' (straightforward).
+    \item \textbf{3\textsuperscript{er} trimestre:} Implementación de conceptos complejos, a partir de la experiencia obtenida en el primer semestre.
+    \item \textbf{4\textsuperscript{to} trimestre:} Revisión y prueba sobre nuevos datos. Elaboración de conclusiones y redacción del informe final.
+\end{itemize}
+
+% (SIN LOS COMENTARIOS LLEGO A DOS CARILLAS)
+
+\begingroup
+\tiny
+\nocite{*} % Incluye todas las referencias del .bib, citadas o no
+\printbibliography[title={Referencias}]
+\endgroup
+
+\end{document}
