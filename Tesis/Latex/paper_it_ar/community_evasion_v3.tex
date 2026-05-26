@@ -3,7 +3,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=3cm]{geometry}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{svg}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{float}
@@ -285,8 +287,8 @@ Node features      & Static node2vec     & Static + dynamic (7 features) \\
 Target awareness   & None (env mask)     & Explicit $h_t$ injection \\
 Edge attributes    & Not used            & Yes (edge\_attr in backbone) \\
 Actor head         & Linear over GCN out & MLP conditioned on $h_t$ \\
-Critic head        & None (REINFORCE)    & Attention pooling + $h_t$ \\
-Scalability        & Degrades on large graphs & Policy-Guided Subgraphing \\
+Critic head        & Graph-level A2C value head & Target-conditioned + attention pooling \\
+Scalability        & Graph-wide computation & Policy-Guided Subgraphing \\
 \bottomrule
 \end{tabular}
 \caption{Structural comparison between the original baseline and the proposed
@@ -299,16 +301,17 @@ Scalability        & Degrades on large graphs & Policy-Guided Subgraphing \\
   \begin{minipage}[t]{0.45\linewidth}
     \centering
     \includegraphics[width=\linewidth]{model_architecture_background}
-    \caption*{\textbf{Original.} The target node is not seen by the
-      network; the action mask is applied externally.}
+    \par\smallskip
+    {\small\textit{Original.} Target node conditioning is applied via
+      an external environment mask rather than inside the network.}
   \end{minipage}
   \hfill
   \begin{minipage}[t]{0.45\linewidth}
     \centering
     \includegraphics[width=\linewidth]{mermaid-diagram-ac}
-    \caption*{\textbf{Ours (v1).} The target embedding $h_t$ is
-      injected into both Actor and Critic, enabling target-specific
-      decision-making.}
+    \par\smallskip
+    {\small\textit{Ours (v1).} The target embedding $h_t$ is injected
+      explicitly into both Actor and Critic heads.}
   \end{minipage}
   \caption{Side-by-side architecture comparison. The principal structural
     change is explicit target-node conditioning throughout the forward pass.}
@@ -437,8 +440,8 @@ The proposed agent demonstrates a substantial and consistent improvement across
 all tested configurations. Stricter hiding constraints (lower $\tau$) naturally
 increase difficulty, but our architecture maintains a robust performance gap
 over the baseline. With moderate-to-high budget allowances ($\beta \geq 1.0$)
-our model achieves near-perfect success rates, whereas the original agent's
-performance prematurely plateaus. Importantly, the proposed architecture
+our model achieves near-perfect success rates, while at lower budget levels
+the gap between the two architectures is more pronounced. Importantly, the proposed architecture
 maintains consistent behavior across the full parameter grid, without
 overfitting to a single scenario.
 
@@ -450,7 +453,7 @@ end of the tradeoff.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.92\linewidth]{tradeoff_plot}
+  \includesvg[width=0.92\linewidth]{figures/tradeoff_plot}
   \caption{F1 score vs.\ execution time ($\tau=0.5,\ \beta=1$).
            Time axis in logarithmic scale. Each point is one method on one
            dataset/algorithm combination.}
@@ -483,7 +486,6 @@ three community detection algorithms evaluated.
     ($\tau=0.5,\ \beta=1$).}
   \label{fig:f1-walktrap}
 \end{figure}
-\label{fig:sr-nmi-all}
 
 \subsection{Dual-Agent Results}
 
@@ -515,51 +517,47 @@ dual-agent variant once the full evaluation sweep is complete.)}
 \label{sec:sweep}
 % ======================================================================
 
-\textit{(This section presents a visual summary of how F1 score varies jointly
-with the hiding threshold $\tau$ and the rewiring budget $\beta$. Each 3D
-surface corresponds to one of the three community detection algorithms
-evaluated: Greedy Modularity, Louvain, and Walktrap. Values are averaged across
-datasets. Figures to be included once the full sweep is finalized.)}
+\textit{(This section presents 3D surface plots showing how each evaluation
+metric varies jointly with the hiding threshold $\tau$ and the rewiring budget
+$\beta$, for the GATv2 v1 agent on the \texttt{words} dataset (Louvain
+community detection). One surface is shown per metric: F1 score, NMI, and
+Success Rate. Results for other datasets and algorithms follow the same
+qualitative trends.)}
 
 To better understand the joint sensitivity of the proposed architecture to
-$\tau$ and $\beta$, we run a full grid sweep over
-$\tau \in \{0.3, 0.5, 0.8\}$ and $\beta \in \{0.5, 1.0, 2.0\}$ for each
-community detection algorithm. The resulting F1 surfaces are shown in
-Figures~\ref{fig:sweep-greedy}--\ref{fig:sweep-walktrap}.
+$\tau$ and $\beta$, we swept over $\tau \in \{0.3, 0.5, 0.8\}$ and
+$\beta \in \{0.5, 1.0, 2.0\}$. In general, larger $\beta$ (more budget) and
+larger $\tau$ (softer hiding criterion) make the task easier, and all three
+surfaces reflect this trend. NMI tends to decrease as the budget grows, since
+more rewiring steps introduce more structural perturbation. The most
+informative regime is around intermediate values ($\tau \approx 0.5$,
+$\beta \approx 1.0$), which best captures the tradeoff between hiding
+effectiveness and graph preservation.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\linewidth]{sweep_greedy}
-  \caption{F1 score surface over $(\tau, \beta)$ for the \textbf{Greedy
-    Modularity} community detection algorithm.
-    \textit{(Figure to be included.)}}
-  \label{fig:sweep-greedy}
+  \includegraphics[width=0.65\linewidth]{sweep_words_louvain_f1_v1}
+  \caption{F1 score surface over $(\tau, \beta)$ — \texttt{words} dataset,
+    Louvain community detection.}
+  \label{fig:sweep-f1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\linewidth]{sweep_louvain}
-  \caption{F1 score surface over $(\tau, \beta)$ for the \textbf{Louvain}
-    community detection algorithm.
-    \textit{(Figure to be included.)}}
-  \label{fig:sweep-louvain}
+  \includegraphics[width=0.65\linewidth]{sweep_words_louvain_nmi_v1}
+  \caption{NMI surface over $(\tau, \beta)$ — \texttt{words} dataset,
+    Louvain community detection. Higher NMI indicates lower structural
+    distortion.}
+  \label{fig:sweep-nmi}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\linewidth]{sweep_walktrap}
-  \caption{F1 score surface over $(\tau, \beta)$ for the \textbf{Walktrap}
-    community detection algorithm.
-    \textit{(Figure to be included.)}}
-  \label{fig:sweep-walktrap}
+  \includegraphics[width=0.65\linewidth]{sweep_words_louvain_success_rate_v1}
+  \caption{Success Rate surface over $(\tau, \beta)$ — \texttt{words} dataset,
+    Louvain community detection.}
+  \label{fig:sweep-sr}
 \end{figure}
-
-In general, larger $\beta$ (more budget) and larger $\tau$ (softer hiding
-criterion) make the task easier, and the F1 surface reflects this monotone
-trend. The most interesting regime is around intermediate values
-($\tau \approx 0.5$, $\beta \approx 1.0$), where the proposed architecture
-shows the largest relative improvement over baselines.
-\textit{(Exact numbers to be added once dual-agent sweep is complete.)}
 
 
 % ======================================================================

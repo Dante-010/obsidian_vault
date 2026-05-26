@@ -1,0 +1,40 @@
+\chapter*{\runtitulo}
+
+\noindent
+El problema de \emph{Community Membership Hiding} (CMH), u \emph{ocultamiento de
+membrres\'ia de comunidades}, consiste en, dado un grafo, un algoritmo de detecci\'on
+de comunidades y un nodo objetivo $u$, encontrar un conjunto m\'inimo de reconexiones
+de aristas adyacentes a $u$ de modo que el algoritmo deje de asignarlo a su comunidad
+original, mientras se preserva la integridad estructural del grafo.
+Este problema es relevante en el contexto de la privacidad en redes, donde los
+algoritmos de detecci\'on pueden revelar informaci\'on sensible sobre los usuarios---como
+afiliaciones pol\'iticas o ideol\'ogicas---a partir de su posici\'on estructural, sin
+que estos lo hayan divulgado expl\'icitamente.
+
+Trabajos recientes formularon CMH como un Proceso de Decisi\'on de Markov (MDP) resuelto
+mediante Aprendizaje Profundo por Refuerzo (DRL), empleando una arquitectura
+Actor-Cr\'itico (A2C). En este trabajo identificamos una limitaci\'on arquitect\'onica
+cr\'itica de dicho m\'etodo: el agente eval\'ua el grafo de forma global sin condicionar
+expl\'icitamente en el nodo objetivo, lo que le impide aprender una pol\'itica de
+ocultamiento espec\'ifica.
+
+Proponemos una arquitectura DRL novedosa que incorpora expl\'icitamente la identidad del
+nodo objetivo como caracter\'istica de entrada, utiliza \emph{Graph Attention Networks v2}
+(GATv2) como codificador de grafos para aprovechar un mecanismo de atenci\'on din\'amico
+y m\'as expresivo, y combina se\~nales est\'aticas y din\'amicas que reflejan los cambios
+topol\'ogicos en tiempo real durante el proceso de reconexci\'on.
+Extendemos el sistema de un \'unico agente a una \emph{Arquitectura Dual} que especializa
+agentes separados para la adici\'on y la eliminaci\'on de aristas, e introducimos una
+heur\'istica de \emph{Subgrafado Guiado por Pol\'itica} que hace el m\'etodo escalable
+en grafos de gran tama\~no.
+
+La evaluaci\'on experimental sobre los benchmarks est\'andar del \'area demuestra que
+nuestra arquitectura supera consistentemente al agente DRL original y a los m\'etodos
+basados en gradientes, logrando altas tasas de \'exito con una perturbaci\'on estructural
+m\'inima.
+
+\bigskip
+
+\noindent\textbf{Palabras clave:} detecci\'on de comunidades, ocultamiento de
+membrres\'ia de comunidades, aprendizaje por refuerzo profundo, redes de atenci\'on de
+grafos, privacidad en redes, GATv2, Actor-Cr\'itico.

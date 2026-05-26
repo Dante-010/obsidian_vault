@@ -1,0 +1,34 @@
+\chapter*{\runtitulo}
+
+\noindent
+El problema de \emph{Community Membership Hiding} (CMH) consiste en, dado un grafo, un
+algoritmo de detecci\'on de comunidades y un nodo objetivo $u$, sugerir un conjunto m\'inimo de
+reconexiones de aristas para que $u$ deje de ser detectado como miembro de su comunidad
+original. Este problema es relevante en el contexto de privacidad en redes, donde los
+algoritmos de detecci\'on pueden revelar informaci\'on sensible sobre los usuarios a partir
+de su posici\'on estructural en el grafo.
+
+Trabajos recientes han formulado CMH como un Proceso de Decisi\'on de Markov resuelto
+mediante Aprendizaje Profundo por Refuerzo (DRL), utilizando una arquitectura Actor-Cr\'itico.
+En este trabajo identificamos una limitaci\'on arquitect\'onica cr\'itica del m\'etodo original: el
+agente eval\'ua el grafo de forma global sin condicionar expl\'icitamente en el nodo objetivo,
+lo que le impide aprender una pol\'itica espec\'ifica de ocultamiento.
+
+Proponemos una arquitectura DRL novedosa que incorpora expl\'icitamente la identidad del
+nodo objetivo como entrada de la red, utiliza \emph{Graph Attention Networks v2} (GATv2)
+como codificador de grafos, y combina se\~nales est\'aticas y din\'amicas para representar
+fielmente el estado del grafo durante el proceso de reconexci\'on. Extendemos este sistema
+de un solo agente a una \emph{Arquitectura Dual}, que especializa agentes separados para la
+adici\'on y eliminaci\'on de aristas, e introducimos una heur\'istica de \emph{Subgrafado Guiado
+por Pol\'itica} que hace escalable el m\'etodo en grafos de gran tama\~no.
+
+La evaluaci\'on experimental sobre los datasets est\'andar del \'area muestra que nuestra
+arquitectura supera consistentemente al m\'etodo original y a los m\'etodos de referencia
+basados en gradientes, logrando altas tasas de \'exito de ocultamiento con una perturbaci\'on
+estructural m\'inima.
+
+\bigskip
+
+\noindent\textbf{Palabras clave:} detecci\'on de comunidades, ocultamiento de comunidades,
+aprendizaje por refuerzo profundo, redes de atenci\'on de grafos, privacidad en redes,
+GATv2, Actor-Cr\'itico.

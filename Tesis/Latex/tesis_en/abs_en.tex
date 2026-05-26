@@ -1,0 +1,36 @@
+\chapter*{\runtitle}
+
+\noindent
+The \emph{Community Membership Hiding} (CMH) problem asks: given a graph, a community
+detection algorithm, and a target node $u$, find a minimal set of edge rewirings such
+that $u$ is no longer detected as a member of its original community. This problem arises
+naturally in the context of network privacy, where community detection algorithms can
+inadvertently expose sensitive user affiliations---such as political or ideological
+leanings---solely from the structural position of a node in the underlying graph.
+
+Recent work has formulated CMH as a Markov Decision Process (MDP) solved via Deep
+Reinforcement Learning (DRL), employing an Actor-Critic architecture. While that
+approach demonstrated the viability of the paradigm, we identify a critical architectural
+limitation: the agent evaluates the network globally without explicitly conditioning on
+the identity of the target node, thereby learning a generic community-shuffling policy
+rather than a targeted hiding strategy.
+
+In this thesis, we propose a novel DRL architecture that addresses these fundamental
+shortcomings. Our model explicitly incorporates the target node as a feature of the
+network representation, employs Graph Attention Networks v2 (GATv2) as the graph
+encoder to leverage dynamic, query-conditioned attention, and combines static and
+real-time structural signals to accurately track topological changes during rewiring.
+We further extend the single-agent system into a \emph{Dual-Agent Architecture} that
+dedicates separate agents to edge addition and edge deletion, and introduce a
+\emph{Policy-Guided Subgraphing} heuristic that makes the framework tractable on
+large-scale graphs.
+
+Extensive experimental evaluation on the standard benchmark datasets of the field
+demonstrates that our architecture consistently outperforms both the original DRL
+agent and strong gradient-based baselines, achieving high hiding success rates with
+minimal structural perturbation.
+
+\bigskip
+
+\noindent\textbf{Keywords:} community detection, community membership hiding, deep
+reinforcement learning, graph attention networks, network privacy, GATv2, Actor-Critic.

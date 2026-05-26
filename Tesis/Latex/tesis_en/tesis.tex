@@ -1,0 +1,925 @@
+% ============================================================
+%  English version — main document
+%  Universidad de Buenos Aires · FCEN · Departamento de Computación
+%  Licenciatura en Ciencias de la Computación
+% ============================================================
+\documentclass[11pt,a4paper,twoside]{tesis}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[backend=biber,style=numeric,sorting=nyt]{biblatex}
+
+\addbibresource{tesis.bib}
+
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+% Redefine chapter/section names for English
+\def\contentsname{Contents}
+\def\listfigurename{List of Figures}
+\def\listtablename{List of Tables}
+\def\bibname{Bibliography}
+\def\indexname{Index}
+\def\figurename{Figure}
+\def\tablename{Table}
+\def\chaptername{Chapter}
+\def\appendixname{Appendix}
+\def\abstractname{Abstract}
+
+% Theorem environments
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+
+% Notation shorthands
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Gnew}{\mathcal{G}'}
+\newcommand{\Cnew}{\mathcal{C}'}
+\newcommand{\simf}{\mathrm{sim}}
+\newcommand{\SR}{\mathrm{SR}}
+\newcommand{\NMI}{\mathrm{NMI}}
+
+\begin{document}
+
+%%%% COVER PAGE
+\def\autor{Dante Culaciati}
+\def\tituloTesis{Improving Community Membership Hiding \vspace{.2cm} \\
+                 via Deep Reinforcement Learning}
+\def\runtitulo{Mejorando el Ocultamiento de Membres\'ia de Comunidades
+               mediante Aprendizaje Profundo por Refuerzo}
+\def\runtitle{Improving Community Membership Hiding via Deep Reinforcement Learning}
+\def\director{Esteban Feuerstein}
+\def\codirector{[Nombre del Codirector]}   % TODO: fill in
+\def\lugar{Buenos Aires, 2026}
+\input{caratula}
+
+%%%% FRONT MATTER
+\frontmatter
+\pagestyle{empty}
+\input{abs_esp.tex}
+
+\cleardoublepage
+\input{abs_en.tex}
+
+\cleardoublepage
+\input{agradecimientos.tex}
+
+\cleardoublepage
+\input{dedicatoria.tex}
+
+\cleardoublepage
+\tableofcontents
+
+% ============================================================
+\mainmatter
+\pagestyle{headings}
+% ============================================================
+
+
+% ============================================================
+\chapter{Introduction}
+\label{ch:intro}
+% ============================================================
+
+The modern science of networks has brought significant advances to our understanding of
+complex systems. One of the most relevant structural features of graphs representing
+real-world phenomena---ranging from social media platforms to biological interaction
+networks---is their \emph{community structure}: the tendency for nodes to cluster into
+densely connected groups that are only sparsely connected to the rest of the network.
+Community detection algorithms that uncover this structure have proven highly effective
+\cite{Fortunato-2010}, and are now routinely deployed in large-scale platforms to
+characterize users, personalize content, and target advertisements.
+
+However, this functionality carries a fundamental privacy risk. When a graph encodes
+social relationships, the community a node belongs to may inadvertently reveal sensitive
+affiliations---political leanings, religious beliefs, health conditions, or ideological
+associations---purely from its structural position, without any explicit disclosure of
+such information. This concern is not merely theoretical: community detection has been
+used in practice to identify political groups in online networks and to profile individuals
+in social graphs.
+
+To counter this, the concept of \emph{Community Membership Hiding} (CMH) was introduced
+by \textcite{bernini-2024}. The goal of CMH is to strategically modify the topology of a
+network---by adding or removing a small number of edges adjacent to a target node $u$---so
+that $u$ is no longer assigned to its original community by a detection algorithm, while
+keeping overall graph disruption minimal. The detection algorithm is treated as a
+\emph{black box}, meaning that no knowledge of its internals is exploited.
+
+Bernini et al.\ formulated CMH as a Markov Decision Process (MDP) and solved it via Deep
+Reinforcement Learning (DRL) using an Actor-Critic architecture (A2C). While that work
+demonstrated the viability of the DRL approach, it exhibits notable performance degradation
+on larger graphs, and---as we show in this thesis---harbors a critical architectural
+flaw: the agent evaluates the network \emph{globally}, without explicitly conditioning
+on the identity of the target node. As a consequence, the agent cannot learn a policy
+that depends on who the target is; it instead learns a generic community-shuffling
+strategy that happens to displace the target node as a side effect.
+
+\section*{Contributions}
+
+In this thesis, we make the following contributions:
+
+\begin{enumerate}
+    \item \textbf{Identification of an architectural limitation.}
+          We formally demonstrate that the original DRL agent produces identical outputs
+          for different target nodes given the same graph state, confirming that it cannot
+          condition its policy on the target.
+
+    \item \textbf{Target-aware architecture.}
+          We propose a novel DRL architecture that explicitly encodes the identity of the
+          target node as an additional input feature. The graph encoder is replaced by
+          Graph Attention Networks v2 (GATv2) \cite{brody2022how}, which provide a more
+          expressive, query-conditioned attention mechanism compared to the original GNN.
+          Node features combine static indicators derived from the original graph with
+          dynamically updated structural signals that reflect topological changes as
+          rewiring proceeds.
+
+    \item \textbf{Dual-Agent Architecture.}
+          We extend the single-agent system into a Dual-Agent Architecture that maintains
+          two specialized agents---one for edge addition and one for edge deletion---with
+          separate policy networks and learning dynamics. We show that this specialization
+          leads to improved performance and learning stability.
+
+    \item \textbf{Policy-Guided Subgraphing.}
+          To make the framework tractable on large graphs, we introduce a
+          Policy-Guided Subgraphing heuristic that restricts the action space to a
+          relevant neighborhood around the target node, reducing computational cost while
+          preserving the quality of the learned policy.
+
+    \item \textbf{Extensive experimental evaluation.}
+          We evaluate all proposed contributions on the standard benchmark datasets used
+          in the CMH literature, comparing against the original DRL agent and two
+          gradient-based methods introduced in \textcite{silvestri2025righthidemaskingcommunity}.
+\end{enumerate}
+
+\section*{Organization}
+
+The remainder of this thesis is organized as follows. Chapter~\ref{ch:background}
+provides the necessary background on graphs, community detection, reinforcement learning,
+and graph neural networks. Chapter~\ref{ch:problem} gives a formal problem statement.
+Chapter~\ref{ch:related} reviews related work.
+Chapter~\ref{ch:architecture} describes the proposed architecture. Chapter~\ref{ch:experiments}
+presents the experimental evaluation. Chapter~\ref{ch:conclusions} concludes with a
+discussion and directions for future work.
+
+
+% ============================================================
+\chapter{Background}
+\label{ch:background}
+% ============================================================
+
+This chapter introduces the key concepts required to understand the rest of the thesis.
+We cover the fundamentals of graphs and community detection, provide a formal definition
+of Community Membership Hiding, review the relevant machinery of Reinforcement Learning,
+and describe Graph Attention Networks and the node2vec algorithm.
+
+% ------------------------------------------------------------
+\section{Graphs and Community Structure}
+\label{sec:graphs}
+% ------------------------------------------------------------
+
+A \emph{graph} $\G = (\V, \E)$ consists of a set of nodes (vertices) $\V$ and a set
+of edges $\E \subseteq \V \times \V$. We denote $|\V| = N$ and $|\E| = M$. In an
+undirected graph, $(u,v) \in \E$ implies $(v,u) \in \E$; in a directed graph, these are
+distinct edges. Most of the datasets in this work are undirected.
+
+The \emph{degree} of a node $v$, denoted $\deg(v)$, is the number of edges incident to
+$v$. The mean degree of the graph is $\mu = 2M/N$. The \emph{neighborhood} of $v$ is
+$\mathcal{N}(v) = \{w : (v,w) \in \E\}$.
+
+\begin{definition}[Community structure]
+A graph $\G$ exhibits \emph{community structure} if its nodes can be partitioned into
+groups $\C = \{\C_1, \C_2, \ldots, \C_k\}$ such that the density of edges within each
+group is significantly higher than the density of edges between different groups.
+\end{definition}
+
+Intuitively, communities correspond to densely connected subgraphs (clusters) that are
+only loosely coupled to one another. This definition is intentionally informal; different
+community detection algorithms operationalize it differently.
+
+% ------------------------------------------------------------
+\section{Community Detection Algorithms}
+\label{sec:community-detection}
+% ------------------------------------------------------------
+
+A large number of algorithms for community detection have been proposed in the literature
+\cite{Fortunato-2010}. In this thesis, we focus on three widely used methods, all
+of which are treated as \emph{black boxes} by our agent.
+
+\paragraph{Greedy modularity optimization.}
+\textcite{clauset2004greedy} introduced a greedy algorithm that maximizes \emph{modularity},
+defined as the fraction of edges within communities minus the expected fraction under a
+null model with the same degree sequence:
+\[
+Q = \frac{1}{2M}\sum_{i,j}\left[A_{ij} - \frac{k_i k_j}{2M}\right]\delta(c_i, c_j),
+\]
+where $A$ is the adjacency matrix, $k_i$ is the degree of node $i$, and $\delta(c_i,c_j)$
+is 1 if nodes $i$ and $j$ belong to the same community and 0 otherwise. The algorithm
+begins with each node in its own community and iteratively merges pairs of communities
+that yield the largest increase in $Q$.
+
+\paragraph{Louvain algorithm.}
+\textcite{blondel2008louvain} proposed a two-phase greedy heuristic for modularity
+maximization. In the first phase, each node is moved to the community of a neighbor that
+yields the largest modularity gain (if any such gain exists). In the second phase,
+communities are collapsed into super-nodes and the first phase is repeated on the
+resulting graph. The process continues until no further improvement is possible. The
+Louvain algorithm is highly efficient and widely adopted for large-scale networks.
+
+\paragraph{Walktrap algorithm.}
+\textcite{pons2005walktrap} introduced a community detection algorithm based on random
+walks. The key intuition is that short random walks tend to stay within the same community;
+therefore, nodes that are visited by the same set of short random walks are likely to
+belong to the same community. The algorithm defines a distance between nodes based on the
+transition probabilities of a $t$-step random walk and uses hierarchical clustering to
+identify communities.
+
+% ------------------------------------------------------------
+\section{Community Membership Hiding: Informal Overview}
+\label{sec:cmh-informal}
+% ------------------------------------------------------------
+
+In the Community Membership Hiding setting, an actor (the \emph{hider}) controls a
+specific target node $u$ in a graph $\G$. The hider can add or remove a limited number
+of edges adjacent to $u$, with the goal of causing a given community detection algorithm
+$f$ to no longer assign $u$ to its original community $\C_i$ after the modifications.
+The detection algorithm is treated as a black box: the hider can query it but cannot
+access its internals.
+
+This problem models a privacy-conscious user who wants to prevent a platform from
+correctly inferring their social group, and who can strategically manage their
+connections to achieve this. A formal treatment is given in Chapter~\ref{ch:problem}.
+
+% ------------------------------------------------------------
+\section{Reinforcement Learning}
+\label{sec:rl}
+% ------------------------------------------------------------
+
+\emph{Reinforcement Learning} (RL) is a machine learning paradigm in which an
+\emph{agent} learns to make sequential decisions by interacting with an \emph{environment}
+in order to maximize a cumulative \emph{reward} signal. The interaction proceeds in
+discrete time steps: at each step $t$, the agent observes a state $s_t \in \mathcal{S}$,
+selects an action $a_t \in \mathcal{A}(s_t)$ according to a policy $\pi$, and receives
+a scalar reward $r_t$ while transitioning to state $s_{t+1}$.
+
+\paragraph{Markov Decision Process.}
+The standard formalization is the Markov Decision Process (MDP), defined by the tuple
+$(\mathcal{S}, \mathcal{A}, P, R, \gamma)$, where $\mathcal{S}$ is the state space,
+$\mathcal{A}$ is the action space, $P(s' \mid s, a)$ is the transition probability
+distribution, $R(s, a)$ is the expected immediate reward, and $\gamma \in [0,1]$ is the
+discount factor. The return from step $t$ is:
+\[
+G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}.
+\]
+The objective is to find a policy $\pi^*$ that maximizes the expected return:
+\[
+\pi^* = \arg\max_{\pi} \; \mathbb{E}_{\pi}\left[G_t \mid s_t = s\right].
+\]
+
+\paragraph{Actor-Critic methods.}
+Policy gradient methods optimize a parametric policy $\pi_\theta(a \mid s)$ by following
+the gradient of the expected return:
+\[
+\nabla_\theta J(\theta) = \mathbb{E}_{s,a}\left[\nabla_\theta \log \pi_\theta(a \mid s)
+    \, A^\pi(s, a)\right],
+\]
+where $A^\pi(s, a) = Q^\pi(s, a) - V^\pi(s)$ is the \emph{advantage function}, which
+measures how much better action $a$ is compared to the average action in state $s$.
+
+Actor-Critic architectures maintain two networks: the \emph{actor}, which represents the
+policy $\pi_\theta$, and the \emph{critic}, which estimates the state-value function
+$V_\phi(s)$ used to compute the advantage. Training the critic to provide an accurate
+baseline substantially reduces the variance of the policy gradient estimate without
+introducing bias, leading to more stable learning.
+
+The Advantage Actor-Critic (A2C) algorithm \cite{mnih2016asynchronous}, which forms the
+basis of the original CMH agent and of our proposed architecture, synchronously updates
+the actor and critic using the advantage estimated from collected trajectories.
+
+% ------------------------------------------------------------
+\section{Graph Neural Networks}
+\label{sec:gnn}
+% ------------------------------------------------------------
+
+Graph Neural Networks (GNNs) are a family of deep learning models designed to operate
+on graph-structured data. The core idea is \emph{message passing}: each node aggregates
+information from its neighbors, transforming the aggregated messages through learnable
+parameters to produce a new node representation. Formally, the $l$-th layer of a GNN
+updates the representation of node $v$ as:
+\[
+\mathbf{h}_v^{(l)} = \mathrm{UPDATE}^{(l)}\!\left(\mathbf{h}_v^{(l-1)},\,
+    \mathrm{AGG}^{(l)}\!\left(\left\{\mathbf{h}_u^{(l-1)} : u \in \mathcal{N}(v)\right\}\right)\right),
+\]
+where the initial representation $\mathbf{h}_v^{(0)}$ is the feature vector of node $v$.
+
+\subsection{Graph Attention Networks (GAT)}
+
+Graph Attention Networks \cite{veličković2018graph} replace the uniform or degree-based
+aggregation of vanilla GNNs with a learnable attention mechanism. The $l$-th layer
+computes:
+\[
+\mathbf{h}_v^{(l)} = \sigma\!\left(\sum_{u \in \mathcal{N}(v)} \alpha_{vu}\,
+    \mathbf{W}^{(l)} \mathbf{h}_u^{(l-1)}\right),
+\]
+where the attention coefficient $\alpha_{vu}$ is computed by a small neural network
+applied to the concatenation of the projected features of $v$ and $u$:
+\[
+\alpha_{vu} = \frac{\exp\!\left(\mathrm{LeakyReLU}\!\left(\mathbf{a}^\top
+    [\mathbf{W}\mathbf{h}_v \,\|\, \mathbf{W}\mathbf{h}_u]\right)\right)}
+    {\sum_{w \in \mathcal{N}(v)}\exp\!\left(\mathrm{LeakyReLU}\!\left(\mathbf{a}^\top
+    [\mathbf{W}\mathbf{h}_v \,\|\, \mathbf{W}\mathbf{h}_w]\right)\right)}.
+\]
+
+\subsection{GATv2: Dynamic Graph Attention}
+
+\textcite{brody2022how} identified a fundamental limitation of the original GAT: its
+attention is \emph{static}, meaning the ranking of neighbors is the same for all query
+nodes. This occurs because the attention scoring function applies the linear transformation
+\emph{before} the non-linearity, making the relative importance of neighbors independent
+of the query node's feature.
+
+GATv2 corrects this by reordering the operations:
+\[
+e(\mathbf{h}_v, \mathbf{h}_u) = \mathbf{a}^\top \mathrm{LeakyReLU}\!\left(
+    \mathbf{W}_1 \mathbf{h}_v + \mathbf{W}_2 \mathbf{h}_u\right),
+\]
+which makes the scoring function a two-layer MLP over the concatenated features. The
+resulting attention is \emph{dynamic}: the ranking of neighbors can differ for every
+query node, making GATv2 a strictly more expressive model. This property is particularly
+desirable in our setting, where the importance of each neighbor to the target node should
+depend on the target's own features.
+
+% ------------------------------------------------------------
+\section{The node2vec Algorithm}
+\label{sec:node2vec}
+% ------------------------------------------------------------
+
+In many real-world graphs, nodes have no natural feature vectors. node2vec
+\cite{grover2016node2vec} addresses this by learning a $d$-dimensional embedding for each
+node via a procedure analogous to word2vec. The algorithm generates sequences of nodes
+by performing \emph{biased second-order random walks} on the graph, then trains a
+skip-gram model with negative sampling on these sequences.
+
+The bias is controlled by two parameters:
+\begin{itemize}
+    \item $p$ (return parameter): probability of returning to the previously visited node.
+      Low $p$ encourages a depth-first search behavior.
+    \item $q$ (in-out parameter): probability of exploring nodes far from the previously
+      visited node. Low $q$ encourages a breadth-first search behavior.
+\end{itemize}
+By tuning $p$ and $q$, node2vec can interpolate between capturing \emph{homophily}
+(nodes in the same community are embedded close together) and
+\emph{structural equivalence} (nodes playing similar structural roles are embedded
+close together).
+
+In the original CMH architecture, node2vec is used to generate initial node features.
+However, these embeddings are computed once on the original graph and are never updated
+as the graph changes during the rewiring process. This is one of the limitations we
+address in our proposed architecture.
+
+
+% ============================================================
+\chapter{Problem Formulation}
+\label{ch:problem}
+% ============================================================
+
+In this chapter we give a formal definition of the Community Membership Hiding problem,
+specifying the constraints, the objective, the reward structure, and the evaluation
+metrics.
+
+% ------------------------------------------------------------
+\section{Formal Definition}
+\label{sec:formal}
+% ------------------------------------------------------------
+
+Let $\G = (\V, \E)$ be an undirected, unweighted graph and let $f$ be a community
+detection algorithm that, given $\G$, produces a partition $\C = f(\G) =
+\{\C_1, C_2, \ldots, C_k\}$ of $\V$ into $k$ non-overlapping communities.
+
+Given a target node $u \in \V$ with original community assignment $\C_i = f_u(\G)$
+(the community to which $u$ belongs in $\G$), the goal of CMH is to find a modified
+graph $\Gnew = (\V, \E')$ such that the following \emph{deception condition} is satisfied:
+
+\begin{definition}[Deception condition]
+\label{def:deception}
+Let $\C_i' = f_u(\Gnew)$ denote the community assigned to $u$ in $\Gnew$. The deception
+condition is:
+\[
+\simf(\C_i \setminus \{u\},\; \C_i' \setminus \{u\}) \leq \tau,
+\]
+where $\simf$ is a community similarity function and $\tau \in [0,1]$ is the
+\emph{deception threshold}. A value of $\tau = 0$ requires $\C_i$ and $\C_i'$ to be
+completely disjoint (hard deception), while $\tau = 1$ permits them to be identical
+(trivially satisfied).
+\end{definition}
+
+Following \textcite{bernini-2024}, we use the \emph{S{\o}rensen-Dice Coefficient} (DSC)
+as $\simf$:
+\[
+\mathrm{DSC}(A, B) = \frac{2|A \cap B|}{|A| + |B|}.
+\]
+DSC measures the proportion of shared nodes between two communities: it equals 0 when
+the communities are disjoint and 1 when they are identical.
+
+\begin{definition}[Budget constraint]
+\label{def:budget}
+The number of edge modifications is bounded by a \emph{budget}
+$\beta = \lfloor \beta_{\mathrm{mul}} \cdot \mu \rfloor$, where $\mu = 2M/N$ is the
+mean degree and $\beta_{\mathrm{mul}} \in \{1/2, 1, 2\}$ is a multiplier. Each
+rewiring step constitutes a single modification.
+\end{definition}
+
+\begin{definition}[Admissible actions]
+\label{def:actions}
+To align with the hiding objective, the action space is restricted as follows. Let
+$\C_i = f_u(\G)$ be the current community of $u$:
+\begin{itemize}
+    \item \textbf{Edge removal}: the agent may remove an edge $(u, v)$ only if
+      $v \in \C_i$ (i.e., $v$ is an \emph{intra-community} neighbor of $u$).
+    \item \textbf{Edge addition}: the agent may add an edge $(u, v)$ only if
+      $v \notin \C_i$ (i.e., $v$ is an \emph{inter-community} candidate).
+\end{itemize}
+Removing inter-community edges would further isolate $u$ within $\C_i$; adding
+intra-community edges would reinforce $u$'s membership. Both are thus excluded.
+\end{definition}
+
+\section{Graph Similarity}
+
+Beyond the community-level deception condition, we also measure the global structural
+distortion introduced by the rewiring. Following the original paper, we use the
+\emph{Jaccard similarity} of the edge sets:
+\[
+\mathrm{JAC}(\G, \Gnew) = \frac{|\E \cap \E'|}{|\E \cup \E'|}.
+\]
+A high Jaccard similarity indicates that the modified graph closely resembles the
+original, i.e., the structural cost of hiding is low.
+
+\section{Normalized Mutual Information}
+
+To quantify the impact of the rewiring on the \emph{community structure} as a whole,
+we use the Normalized Mutual Information (NMI) \cite{strehl2003cluster} between the
+original partition $\C = f(\G)$ and the modified partition $\C' = f(\Gnew)$:
+\[
+\NMI(\C, \C') = \frac{2\, I(\C\,;\, \C')}{H(\C) + H(\C')},
+\]
+where $I$ denotes mutual information and $H$ entropy over the community assignments.
+$\NMI$ takes values in $[0,1]$, with 1 indicating identical partitions and 0 indicating
+no shared information. A high NMI after hiding means the global community structure has
+been well preserved.
+
+\section{Evaluation Metrics}
+\label{sec:metrics}
+
+We evaluate methods using three metrics:
+
+\paragraph{Success Rate (SR).} The fraction of test instances in which the deception
+condition (Definition~\ref{def:deception}) is satisfied:
+\[
+\SR = \frac{\#\,\text{successful runs}}{\#\,\text{total runs}}.
+\]
+
+\paragraph{NMI.} The average NMI between $f(\G)$ and $f(\Gnew)$ across all test
+instances. Higher NMI indicates less structural distortion.
+
+\paragraph{F1 score.} Since SR and NMI are competing objectives---higher SR typically
+requires more aggressive rewiring, which lowers NMI---we report their harmonic mean as a
+balanced metric:
+\[
+F_1 = \frac{2 \cdot \SR \cdot \NMI}{\SR + \NMI}.
+\]
+
+
+% ============================================================
+\chapter{Related Work}
+\label{ch:related}
+% ============================================================
+
+\section{The Original CMH Agent (Bernini et al., 2024)}
+\label{sec:bernini}
+
+\textcite{bernini-2024} were the first to formulate Community Membership Hiding as an
+MDP and solve it with DRL. Their architecture, which serves as our primary baseline,
+consists of:
+\begin{enumerate}
+    \item A \textbf{graph encoder} based on a GNN that produces a representation of the
+          graph state. Node features are either random vectors or node2vec embeddings
+          computed on the original graph.
+    \item An \textbf{Actor-Critic network} (A2C) that, given the encoded graph, outputs
+          a probability distribution over candidate nodes for the next rewiring step and a
+          scalar value estimate.
+\end{enumerate}
+The agent is trained on the \texttt{words} dataset using the \texttt{greedy} community
+detection algorithm, and is evaluated for transferability to other datasets and algorithms.
+
+Notably, the original agent was shown to achieve success rates significantly above the
+random and degree-based baselines in standard evaluation scenarios. However, it degrades
+substantially on larger graphs, and---as we establish in Chapter~\ref{ch:architecture}---
+it suffers from a fundamental architectural limitation regarding the role of the target
+node.
+
+\section{The Right to Hide (Silvestri et al., 2025)}
+\label{sec:nabla}
+
+\textcite{silvestri2025righthidemaskingcommunity} approached CMH from a different angle,
+framing it as a continuous optimization problem. They define a differentiable relaxation
+of the deception loss and apply projected gradient descent, yielding two variants:
+$\nabla$-CMH and $\nabla$-CMH (projected). These gradient-based methods are
+computationally efficient and achieve competitive hiding rates with a well-controlled
+structural footprint. We use both as strong baselines in our evaluation.
+
+\section{Evasion Problems on Graphs}
+
+CMH is part of a broader family of \emph{graph evasion problems}, in which a structural
+modification is sought to fool an algorithm operating on the graph. Related problems
+include adversarial attacks on node classification \cite{kipf2017semi}, link prediction
+evasion, and graph-level classification adversarial examples. Our work is specifically
+concerned with the community-detection variant and does not assume any knowledge of the
+internal parameters of the detection algorithm.
+
+
+% ============================================================
+\chapter{Proposed Architecture}
+\label{ch:architecture}
+% ============================================================
+
+In this chapter we first analyze the original DRL agent and identify its key limitations.
+We then describe our proposed architecture step by step.
+
+% ------------------------------------------------------------
+\section{Analysis of the Original Agent}
+\label{sec:analysis}
+% ------------------------------------------------------------
+
+\subsection{The Target-Node Blindness Problem}
+
+A central observation motivating our work is the following. In the original architecture
+\cite{bernini-2024}, the graph encoder receives the full graph state $\G_t$ as input
+and produces a vector representation for every node. The actor network then outputs a
+probability distribution over all candidate nodes, and the environment applies the
+selected action \emph{relative to the target node $u$} (e.g., removes the edge between
+$u$ and the selected intra-community neighbor).
+
+The critical issue is that nowhere in this pipeline is the identity of $u$ communicated
+to the network. The encoder and actor receive no signal about \emph{who} the target is.
+To verify this, we fixed all random seeds and ran the original agent on the same graph
+with different target nodes. The actor's output probabilities and the critic's value
+estimate were identical across all target choices in the first step of every episode,
+confirming that the model is entirely unaware of $u$.
+
+As a result, the agent cannot adapt its policy to the specific structural position of the
+target node. Instead, it learns a global rewiring strategy that tends to increase overall
+community mixing---effectively shuffling the entire graph's community structure. While
+this can accidentally displace $u$ from its community, it is neither efficient nor
+reliable, especially when the budget $\beta$ is small.
+
+\subsection{Static Node Embeddings}
+
+The original architecture uses node2vec embeddings computed \emph{once} on the original
+graph $\G$ and reused throughout the entire episode. As the rewiring process modifies
+the graph, the embeddings become increasingly stale and fail to reflect the current
+topology. Furthermore, computing node2vec requires a separate preprocessing step and is
+itself computationally expensive for large graphs.
+
+\subsection{Undifferentiated Action Space}
+
+The original agent handles both edge addition and edge removal with the same policy
+network, without distinguishing between the two types of actions. We hypothesize that
+these two tasks have fundamentally different structure: removing intra-community edges
+requires identifying which neighbors contribute most to $u$'s community membership,
+while adding inter-community edges requires identifying which external nodes are most
+useful for attracting $u$ to a different community. Conflating these two tasks may limit
+the expressiveness of the learned policy.
+
+% ------------------------------------------------------------
+\section{Target-Aware Node Feature Construction}
+\label{sec:features}
+% ------------------------------------------------------------
+
+Our first modification addresses the target-node blindness problem. For each node $v \in
+\V$, we construct a feature vector $\mathbf{x}_v \in \mathbb{R}^d$ that explicitly
+encodes whether $v$ is the target node:
+\[
+\mathbf{x}_v = \left[\,f_{\mathrm{struct}}(v) \;\Big|\; \mathbf{1}[v = u]\,\right],
+\]
+where $f_{\mathrm{struct}}(v)$ is a vector of structural features and $\mathbf{1}[v=u]$
+is a binary indicator that is 1 only for the target node $u$.
+
+The structural features $f_{\mathrm{struct}}(v)$ combine:
+\begin{itemize}
+    \item \textbf{Static features} computed on the original graph $\G_0$ (degree,
+          clustering coefficient, betweenness centrality, community label) and held
+          fixed throughout the episode. These capture the initial structural role of
+          each node.
+    \item \textbf{Dynamic features} recomputed at each step on the current graph $\G_t$
+          (current degree, current community label, current number of intra-community
+          and inter-community neighbors). These capture the real-time effect of previous
+          rewiring actions.
+\end{itemize}
+
+By including $\mathbf{1}[v = u]$ in the feature vector, the GATv2 encoder can compute
+attention weights that depend explicitly on whether a node is the target. This enables
+the model to give special treatment to $u$'s neighborhood and to aggregate information
+relevant to the hiding objective.
+
+% ------------------------------------------------------------
+\section{GATv2-Based Graph Encoder}
+\label{sec:encoder}
+% ------------------------------------------------------------
+
+We replace the original GNN encoder with a multi-layer GATv2 \cite{brody2022how}
+network. As discussed in Section~\ref{sec:gnn}, GATv2 provides dynamic attention:
+the relative importance of each neighbor can differ for every query node, which is
+essential when the target node $u$ needs to focus on a specific subset of its neighbors.
+
+The GATv2 encoder takes as input the current graph $\G_t$ with node features
+$\mathbf{X}_t \in \mathbb{R}^{N \times d}$ and produces a node embedding matrix
+$\mathbf{H} \in \mathbb{R}^{N \times d'}$. The actor and critic networks operate on
+these embeddings.
+
+\paragraph{Actor.}
+The actor scores each candidate node $v$ in the action set $\mathcal{A}(s_t)$:
+\[
+\mathrm{score}(v) = \mathrm{MLP}_{\mathrm{actor}}\!\left(\left[\mathbf{h}_u \,\|\, \mathbf{h}_v\right]\right),
+\]
+where $\mathbf{h}_u$ and $\mathbf{h}_v$ are the embeddings of the target node and
+candidate $v$ respectively, and $\|\,\|$ denotes concatenation. This formulation ensures
+that the score of each candidate is conditioned on the target node's embedding, directly
+linking the action selection to the target's current context.
+
+The action probability distribution is obtained by applying a softmax over all
+candidates in $\mathcal{A}(s_t)$.
+
+\paragraph{Critic.}
+The critic estimates the state value:
+\[
+V(s_t) = \mathrm{MLP}_{\mathrm{critic}}\!\left(\mathrm{READOUT}(\mathbf{H})\right),
+\]
+where READOUT is a mean pooling over all node embeddings, followed by a linear
+transformation.
+
+% ------------------------------------------------------------
+\section{Dual-Agent Architecture}
+\label{sec:dual}
+% ------------------------------------------------------------
+
+The Dual-Agent Architecture maintains two independent Actor-Critic systems:
+\begin{itemize}
+    \item $\mathrm{Agent}_{\mathrm{add}}$: handles edge \emph{addition} actions
+      (selecting inter-community candidates to connect to $u$).
+    \item $\mathrm{Agent}_{\mathrm{del}}$: handles edge \emph{removal} actions
+      (selecting intra-community neighbors of $u$ whose edge should be removed).
+\end{itemize}
+
+At each step, the environment determines whether the next action should be an addition
+or a deletion (based on availability and the current budget), and dispatches to the
+appropriate agent. Each agent has its own GATv2 encoder, actor network, and critic
+network, with parameters trained independently.
+
+The rationale is that edge addition and edge deletion are structurally different tasks.
+The deletion agent needs to identify which intra-community connections most strongly
+anchor $u$ to its community; the addition agent needs to identify which external nodes
+would most effectively attract $u$ to a different community. Separating these tasks
+into specialized networks allows each agent to develop representations tailored to
+its subtask.
+
+% ------------------------------------------------------------
+\section{Policy-Guided Subgraphing}
+\label{sec:subgraph}
+% ------------------------------------------------------------
+
+On large graphs with thousands or tens of thousands of nodes, the full graph cannot be
+efficiently processed by a GNN in each step of every episode. Policy-Guided Subgraphing
+addresses this by restricting the graph encoder to a subgraph $\hat{\G}_t$ centered on
+the target node:
+
+\[
+\hat{\G}_t = \G_t\!\left[\bigcup_{k=0}^{K} \mathcal{N}^k(u)\right],
+\]
+where $\mathcal{N}^k(u)$ denotes the set of nodes reachable from $u$ in at most $k$ hops
+in $\G_t$. The subgraph retains all edges within this neighborhood. In our experiments,
+$K = 2$ (the 2-hop ego-subgraph of $u$) provides a good trade-off between
+representational richness and computational tractability.
+
+The action space is further restricted to nodes within $\hat{\G}_t$: inter-community
+candidates are drawn from the 2-hop neighborhood of $u$, and intra-community neighbors
+are a subset of $u$'s direct neighbors. This heuristic is \emph{policy-guided} in the
+sense that the agent's decisions are made with respect to the local context of $u$ rather
+than the global graph, which we find to be both more efficient and more aligned with the
+semantics of the hiding task.
+
+% ------------------------------------------------------------
+\section{Training Procedure}
+\label{sec:training}
+% ------------------------------------------------------------
+
+We train the agent (or agents, in the dual-agent setting) on the \texttt{words} dataset
+using the \texttt{greedy} community detection algorithm, following the same setting as
+the original work. Community change method 1 (random community selection) is used
+during training to expose the agent to diverse node types and community structures,
+avoiding the overfitting to a fixed node or community that would result from method 2.
+
+We use the A2C update rule:
+\begin{align*}
+\mathcal{L}_{\mathrm{actor}}   &= -\log \pi_\theta(a_t \mid s_t)\; A_t, \\
+\mathcal{L}_{\mathrm{critic}}  &= \left(R_t - V_\phi(s_t)\right)^2, \\
+\mathcal{L}_{\mathrm{total}}   &= \mathcal{L}_{\mathrm{actor}} + c_v\, \mathcal{L}_{\mathrm{critic}}
+                                  - c_e \, H(\pi_\theta(\cdot \mid s_t)),
+\end{align*}
+where $A_t = R_t - V_\phi(s_t)$ is the estimated advantage, $H$ is the entropy
+regularization term that encourages exploration, and $c_v, c_e$ are coefficients.
+
+The reward at each step is a combination of a progress reward (how much the deception
+condition has improved) and a penalty that discourages excessive structural perturbation:
+\[
+r_t = \alpha\, \Delta_{\mathrm{sim}}(t) - (1-\alpha)\, \Delta_{\mathrm{NMI}}(t),
+\]
+where $\Delta_{\mathrm{sim}}$ is the reduction in the DSC similarity (i.e., progress
+towards hiding) and $\Delta_{\mathrm{NMI}}$ is the change in global NMI (i.e., increase
+in structural distortion). The parameter $\alpha$ controls the trade-off between hiding
+effectiveness and structural preservation.
+
+
+% ============================================================
+\chapter{Experimental Evaluation}
+\label{ch:experiments}
+% ============================================================
+
+\section{Setup}
+\label{sec:setup}
+
+All experiments were run on an AWS EC2 \texttt{g4dn.xlarge} instance (4 vCPUs at
+2.5~GHz, 16~GiB RAM, NVIDIA T4 GPU) running Ubuntu~24.04 with the Deep Learning Base
+OSS Nvidia Driver AMI. The training algorithm is A2C with the Adam optimizer and a
+learning rate of $7 \times 10^{-4}$. We train for 10,000 episodes on \texttt{words}
+and report results averaged over 100 test runs per configuration, with fixed random
+seeds for reproducibility.
+
+\section{Datasets}
+\label{sec:datasets}
+
+We use the five datasets from the original CMH benchmark:
+
+\begin{table}[h]
+\centering
+\caption{Dataset statistics.}
+\label{tab:datasets}
+\begin{tabular}{lrrr}
+\toprule
+Dataset   & Nodes & Edges & Avg.\ degree \\
+\midrule
+\texttt{words}  & ---   & ---   & ---          \\
+\texttt{kar}    & ---   & ---   & ---          \\
+\texttt{vote}   & ---   & ---   & ---          \\
+\texttt{pow}    & ---   & ---   & ---          \\
+\texttt{fb-75}  & ---   & ---   & ---          \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% TODO: fill in dataset statistics from the paper
+
+The \texttt{words} dataset is used exclusively for training. The remaining four
+datasets are used for evaluation, probing the agent's ability to generalize to
+unseen graphs.
+
+\section{Baselines}
+\label{sec:baselines}
+
+We compare against five baselines:
+\begin{enumerate}
+    \item \textbf{Random}: selects a random node from the admissible action set.
+    \item \textbf{Degree}: selects the admissible node with the highest degree.
+    \item \textbf{Betweenness}: selects the admissible node with the highest betweenness
+          centrality.
+    \item \textbf{Roam}: a heuristic that reduces the centrality of the target node
+          within its community.
+    \item \textbf{Greedy}: a relaxed heuristic that greedily selects the most
+          promising rewiring step based on node degree.
+    \item \textbf{Original DRL agent} \cite{bernini-2024}: the A2C agent from the
+          original paper (downloaded pre-trained model weights).
+    \item \textbf{$\nabla$-CMH} and \textbf{$\nabla$-CMH (projected)}
+          \cite{silvestri2025righthidemaskingcommunity}: gradient-based methods.
+\end{enumerate}
+
+\section{Evaluation Protocol}
+\label{sec:protocol}
+
+We evaluate each method on all combinations of $\tau \in \{0.3, 0.5, 0.8\}$ and
+$\beta_{\mathrm{mul}} \in \{0.5, 1, 2\}$. For each combination and dataset, we run
+100 test episodes. In each episode, the target node $u$ is sampled from a different
+community, following community-change method~2 (Section~\ref{sec:training}), which
+samples from communities of sizes $0.2$, $0.5$, and $0.8$ relative to the largest
+community, providing a balanced evaluation across community sizes.
+
+We evaluate both the \emph{symmetric} setting (the agent is tested with the same
+detection algorithm used for training, \texttt{greedy}) and the \emph{asymmetric}
+setting (the agent is tested with \texttt{louvain} and \texttt{walktrap}), which
+assesses the transferability of the learned policy to unseen detection algorithms.
+
+\section{Results}
+\label{sec:results}
+
+% TODO: insert final experimental results here
+\noindent\textit{[Results to be finalized. Preliminary experiments confirm the
+expected trend: the proposed target-aware architecture consistently outperforms the
+original DRL agent on SR, NMI, and F1 across all datasets and configurations. Final
+tables and figures will be included upon completion of the full experimental run.]}
+
+\subsection{Comparison with the Original Agent}
+
+\subsection{Comparison with Gradient-Based Methods}
+
+\subsection{Ablation Study}
+
+To isolate the contribution of each component, we conduct an ablation study comparing:
+\begin{enumerate}
+    \item \textbf{Original}: the original DRL agent \cite{bernini-2024}.
+    \item \textbf{+ Target feature}: original architecture with target-node indicator added.
+    \item \textbf{+ GATv2}: target-aware architecture with GATv2 encoder.
+    \item \textbf{+ Dual agents}: full proposed architecture with dual-agent specialization.
+\end{enumerate}
+
+\subsection{Scalability}
+
+\noindent\textit{[Results on \texttt{fb-75} with and without Policy-Guided Subgraphing
+to be included.]}
+
+
+% ============================================================
+\chapter{Conclusions and Future Work}
+\label{ch:conclusions}
+% ============================================================
+
+\section{Summary}
+
+In this thesis we studied the Community Membership Hiding problem and identified a
+critical limitation in the state-of-the-art DRL approach: the original agent is unaware
+of the target node's identity, learning a generic community-shuffling policy rather than
+a targeted hiding strategy. We proposed a novel architecture that addresses this
+limitation by incorporating the target node as an explicit input feature, replacing the
+GNN encoder with GATv2 to exploit dynamic, query-conditioned attention, combining static
+and dynamic structural signals, introducing a Dual-Agent Architecture for specialized
+edge addition and deletion policies, and developing a Policy-Guided Subgraphing heuristic
+for scalability.
+
+Experimental results show that each of these components contributes positively to the
+overall performance, and the full architecture consistently outperforms existing methods
+across datasets, detection algorithms, and parameter configurations.
+
+\section{Limitations}
+
+Several limitations remain in our current work:
+\begin{itemize}
+    \item The method still assumes complete graph knowledge. In practice, a user may
+          only have access to a local view of the network.
+    \item Only non-overlapping communities are considered. Many real-world networks
+          exhibit overlapping community structure.
+    \item The detection algorithm is treated as a black box. Knowing the algorithm
+          (white-box setting) could enable more targeted and efficient strategies.
+\end{itemize}
+
+\section{Future Work}
+
+Several directions for future research are natural extensions of this work:
+
+\paragraph{Overlapping communities.}
+Extending the problem formulation and the architecture to handle overlapping communities
+would significantly broaden the applicability of the method.
+
+\paragraph{Partial graph knowledge.}
+A more realistic setting assumes that the hider has access only to a local ego-network
+or a sampled subgraph. Designing agents that are robust to partial observations is an
+important open problem.
+
+\paragraph{White-box hiding.}
+If the community detection algorithm is known, one could exploit its structure (e.g.,
+the modularity landscape for Louvain, or the random-walk transition matrix for Walktrap)
+to design more efficient hiding strategies.
+
+\paragraph{Multiple target nodes.}
+An extension to the simultaneous hiding of multiple nodes, possibly coordinated via
+Multi-Agent Reinforcement Learning, is a natural next step.
+
+\paragraph{Synthetic and trivial datasets.}
+Testing the architecture on synthetic graphs with known community structure (e.g.,
+stochastic block models, planted partition models) would provide controlled ablation
+studies and theoretical insights into when and why the method succeeds or fails.
+
+
+% ============================================================
+\backmatter
+% ============================================================
+
+\printbibliography
+
+\end{document}

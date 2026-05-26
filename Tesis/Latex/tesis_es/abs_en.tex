@@ -1,0 +1,35 @@
+\chapter*{\runtitle}
+
+\noindent
+The \emph{Community Membership Hiding} (CMH) problem asks: given a graph, a community
+detection algorithm, and a target node $u$, find a minimal set of edge rewirings
+adjacent to $u$ such that the algorithm no longer assigns it to its original community,
+while preserving the overall structural integrity of the graph.
+This problem arises in the context of network privacy, where detection algorithms can
+inadvertently reveal sensitive affiliations---political or ideological---solely from
+a node's structural position.
+
+Recent work formulated CMH as a Markov Decision Process (MDP) solved via Deep
+Reinforcement Learning (DRL) using an Actor-Critic (A2C) architecture.
+In this thesis we identify a critical architectural limitation of that approach: the
+agent evaluates the graph globally without explicitly conditioning on the target node,
+thereby learning a generic community-shuffling policy rather than a targeted hiding
+strategy.
+
+We propose a novel DRL architecture that explicitly incorporates the target node as an
+input feature, employs Graph Attention Networks v2 (GATv2) as the graph encoder to
+leverage a more expressive, dynamic attention mechanism, and combines static and
+real-time structural signals that track topological changes during rewiring.
+We extend the single-agent system to a Dual-Agent Architecture that specializes separate
+agents for edge addition and deletion, and introduce a Policy-Guided Subgraphing
+heuristic that makes the framework tractable on large graphs.
+
+Extensive experimental evaluation on the standard benchmark datasets demonstrates that
+our architecture consistently outperforms both the original DRL agent and strong
+gradient-based baselines, achieving high hiding success rates with minimal structural
+perturbation.
+
+\bigskip
+
+\noindent\textbf{Keywords:} community detection, community membership hiding, deep
+reinforcement learning, graph attention networks, network privacy, GATv2, Actor-Critic.

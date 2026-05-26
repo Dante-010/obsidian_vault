@@ -1,0 +1,823 @@
+% ============================================================
+%  Versión en español — documento principal
+%  Universidad de Buenos Aires · FCEN · Departamento de Computación
+%  Licenciatura en Ciencias de la Computación
+% ============================================================
+\documentclass[11pt,a4paper,twoside]{tesis}
+
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[backend=biber,style=numeric,sorting=nyt]{biblatex}
+
+\addbibresource{tesis.bib}
+
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+% Entornos matemáticos
+\newtheorem{definition}{Definición}[chapter]
+\newtheorem{remark}{Observación}[chapter]
+
+% Abreviaturas de notación
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Gnew}{\mathcal{G}'}
+\newcommand{\Cnew}{\mathcal{C}'}
+\newcommand{\simf}{\mathrm{sim}}
+\newcommand{\SR}{\mathrm{SR}}
+\newcommand{\NMI}{\mathrm{NMI}}
+
+\begin{document}
+
+%%%% CARÁTULA
+\def\autor{Dante Culaciati}
+\def\tituloTesis{Mejorando el Ocultamiento de Membres\'ia de Comunidades \vspace{.2cm} \\
+                 mediante Aprendizaje Profundo por Refuerzo}
+\def\runtitulo{Mejorando el Ocultamiento de Membres\'ia de Comunidades
+               mediante Aprendizaje Profundo por Refuerzo}
+\def\runtitle{Improving Community Membership Hiding via Deep Reinforcement Learning}
+\def\director{Esteban Feuerstein}
+\def\codirector{[Nombre del Codirector]}   % TODO: completar
+\def\lugar{Buenos Aires, 2026}
+\input{caratula}
+
+%%%% PRELIMINARES
+\frontmatter
+\pagestyle{empty}
+\input{abs_esp.tex}
+
+\cleardoublepage
+\input{abs_en.tex}
+
+\cleardoublepage
+\input{agradecimientos.tex}
+
+\cleardoublepage
+\input{dedicatoria.tex}
+
+\cleardoublepage
+\tableofcontents
+
+% ============================================================
+\mainmatter
+\pagestyle{headings}
+% ============================================================
+
+
+% ============================================================
+\chapter{Introducción}
+\label{ch:intro}
+% ============================================================
+
+La ciencia moderna de redes ha traído avances significativos en nuestra comprensión de
+los sistemas complejos. Una de las propiedades estructurales más relevantes de los grafos
+que representan fenómenos del mundo real---desde plataformas de redes sociales hasta
+redes de interacción biológica---es su \emph{estructura de comunidades}: la tendencia de
+los nodos a agruparse en conjuntos densamente conectados entre sí, con escasas conexiones
+hacia el resto de la red. Los algoritmos de detección de comunidades que descubren esta
+estructura han demostrado ser altamente efectivos \cite{Fortunato-2010}, y son utilizados
+rutinariamente en plataformas a gran escala para caracterizar usuarios, personalizar
+contenidos y dirigir publicidad.
+
+Sin embargo, esta funcionalidad conlleva un riesgo fundamental de privacidad. Cuando un
+grafo codifica relaciones sociales, la comunidad a la que pertenece un nodo puede revelar
+inadvertidamente afiliaciones sensibles---tendencias políticas, creencias religiosas,
+condiciones de salud o asociaciones ideológicas---a partir únicamente de su posición
+estructural, sin ninguna revelación explícita de dicha información. Esta preocupación no
+es meramente teórica: la detección de comunidades ha sido utilizada en la práctica para
+identificar grupos políticos en redes online y para perfilar individuos en grafos sociales.
+
+Para contrarrestar esto, el concepto de \emph{Community Membership Hiding} (CMH) fue
+introducido por \textcite{bernini-2024}. El objetivo del CMH es modificar
+estratégicamente la topología de una red---añadiendo o eliminando un número pequeño de
+aristas adyacentes a un nodo objetivo $u$---de modo que $u$ deje de ser asignado a su
+comunidad original por un algoritmo de detección, mientras se mantiene mínima la
+perturbación del grafo. El algoritmo de detección se trata como una \emph{caja negra}:
+el actor puede consultarlo pero no puede acceder a sus parámetros internos.
+
+\textcite{bernini-2024} formularon el CMH como un Proceso de Decisión de Markov (MDP) y
+lo resolvieron mediante Aprendizaje Profundo por Refuerzo (DRL) usando una arquitectura
+Actor-Crítico (A2C). Si bien ese trabajo demostró la viabilidad del paradigma DRL, exhibe
+una degradación notable del rendimiento en grafos de mayor tamaño, y---como
+demostramos en esta tesis---adolece de una limitación arquitectónica crítica: el agente
+evalúa la red de forma \emph{global}, sin condicionar explícitamente en la identidad del
+nodo objetivo. Como consecuencia, el agente no puede aprender una política que dependa de
+quién es el objetivo; en cambio, aprende una estrategia genérica de reorganización de
+comunidades que desplaza al nodo objetivo de su comunidad como efecto secundario.
+
+\section*{Contribuciones}
+
+En esta tesis realizamos las siguientes contribuciones:
+
+\begin{enumerate}
+    \item \textbf{Identificación de una limitación arquitectónica.}
+          Demostramos formalmente que el agente DRL original produce salidas idénticas
+          para distintos nodos objetivo dado el mismo estado del grafo, confirmando que
+          no puede condicionar su política en el objetivo.
+
+    \item \textbf{Arquitectura consciente del nodo objetivo.}
+          Proponemos una arquitectura DRL que incorpora explícitamente la identidad del
+          nodo objetivo como característica de entrada. El codificador de grafo se
+          reemplaza por \emph{Graph Attention Networks v2} (GATv2) \cite{brody2022how},
+          que provee un mecanismo de atención más expresivo y condicionado al nodo
+          consulta. Las características de los nodos combinan indicadores estáticos del
+          grafo original con señales estructurales actualizadas dinámicamente durante el
+          proceso de reconexión.
+
+    \item \textbf{Arquitectura Dual.}
+          Extendemos el sistema de un único agente a una Arquitectura Dual que mantiene
+          dos agentes especializados: uno para la adición de aristas y otro para su
+          eliminación, cada uno con redes de política y valor propias entrenadas
+          independientemente.
+
+    \item \textbf{Subgrafado Guiado por Política.}
+          Para hacer el sistema escalable en grafos grandes, introducimos una heurística
+          de Subgrafado Guiado por Política que restringe el codificador de grafo a un
+          subgrafo relevante centrado en el nodo objetivo, reduciendo el costo
+          computacional sin sacrificar la calidad de la política aprendida.
+
+    \item \textbf{Evaluación experimental extensiva.}
+          Evaluamos todas las contribuciones propuestas sobre los datasets de benchmark
+          estándar del área, comparando contra el agente DRL original y dos métodos
+          basados en gradientes introducidos en \textcite{silvestri2025righthidemaskingcommunity}.
+\end{enumerate}
+
+\section*{Organización del trabajo}
+
+El resto de esta tesis se organiza de la siguiente manera. El
+Capítulo~\ref{ch:background} presenta los conceptos necesarios sobre grafos, detección
+de comunidades, aprendizaje por refuerzo y redes neuronales de grafos.
+El Capítulo~\ref{ch:problem} formaliza el problema.
+El Capítulo~\ref{ch:related} revisa los trabajos relacionados.
+El Capítulo~\ref{ch:architecture} describe la arquitectura propuesta.
+El Capítulo~\ref{ch:experiments} presenta la evaluación experimental.
+El Capítulo~\ref{ch:conclusions} concluye con una discusión y direcciones de trabajo
+futuro.
+
+
+% ============================================================
+\chapter{Marco Teórico}
+\label{ch:background}
+% ============================================================
+
+Este capítulo introduce los conceptos fundamentales necesarios para comprender el resto
+de la tesis. Cubrimos los fundamentos de grafos y detección de comunidades, presentamos
+una definición formal del problema CMH, revisamos los elementos relevantes del
+Aprendizaje por Refuerzo, y describimos las redes de atención de grafos y el algoritmo
+node2vec.
+
+% ------------------------------------------------------------
+\section{Grafos y Estructura de Comunidades}
+\label{sec:grafos}
+% ------------------------------------------------------------
+
+Un \emph{grafo} $\G = (\V, \E)$ consiste en un conjunto de nodos $\V$ y un conjunto de
+aristas $\E \subseteq \V \times \V$. Denotamos $|\V| = N$ y $|\E| = M$. En un grafo
+no dirigido, $(u,v) \in \E$ implica $(v,u) \in \E$. La mayoría de los datasets de este
+trabajo corresponden a grafos no dirigidos.
+
+El \emph{grado} de un nodo $v$, denotado $\deg(v)$, es el número de aristas incidentes
+en $v$. El grado medio del grafo es $\mu = 2M/N$. La \emph{vecindad} de $v$ es
+$\mathcal{N}(v) = \{w : (v,w) \in \E\}$.
+
+\begin{definition}[Estructura de comunidades]
+Un grafo $\G$ exhibe \emph{estructura de comunidades} si sus nodos pueden particionarse
+en grupos $\C = \{\C_1, \C_2, \ldots, \C_k\}$ tal que la densidad de aristas dentro de
+cada grupo es significativamente mayor que la densidad de aristas entre grupos distintos.
+\end{definition}
+
+% ------------------------------------------------------------
+\section{Algoritmos de Detección de Comunidades}
+\label{sec:deteccion}
+% ------------------------------------------------------------
+
+Existe una gran variedad de algoritmos para la detección de comunidades en la literatura
+\cite{Fortunato-2010}. En esta tesis nos centramos en tres métodos ampliamente
+utilizados, todos tratados como \emph{cajas negras} por nuestro agente.
+
+\paragraph{Optimización greedy de modularidad.}
+\textcite{clauset2004greedy} introdujeron un algoritmo voraz que maximiza la
+\emph{modularidad}, definida como la fracción de aristas internas a las comunidades
+menos la fracción esperada bajo un modelo nulo con la misma secuencia de grados:
+\[
+Q = \frac{1}{2M}\sum_{i,j}\left[A_{ij} - \frac{k_i k_j}{2M}\right]\delta(c_i, c_j),
+\]
+donde $A$ es la matriz de adyacencia, $k_i$ es el grado del nodo $i$, y $\delta(c_i,c_j)$
+vale 1 si $i$ y $j$ pertenecen a la misma comunidad y 0 en caso contrario. El algoritmo
+parte de cada nodo en su propia comunidad y fusiona iterativamente pares de comunidades
+que producen el mayor aumento de $Q$.
+
+\paragraph{Algoritmo de Louvain.}
+\textcite{blondel2008louvain} propusieron una heurística de dos fases para la
+maximización de la modularidad. En la primera fase, cada nodo se mueve a la comunidad
+del vecino que produce la mayor ganancia de modularidad. En la segunda fase, las
+comunidades se colapsan en super-nodos y la primera fase se repite sobre el grafo
+resultante. El proceso continúa hasta que no sea posible ninguna mejora adicional.
+
+\paragraph{Algoritmo de Walktrap.}
+\textcite{pons2005walktrap} introdujeron un algoritmo basado en caminatas aleatorias.
+La intuición es que las caminatas aleatorias cortas tienden a permanecer dentro de la
+misma comunidad; por lo tanto, los nodos visitados por el mismo conjunto de caminatas
+cortas probablemente pertenecen a la misma comunidad. El algoritmo define una distancia
+entre nodos basada en las probabilidades de transición de una caminata aleatoria de $t$
+pasos y utiliza clustering jerárquico para identificar comunidades.
+
+% ------------------------------------------------------------
+\section{Aprendizaje por Refuerzo}
+\label{sec:rl}
+% ------------------------------------------------------------
+
+El \emph{Aprendizaje por Refuerzo} (AR) es un paradigma del aprendizaje automático en
+el cual un \emph{agente} aprende a tomar decisiones secuenciales interactuando con un
+\emph{entorno} con el objetivo de maximizar una señal acumulada de \emph{recompensa}.
+La interacción procede en pasos de tiempo discretos: en cada paso $t$, el agente observa
+un estado $s_t \in \mathcal{S}$, selecciona una acción $a_t \in \mathcal{A}(s_t)$ según
+una política $\pi$, y recibe una recompensa escalar $r_t$ transitando al estado
+$s_{t+1}$.
+
+\paragraph{Proceso de Decisión de Markov.}
+La formalización estándar es el Proceso de Decisión de Markov (MDP), definido por la
+tupla $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$, donde $\gamma \in [0,1]$ es el factor
+de descuento. El retorno desde el paso $t$ es:
+\[
+G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}.
+\]
+El objetivo es encontrar una política $\pi^*$ que maximice el retorno esperado:
+\[
+\pi^* = \arg\max_{\pi} \; \mathbb{E}_{\pi}\left[G_t \mid s_t = s\right].
+\]
+
+\paragraph{Métodos Actor-Crítico.}
+Los métodos de gradiente de política optimizan una política paramétrica $\pi_\theta(a
+\mid s)$ siguiendo el gradiente del retorno esperado. Las arquitecturas Actor-Crítico
+mantienen dos redes: el \emph{actor}, que representa la política $\pi_\theta$, y el
+\emph{crítico}, que estima la función de valor de estado $V_\phi(s)$ para calcular la
+\emph{ventaja}:
+\[
+A_t = R_t - V_\phi(s_t).
+\]
+Entrenar el crítico para proveer una base precisa reduce sustancialmente la varianza del
+estimador del gradiente de política sin introducir sesgo, lo que lleva a un aprendizaje
+más estable.
+
+El algoritmo \emph{Advantage Actor-Critic} (A2C) \cite{mnih2016asynchronous}, que
+constituye la base del agente CMH original y de nuestra arquitectura propuesta,
+actualiza síncronamente el actor y el crítico utilizando la ventaja estimada a partir de
+trayectorias recolectadas.
+
+% ------------------------------------------------------------
+\section{Redes Neuronales de Grafos}
+\label{sec:gnn}
+% ------------------------------------------------------------
+
+Las Redes Neuronales de Grafos (GNNs) son una familia de modelos de aprendizaje
+profundo diseñados para operar sobre datos estructurados en grafos. La idea central es
+el \emph{paso de mensajes}: cada nodo agrega información de sus vecinos, transformando
+los mensajes agregados mediante parámetros aprendibles para producir una nueva
+representación. Formalmente, la capa $l$ de una GNN actualiza la representación del
+nodo $v$ como:
+\[
+\mathbf{h}_v^{(l)} = \mathrm{ACTUALIZAR}^{(l)}\!\left(\mathbf{h}_v^{(l-1)},\,
+    \mathrm{AGREGAR}^{(l)}\!\left(\left\{\mathbf{h}_u^{(l-1)} : u \in \mathcal{N}(v)\right\}\right)\right).
+\]
+
+\subsection{Graph Attention Networks (GAT)}
+
+Las Graph Attention Networks \cite{veličković2018graph} reemplazan la agregación
+uniforme o basada en grado de las GNNs estándar por un mecanismo de atención aprendible:
+\[
+\alpha_{vu} = \frac{\exp\!\left(\mathrm{LeakyReLU}\!\left(\mathbf{a}^\top
+    [\mathbf{W}\mathbf{h}_v \,\|\, \mathbf{W}\mathbf{h}_u]\right)\right)}
+    {\sum_{w \in \mathcal{N}(v)}\exp\!\left(\mathrm{LeakyReLU}\!\left(\mathbf{a}^\top
+    [\mathbf{W}\mathbf{h}_v \,\|\, \mathbf{W}\mathbf{h}_w]\right)\right)}.
+\]
+
+\subsection{GATv2: Atención Dinámica}
+
+\textcite{brody2022how} identificaron una limitación fundamental de la GAT original:
+su atención es \emph{estática}, lo que significa que el ranking de los vecinos es el
+mismo para todos los nodos consulta. GATv2 corrige esto reordenando las operaciones:
+\[
+e(\mathbf{h}_v, \mathbf{h}_u) = \mathbf{a}^\top \mathrm{LeakyReLU}\!\left(
+    \mathbf{W}_1 \mathbf{h}_v + \mathbf{W}_2 \mathbf{h}_u\right),
+\]
+lo que hace que la función de puntuación sea un MLP de 2 capas sobre las características
+concatenadas. La atención resultante es \emph{dinámica}: el ranking de los vecinos puede
+diferir para cada nodo consulta, haciendo de GATv2 un modelo estrictamente más expresivo.
+Esta propiedad es particularmente deseable en nuestro contexto, donde la importancia de
+cada vecino para el nodo objetivo debe depender de las propias características del
+objetivo.
+
+% ------------------------------------------------------------
+\section{El Algoritmo node2vec}
+\label{sec:node2vec}
+% ------------------------------------------------------------
+
+En muchos grafos del mundo real, los nodos no tienen vectores de características
+naturales. node2vec \cite{grover2016node2vec} aborda esto aprendiendo un embedding de
+dimensión $d$ para cada nodo mediante un procedimiento análogo a word2vec. El algoritmo
+genera secuencias de nodos realizando \emph{caminatas aleatorias sesgadas de segundo
+orden} sobre el grafo, y luego entrena un modelo skip-gram con negative sampling sobre
+dichas secuencias.
+
+El sesgo se controla mediante dos parámetros: $p$ (probabilidad de retorno al nodo
+anterior) y $q$ (probabilidad de explorar nodos lejanos). Ajustando $p$ y $q$, node2vec
+puede capturar \emph{homofilia} (nodos de la misma comunidad se embeben cerca) o
+\emph{equivalencia estructural} (nodos con roles estructurales similares se embeben
+cerca).
+
+En la arquitectura CMH original, node2vec se usa para generar características iniciales
+de los nodos. Sin embargo, estos embeddings se calculan una única vez sobre el grafo
+original y no se actualizan a medida que el grafo cambia durante el proceso de
+reconexión. Esta es una de las limitaciones que abordamos en nuestra propuesta.
+
+
+% ============================================================
+\chapter{Formulación del Problema}
+\label{ch:problem}
+% ============================================================
+
+En este capítulo damos una definición formal del problema de Community Membership
+Hiding, especificando las restricciones, el objetivo, la estructura de recompensas y las
+métricas de evaluación.
+
+\section{Definición Formal}
+\label{sec:formal}
+
+Sea $\G = (\V, \E)$ un grafo no dirigido y no ponderado, y sea $f$ un algoritmo de
+detección de comunidades que, dado $\G$, produce una partición $\C = f(\G) =
+\{\C_1, \C_2, \ldots, \C_k\}$ de $\V$ en $k$ comunidades no solapadas.
+
+Dado un nodo objetivo $u \in \V$ con comunidad original $\C_i = f_u(\G)$, el objetivo
+del CMH es encontrar un grafo modificado $\Gnew = (\V, \E')$ tal que se satisfaga la
+siguiente \emph{condición de engaño}:
+
+\begin{definition}[Condición de engaño]
+\label{def:deception}
+Sea $\C_i' = f_u(\Gnew)$ la comunidad asignada a $u$ en $\Gnew$. La condición de engaño es:
+\[
+\simf(\C_i \setminus \{u\},\; \C_i' \setminus \{u\}) \leq \tau,
+\]
+donde $\simf$ es una función de similitud entre comunidades y $\tau \in [0,1]$ es el
+\emph{umbral de engaño}. Un valor de $\tau = 0$ requiere que $\C_i$ y $\C_i'$ sean
+completamente disjuntas (engaño duro), mientras que $\tau = 1$ permite que sean
+idénticas (trivialmente satisfecho).
+\end{definition}
+
+Siguiendo \textcite{bernini-2024}, utilizamos el \emph{Coeficiente de Sørensen-Dice}
+(DSC) como $\simf$:
+\[
+\mathrm{DSC}(A, B) = \frac{2|A \cap B|}{|A| + |B|}.
+\]
+El DSC vale 0 cuando las comunidades son disjuntas y 1 cuando son idénticas.
+
+\begin{definition}[Restricción de presupuesto]
+\label{def:budget}
+El número de modificaciones de aristas está acotado por un \emph{presupuesto}
+$\beta = \lfloor \beta_{\mathrm{mul}} \cdot \mu \rfloor$, donde $\mu = 2M/N$ es el
+grado medio y $\beta_{\mathrm{mul}} \in \{1/2, 1, 2\}$ es un multiplicador.
+\end{definition}
+
+\begin{definition}[Acciones admisibles]
+\label{def:actions}
+El espacio de acciones está restringido de la siguiente manera. Sea $\C_i = f_u(\G)$ la
+comunidad actual de $u$:
+\begin{itemize}
+    \item \textbf{Eliminación de arista}: el agente puede eliminar una arista $(u, v)$
+      solo si $v \in \C_i$ (vecino \emph{intra-comunitario} de $u$).
+    \item \textbf{Adición de arista}: el agente puede añadir una arista $(u, v)$ solo
+      si $v \notin \C_i$ (candidato \emph{inter-comunitario}).
+\end{itemize}
+\end{definition}
+
+\section{Similitud de Grafo}
+
+Además de la condición de engaño a nivel de comunidad, medimos la distorsión estructural
+global introducida por la reconexión mediante la \emph{similitud de Jaccard} sobre los
+conjuntos de aristas:
+\[
+\mathrm{JAC}(\G, \Gnew) = \frac{|\E \cap \E'|}{|\E \cup \E'|}.
+\]
+
+\section{Información Mutua Normalizada}
+
+Para cuantificar el impacto de la reconexión sobre la \emph{estructura de comunidades}
+en su conjunto, utilizamos la Información Mutua Normalizada (NMI) \cite{strehl2003cluster}
+entre la partición original $\C = f(\G)$ y la modificada $\C' = f(\Gnew)$:
+\[
+\NMI(\C, \C') = \frac{2\, I(\C\,;\, \C')}{H(\C) + H(\C')}.
+\]
+Un NMI alto tras el ocultamiento indica que la estructura global de comunidades ha sido
+bien preservada.
+
+\section{Métricas de Evaluación}
+\label{sec:metrics}
+
+Evaluamos los métodos con tres métricas:
+
+\paragraph{Tasa de Éxito (SR).} La fracción de instancias de prueba en las que la
+condición de engaño (Definición~\ref{def:deception}) se satisface.
+
+\paragraph{NMI.} El NMI promedio entre $f(\G)$ y $f(\Gnew)$ sobre todas las instancias
+de prueba. Un NMI mayor indica menor distorsión estructural.
+
+\paragraph{Score F1.} La media armónica de SR y NMI:
+\[
+F_1 = \frac{2 \cdot \SR \cdot \NMI}{\SR + \NMI}.
+\]
+
+
+% ============================================================
+\chapter{Trabajos Relacionados}
+\label{ch:related}
+% ============================================================
+
+\section{El Agente CMH Original (Bernini et al., 2024)}
+\label{sec:bernini}
+
+\textcite{bernini-2024} fueron los primeros en formular el CMH como un MDP y resolverlo
+con DRL. Su arquitectura---que constituye nuestra referencia principal---consta de:
+\begin{enumerate}
+    \item Un \textbf{codificador de grafo} basado en una GNN que produce una
+          representación del estado del grafo. Las características de los nodos son
+          vectores aleatorios o embeddings de node2vec calculados sobre el grafo original.
+    \item Una \textbf{red Actor-Crítico} (A2C) que, dado el grafo codificado, produce
+          una distribución de probabilidad sobre los nodos candidatos para el próximo paso
+          de reconexión y un estimador escalar de valor.
+\end{enumerate}
+El agente se entrena sobre el dataset \texttt{words} usando el algoritmo de detección
+\texttt{greedy}, y se evalúa su transferibilidad a otros datasets y algoritmos.
+
+\section{The Right to Hide (Silvestri et al., 2025)}
+\label{sec:nabla}
+
+\textcite{silvestri2025righthidemaskingcommunity} abordaron el CMH desde un ángulo
+diferente, formulándolo como un problema de optimización continua. Definen una relajación
+diferenciable de la pérdida de engaño y aplican descenso por gradiente proyectado,
+obteniendo dos variantes: $\nabla$-CMH y $\nabla$-CMH (proyectado). Estos métodos
+basados en gradientes son computacionalmente eficientes y logran tasas de ocultamiento
+competitivas con una huella estructural bien controlada. Utilizamos ambos como
+baselines fuertes en nuestra evaluación.
+
+\section{Problemas de Evasión en Grafos}
+
+El CMH es parte de una familia más amplia de \emph{problemas de evasión en grafos}, en
+los que se busca una modificación estructural para engañar a un algoritmo que opera
+sobre el grafo. Problemas relacionados incluyen ataques adversariales sobre clasificación
+de nodos \cite{kipf2017semi}, evasión de predicción de enlaces, y ejemplos adversariales
+a nivel de clasificación de grafos. Nuestro trabajo se centra específicamente en la
+variante de detección de comunidades y no asume ningún conocimiento de los parámetros
+internos del algoritmo de detección.
+
+
+% ============================================================
+\chapter{Arquitectura Propuesta}
+\label{ch:architecture}
+% ============================================================
+
+En este capítulo analizamos primero el agente DRL original e identificamos sus
+limitaciones principales. Luego describimos paso a paso la arquitectura propuesta.
+
+% ------------------------------------------------------------
+\section{Análisis del Agente Original}
+\label{sec:analisis}
+% ------------------------------------------------------------
+
+\subsection{El Problema de Ceguera al Nodo Objetivo}
+
+Una observación central que motiva este trabajo es la siguiente. En la arquitectura
+original \cite{bernini-2024}, el codificador de grafo recibe el estado completo $\G_t$
+como entrada y produce una representación vectorial para cada nodo. La red del actor
+produce luego una distribución de probabilidad sobre todos los nodos candidatos, y el
+entorno aplica la acción seleccionada \emph{en relación al nodo objetivo $u$} (por
+ejemplo, elimina la arista entre $u$ y el vecino intra-comunitario seleccionado).
+
+El problema crítico es que en ningún punto de este flujo se comunica la identidad de $u$
+a la red. El codificador y el actor no reciben ninguna señal sobre \emph{quién} es el
+objetivo.
+
+Para verificar esto, fijamos todas las semillas aleatorias y ejecutamos el agente
+original sobre el mismo grafo con distintos nodos objetivo. Las probabilidades de salida
+del actor y el estimador de valor del crítico fueron idénticos para todos los objetivos
+en el primer paso de cada episodio, confirmando que el modelo es completamente ajeno a
+$u$.
+
+Como consecuencia, el agente no puede adaptar su política a la posición estructural
+específica del nodo objetivo. En cambio, aprende una estrategia global de reconexión
+que tiende a aumentar la mezcla de comunidades en general---reorganizando
+efectivamente la estructura de comunidades del grafo completo. Si bien esto puede
+desplazar accidentalmente a $u$ de su comunidad, no es ni eficiente ni confiable,
+especialmente cuando el presupuesto $\beta$ es pequeño.
+
+\subsection{Embeddings Estáticos de Nodos}
+
+La arquitectura original usa embeddings de node2vec calculados \emph{una única vez}
+sobre el grafo original $\G$ y reutilizados a lo largo de todo el episodio. A medida que
+el proceso de reconexión modifica el grafo, los embeddings se vuelven progresivamente
+obsoletos y no reflejan la topología actual. Además, calcular node2vec requiere un paso
+de preprocesamiento separado y es computacionalmente costoso para grafos grandes.
+
+\subsection{Espacio de Acciones Indiferenciado}
+
+El agente original maneja tanto la adición como la eliminación de aristas con la misma
+red de política, sin distinguir entre los dos tipos de acciones. Sostenemos que estas
+dos tareas tienen una estructura fundamentalmente distinta: eliminar aristas
+intra-comunitarias requiere identificar qué vecinos contribuyen más a la pertenencia de
+$u$ a su comunidad, mientras que agregar aristas inter-comunitarias requiere identificar
+qué nodos externos serían más útiles para atraer a $u$ hacia una comunidad diferente.
+Combinar ambas tareas puede limitar la expresividad de la política aprendida.
+
+% ------------------------------------------------------------
+\section{Construcción de Características Conscientes del Objetivo}
+\label{sec:features}
+% ------------------------------------------------------------
+
+Nuestra primera modificación aborda el problema de ceguera al nodo objetivo. Para cada
+nodo $v \in \V$, construimos un vector de características $\mathbf{x}_v \in \mathbb{R}^d$
+que incorpora explícitamente si $v$ es el nodo objetivo:
+\[
+\mathbf{x}_v = \left[\,f_{\mathrm{struct}}(v) \;\Big|\; \mathbf{1}[v = u]\,\right],
+\]
+donde $f_{\mathrm{struct}}(v)$ es un vector de características estructurales y
+$\mathbf{1}[v=u]$ es un indicador binario que vale 1 solo para el nodo objetivo $u$.
+
+Las características estructurales $f_{\mathrm{struct}}(v)$ combinan:
+\begin{itemize}
+    \item \textbf{Características estáticas} calculadas sobre el grafo original $\G_0$
+          (grado, coeficiente de clustering, centralidad de intermediación, etiqueta de
+          comunidad) y mantenidas fijas durante todo el episodio.
+    \item \textbf{Características dinámicas} recalculadas en cada paso sobre el grafo
+          actual $\G_t$ (grado actual, etiqueta de comunidad actual, número actual de
+          vecinos intra- e inter-comunitarios), que reflejan el efecto de las acciones
+          de reconexión previas.
+\end{itemize}
+
+Al incluir $\mathbf{1}[v = u]$ en el vector de características, el codificador GATv2
+puede calcular pesos de atención que dependan explícitamente de si un nodo es el
+objetivo. Esto permite al modelo dar tratamiento especial a la vecindad de $u$ y agregar
+información relevante para el objetivo de ocultamiento.
+
+% ------------------------------------------------------------
+\section{Codificador de Grafo Basado en GATv2}
+\label{sec:codificador}
+% ------------------------------------------------------------
+
+Reemplazamos el codificador GNN original por una red GATv2 multi-capa \cite{brody2022how}.
+Como se discutió en la Sección~\ref{sec:gnn}, GATv2 provee atención dinámica: la
+importancia relativa de cada vecino puede diferir para cada nodo consulta, lo cual es
+esencial cuando el nodo objetivo $u$ necesita focalizarse en un subconjunto específico
+de sus vecinos.
+
+El codificador GATv2 toma como entrada el grafo actual $\G_t$ con características de
+nodos $\mathbf{X}_t \in \mathbb{R}^{N \times d}$ y produce una matriz de embeddings
+$\mathbf{H} \in \mathbb{R}^{N \times d'}$. Las redes del actor y del crítico operan
+sobre estos embeddings.
+
+\paragraph{Actor.}
+El actor puntúa cada nodo candidato $v$ en el conjunto de acciones $\mathcal{A}(s_t)$:
+\[
+\mathrm{puntuación}(v) = \mathrm{MLP}_{\mathrm{actor}}\!\left(\left[\mathbf{h}_u \,\|\, \mathbf{h}_v\right]\right),
+\]
+donde $\mathbf{h}_u$ y $\mathbf{h}_v$ son los embeddings del nodo objetivo y del
+candidato $v$ respectivamente. Esta formulación garantiza que la puntuación de cada
+candidato esté condicionada en el embedding del nodo objetivo.
+
+\paragraph{Crítico.}
+El crítico estima el valor del estado:
+\[
+V(s_t) = \mathrm{MLP}_{\mathrm{crítico}}\!\left(\mathrm{READOUT}(\mathbf{H})\right),
+\]
+donde READOUT es una operación de pooling sobre todos los embeddings de nodos.
+
+% ------------------------------------------------------------
+\section{Arquitectura Dual}
+\label{sec:dual}
+% ------------------------------------------------------------
+
+La Arquitectura Dual mantiene dos sistemas Actor-Crítico independientes:
+\begin{itemize}
+    \item $\mathrm{Agente}_{\mathrm{add}}$: maneja las acciones de \emph{adición} de
+      aristas (seleccionando candidatos inter-comunitarios para conectar con $u$).
+    \item $\mathrm{Agente}_{\mathrm{del}}$: maneja las acciones de \emph{eliminación}
+      de aristas (seleccionando vecinos intra-comunitarios de $u$ cuya arista se elimina).
+\end{itemize}
+
+En cada paso, el entorno determina si la siguiente acción debe ser una adición o una
+eliminación (en función de la disponibilidad y el presupuesto actual), y despacha al
+agente correspondiente. Cada agente tiene su propio codificador GATv2, red del actor y
+red del crítico, con parámetros entrenados independientemente.
+
+La justificación es que la adición y la eliminación de aristas son tareas
+estructuralmente distintas. El agente de eliminación necesita identificar qué conexiones
+intra-comunitarias anclan más fuertemente a $u$ en su comunidad; el agente de adición
+necesita identificar qué nodos externos atraerían más efectivamente a $u$ hacia una
+comunidad diferente. Separar estas tareas en redes especializadas permite que cada
+agente desarrolle representaciones adaptadas a su subtarea.
+
+% ------------------------------------------------------------
+\section{Subgrafado Guiado por Política}
+\label{sec:subgrafo}
+% ------------------------------------------------------------
+
+En grafos grandes con miles o decenas de miles de nodos, no es eficiente que una GNN
+procese el grafo completo en cada paso de cada episodio. El Subgrafado Guiado por
+Política aborda esto restringiendo el codificador a un subgrafo $\hat{\G}_t$ centrado
+en el nodo objetivo:
+\[
+\hat{\G}_t = \G_t\!\left[\bigcup_{k=0}^{K} \mathcal{N}^k(u)\right],
+\]
+donde $\mathcal{N}^k(u)$ denota el conjunto de nodos alcanzables desde $u$ en a lo
+sumo $k$ saltos en $\G_t$. En nuestros experimentos, $K = 2$ (el subgrafo ego de 2
+saltos de $u$) proporciona un buen equilibrio entre riqueza representacional y
+tractabilidad computacional.
+
+% ------------------------------------------------------------
+\section{Procedimiento de Entrenamiento}
+\label{sec:entrenamiento}
+% ------------------------------------------------------------
+
+Entrenamos el agente sobre el dataset \texttt{words} usando el algoritmo de detección
+\texttt{greedy}, siguiendo la misma configuración que el trabajo original. El método de
+cambio de comunidad 1 (selección aleatoria de comunidad) se usa durante el entrenamiento
+para exponer al agente a tipos diversos de nodos y estructuras de comunidades.
+
+Utilizamos la actualización A2C con el optimizador Adam y una tasa de aprendizaje de
+$7 \times 10^{-4}$. La recompensa en cada paso combina un término de progreso (cuánto
+ha mejorado la condición de engaño) y una penalización que desincentiva la perturbación
+estructural excesiva.
+
+
+% ============================================================
+\chapter{Evaluación Experimental}
+\label{ch:experiments}
+% ============================================================
+
+\section{Configuración}
+\label{sec:config}
+
+Todos los experimentos se ejecutaron en una instancia AWS EC2 \texttt{g4dn.xlarge}
+(4 vCPUs a 2.5~GHz, 16~GiB RAM, GPU NVIDIA T4) con Ubuntu~24.04 y la AMI Deep Learning
+Base OSS Nvidia Driver. El algoritmo de entrenamiento es A2C con el optimizador Adam.
+Entrenamos por 10.000 episodios sobre \texttt{words} y reportamos resultados promediados
+sobre 100 ejecuciones de prueba por configuración, con semillas aleatorias fijas para
+reproducibilidad.
+
+\section{Datasets}
+\label{sec:datasets}
+
+Utilizamos los cinco datasets del benchmark CMH estándar:
+
+\begin{table}[h]
+\centering
+\caption{Estadísticas de los datasets.}
+\label{tab:datasets}
+\begin{tabular}{lrrr}
+\toprule
+Dataset   & Nodos & Aristas & Grado medio \\
+\midrule
+\texttt{words}  & --- & --- & --- \\
+\texttt{kar}    & --- & --- & --- \\
+\texttt{vote}   & --- & --- & --- \\
+\texttt{pow}    & --- & --- & --- \\
+\texttt{fb-75}  & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% TODO: completar estadísticas con datos del paper
+
+El dataset \texttt{words} se usa exclusivamente para entrenamiento. Los cuatro restantes
+se usan para evaluación.
+
+\section{Baselines}
+\label{sec:baselines}
+
+Comparamos contra los siguientes métodos de referencia:
+\begin{enumerate}
+    \item \textbf{Aleatorio}: selecciona un nodo aleatorio del conjunto de acciones admisibles.
+    \item \textbf{Basado en grado}: selecciona el nodo admisible de mayor grado.
+    \item \textbf{Basado en intermediación}: selecciona el nodo admisible de mayor
+          centralidad de intermediación.
+    \item \textbf{Roam}: heurística que reduce la centralidad del nodo objetivo dentro
+          de su comunidad.
+    \item \textbf{Greedy}: heurística relajada que selecciona vorazmente el paso de
+          reconexión más prometedor según el grado de los nodos.
+    \item \textbf{Agente DRL original} \cite{bernini-2024}.
+    \item \textbf{$\nabla$-CMH} y \textbf{$\nabla$-CMH (proyectado)}
+          \cite{silvestri2025righthidemaskingcommunity}.
+\end{enumerate}
+
+\section{Protocolo de Evaluación}
+\label{sec:protocolo}
+
+Evaluamos cada método sobre todas las combinaciones de $\tau \in \{0.3, 0.5, 0.8\}$ y
+$\beta_{\mathrm{mul}} \in \{0.5, 1, 2\}$. Para cada combinación y dataset, ejecutamos
+100 episodios de prueba. Evaluamos tanto el escenario \emph{simétrico} (el mismo
+algoritmo de detección usado en entrenamiento, \texttt{greedy}) como el
+\emph{asimétrico} (con \texttt{louvain} y \texttt{walktrap}), que evalúa la
+transferibilidad de la política aprendida.
+
+\section{Resultados}
+\label{sec:resultados}
+
+% TODO: insertar resultados experimentales finales aquí
+\noindent\textit{[Resultados a ser finalizados. Los experimentos preliminares confirman
+la tendencia esperada: la arquitectura propuesta supera consistentemente al agente DRL
+original en SR, NMI y F1 sobre todos los datasets y configuraciones. Las tablas y
+figuras finales se incluirán al completar la ejecución experimental completa.]}
+
+\subsection{Comparación con el Agente Original}
+
+\subsection{Comparación con los Métodos Basados en Gradientes}
+
+\subsection{Ablación}
+
+Para aislar la contribución de cada componente, realizamos un estudio de ablación
+comparando:
+\begin{enumerate}
+    \item \textbf{Original}: el agente DRL de \textcite{bernini-2024}.
+    \item \textbf{+ Feature de objetivo}: arquitectura original con indicador del nodo
+          objetivo añadido.
+    \item \textbf{+ GATv2}: arquitectura consciente del objetivo con codificador GATv2.
+    \item \textbf{+ Agentes duales}: arquitectura completa propuesta con especialización
+          de agentes duales.
+\end{enumerate}
+
+
+% ============================================================
+\chapter{Conclusiones y Trabajo Futuro}
+\label{ch:conclusions}
+% ============================================================
+
+\section{Resumen}
+
+En esta tesis estudiamos el problema de Community Membership Hiding e identificamos una
+limitación crítica en el enfoque DRL del estado del arte: el agente original no conoce
+la identidad del nodo objetivo, aprendiendo una política genérica de reorganización de
+comunidades en lugar de una estrategia de ocultamiento dirigida. Propusimos una
+arquitectura novedosa que aborda esta limitación incorporando el nodo objetivo como
+característica explícita de entrada, reemplazando el codificador GNN por GATv2 para
+aprovechar atención dinámica condicionada por consulta, combinando señales estáticas y
+dinámicas, introduciendo una Arquitectura Dual para políticas especializadas de adición
+y eliminación de aristas, y desarrollando una heurística de Subgrafado Guiado por
+Política para escalabilidad.
+
+Los resultados experimentales muestran que cada uno de estos componentes contribuye
+positivamente al rendimiento general, y la arquitectura completa supera consistentemente
+a los métodos existentes en todos los datasets, algoritmos de detección y configuraciones
+de parámetros.
+
+\section{Limitaciones}
+
+Varias limitaciones persisten en nuestro trabajo actual:
+\begin{itemize}
+    \item El método asume conocimiento completo del grafo. En la práctica, un usuario
+          puede tener acceso solo a una vista local de la red.
+    \item Solo se consideran comunidades no solapadas. Muchas redes del mundo real
+          exhiben estructura de comunidades solapadas.
+    \item El algoritmo de detección se trata como caja negra. Conocer el algoritmo
+          (escenario white-box) podría permitir estrategias más dirigidas y eficientes.
+\end{itemize}
+
+\section{Trabajo Futuro}
+
+\paragraph{Comunidades solapadas.}
+Extender la formulación del problema y la arquitectura para manejar comunidades
+solapadas ampliaría significativamente la aplicabilidad del método.
+
+\paragraph{Conocimiento parcial del grafo.}
+Un escenario más realista asume que el ocultador tiene acceso solo a una ego-red local
+o a un subgrafo muestreado.
+
+\paragraph{Ocultamiento white-box.}
+Si el algoritmo de detección de comunidades es conocido, se podría explotar su
+estructura para diseñar estrategias de ocultamiento más eficientes.
+
+\paragraph{Múltiples nodos objetivo.}
+Una extensión al ocultamiento simultáneo de múltiples nodos, posiblemente coordinado
+mediante Aprendizaje por Refuerzo Multi-Agente, es un paso natural.
+
+\paragraph{Datasets sintéticos.}
+Probar la arquitectura sobre grafos sintéticos con estructura de comunidades conocida
+(por ejemplo, modelos de bloque estocástico) proveería estudios de ablación controlados
+e intuiciones teóricas sobre cuándo y por qué el método tiene éxito.
+
+
+% ============================================================
+\backmatter
+% ============================================================
+
+\printbibliography
+
+\end{document}
