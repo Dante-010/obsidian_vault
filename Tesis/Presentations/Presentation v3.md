@@ -177,7 +177,6 @@ These encode the *rules of the game* and the initial graph state.
 | **Is Original Neighbor** | Remembers the initial neighborhood |
 
 ---
-
 ## Dynamic Features
 
 Capture the evolving relationship between nodes and the target.
@@ -188,6 +187,14 @@ Capture the evolving relationship between nodes and the target.
 | **Is Current Neighbor** | Binary edge indicator                                                                                                                                |
 | **Common Neighbors**    | Structural overlap with target<br>$∣N(\text{target}) \cap N(n)∣$                                                                                     |
 | **Jaccard Similarity**  | Measures the probability that a neighbor of either node is a neighbor of both. $\frac{∣N(\text{target}) \cap N(n)∣}{{∣N(\text{target}) \cup N(n)∣}}$ |
+
+---
+Hacer el ablation con los cambios principales que tiene esta arquitectura sobre la original:
+// 1. Pasarle el nodo target a la red neuronal.
+
+1. Usar GATv2  (cambiar la arquitectura de la red neuronal).
+2. Usar features.
+3. Dual-Agent.
 
 
 ---

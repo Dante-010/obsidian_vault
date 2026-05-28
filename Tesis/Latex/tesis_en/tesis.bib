@@ -1,9 +1,14 @@
+% ----------------------------------------------------------------
+%  Bibliography — English thesis
+% ----------------------------------------------------------------
+
+% ----- Core CMH papers ------------------------------------------
+
 @inproceedings{bernini-2024,
   author    = {Andrea Bernini and Fabrizio Silvestri and Gabriele Tolomei},
   title     = {Evading Community Detection via Counterfactual Neighborhood Search},
   booktitle = {Proceedings of the ACM Web Conference 2024 (WWW '24)},
   year      = {2024},
-  note      = {arXiv:2306.16:10},
 }
 
 @misc{silvestri2025righthidemaskingcommunity,
@@ -15,37 +20,7 @@
   primaryClass  = {cs.SI},
 }
 
-@article{brody2022how,
-  author  = {Shaked Brody and Uri Alon and Eran Yahav},
-  title   = {How Attentive are Graph Attention Networks?},
-  journal = {International Conference on Learning Representations (ICLR)},
-  year    = {2022},
-}
-
-@inproceedings{veličković2018graph,
-  author    = {Petar Veli{\v{c}}kovi{\'c} and Guillem Cucurull and Arantxa Casanova
-               and Adriana Romero and Pietro Li{\`o} and Yoshua Bengio},
-  title     = {Graph Attention Networks},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2018},
-}
-
-@inproceedings{grover2016node2vec,
-  author    = {Aditya Grover and Jure Leskovec},
-  title     = {node2vec: Scalable Feature Learning for Networks},
-  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on
-               Knowledge Discovery and Data Mining},
-  year      = {2016},
-}
-
-@article{mnih2016asynchronous,
-  author  = {Volodymyr Mnih and Adri{\`a} Puigdom{\`e}nech Badia and Mehdi Mirza
-             and Alex Graves and Timothy P.\ Lillicrap and Tim Harley and David Silver
-             and Koray Kavukcuoglu},
-  title   = {Asynchronous Methods for Deep Reinforcement Learning},
-  journal = {Proceedings of the 33rd International Conference on Machine Learning},
-  year    = {2016},
-}
+% ----- Community detection --------------------------------------
 
 @article{Fortunato-2010,
   author  = {Santo Fortunato},
@@ -55,6 +30,16 @@
   number  = {3--5},
   pages   = {75--174},
   year    = {2010},
+}
+
+@article{Fortunato-2022,
+  author  = {Santo Fortunato and Marc Barthélemy},
+  title   = {Resolution limit in community detection},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {104},
+  number  = {1},
+  pages   = {36--41},
+  year    = {2007},
 }
 
 @article{blondel2008louvain,
@@ -88,6 +73,28 @@
   year    = {2004},
 }
 
+@article{newman2006modularity,
+  author  = {M.~E.~J. Newman},
+  title   = {Modularity and community structure in networks},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {103},
+  number  = {23},
+  pages   = {8577--8582},
+  year    = {2006},
+}
+
+@article{girvan2002community,
+  author  = {M.\ Girvan and M.~E.~J. Newman},
+  title   = {Community structure in social and biological networks},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {99},
+  number  = {12},
+  pages   = {7821--7826},
+  year    = {2002},
+}
+
+% ----- Similarity functions & metrics ---------------------------
+
 @article{sorensen1948dice,
   author  = {Thorvald S{\o}rensen},
   title   = {A method of establishing groups of equal amplitude in plant sociology},
@@ -117,12 +124,7 @@
   year    = {2003},
 }
 
-@inproceedings{kipf2017semi,
-  author    = {Thomas N.\ Kipf and Max Welling},
-  title     = {Semi-Supervised Classification with Graph Convolutional Networks},
-  booktitle = {International Conference on Learning Representations (ICLR)},
-  year      = {2017},
-}
+% ----- Reinforcement Learning -----------------------------------
 
 @book{sutton2018rl,
   author    = {Richard S.\ Sutton and Andrew G.\ Barto},
@@ -132,8 +134,246 @@
   year      = {2018},
 }
 
-@misc{roam2022,
-  author = {Arnaiz-Rodr\'iguez, Adolfo and Beechey, Samuel and Lio, Pietro},
-  title  = {ROAM: Random layer mixup for semi-supervised learning in graph neural networks},
-  year   = {2022},
+@article{mnih2016asynchronous,
+  author  = {Volodymyr Mnih and Adri{\`a} Puigdom{\`e}nech Badia and Mehdi Mirza
+             and Alex Graves and Timothy P.\ Lillicrap and Tim Harley and David Silver
+             and Koray Kavukcuoglu},
+  title   = {Asynchronous Methods for Deep Reinforcement Learning},
+  journal = {Proceedings of the 33rd International Conference on Machine Learning (ICML)},
+  pages   = {1928--1937},
+  year    = {2016},
+}
+
+@article{williams1992reinforce,
+  author  = {Ronald J.\ Williams},
+  title   = {Simple Statistical Gradient-Following Algorithms for Connectionist
+             Reinforcement Learning},
+  journal = {Machine Learning},
+  volume  = {8},
+  pages   = {229--256},
+  year    = {1992},
+}
+
+@article{schulman2017ppo,
+  author        = {John Schulman and Filip Wolski and Prafulla Dhariwal and
+                   Alec Radford and Oleg Klimov},
+  title         = {Proximal Policy Optimization Algorithms},
+  journal       = {arXiv preprint arXiv:1707.06347},
+  year          = {2017},
+}
+
+@article{mnih2015dqn,
+  author  = {Volodymyr Mnih and Koray Kavukcuoglu and David Silver and
+             Andrei A.\ Rusu and Joel Veness and Marc G.\ Bellemare and
+             Alex Graves and Martin Riedmiller and Andreas K.\ Fidjeland and
+             Georg Ostrovski and Stig Petersen and Charles Beattie and
+             Amir Sadik and Ioannis Antonoglou and Helen King and Dharshan Kumaran
+             and Daan Wierstra and Shane Legg and Demis Hassabis},
+  title   = {Human-level control through deep reinforcement learning},
+  journal = {Nature},
+  volume  = {518},
+  pages   = {529--533},
+  year    = {2015},
+}
+
+% ----- Graph Neural Networks ------------------------------------
+
+@inproceedings{kipf2017semi,
+  author    = {Thomas N.\ Kipf and Max Welling},
+  title     = {Semi-Supervised Classification with Graph Convolutional Networks},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2017},
+}
+
+@inproceedings{veličković2018graph,
+  author    = {Petar Veli{\v{c}}kovi{\'c} and Guillem Cucurull and Arantxa Casanova
+               and Adriana Romero and Pietro Li{\`o} and Yoshua Bengio},
+  title     = {Graph Attention Networks},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2018},
+}
+
+@article{brody2022how,
+  author  = {Shaked Brody and Uri Alon and Eran Yahav},
+  title   = {How Attentive are Graph Attention Networks?},
+  journal = {International Conference on Learning Representations (ICLR)},
+  year    = {2022},
+}
+
+@inproceedings{hamilton2017graphsage,
+  author    = {William L.\ Hamilton and Rex Ying and Jure Leskovec},
+  title     = {Inductive Representation Learning on Large Graphs},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  pages     = {1024--1034},
+  year      = {2017},
+}
+
+@inproceedings{xu2019powerful,
+  author    = {Keyulu Xu and Weihua Hu and Jure Leskovec and Stefanie Jegelka},
+  title     = {How Powerful are Graph Neural Networks?},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019},
+}
+
+@article{scarselli2009gnn,
+  author  = {Franco Scarselli and Marco Gori and Ah Chung Tsoi and
+             Markus Hagenbuchner and Gabriele Monfardini},
+  title   = {The Graph Neural Network Model},
+  journal = {IEEE Transactions on Neural Networks},
+  volume  = {20},
+  number  = {1},
+  pages   = {61--80},
+  year    = {2009},
+}
+
+@inproceedings{gilmer2017mpnn,
+  author    = {Justin Gilmer and Samuel S.\ Schütt and Patrick F.\ Riley and
+               Oriol Vinyals and George E.\ Dahl},
+  title     = {Neural Message Passing for Quantum Chemistry},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning (ICML)},
+  pages     = {1263--1272},
+  year      = {2017},
+}
+
+@article{fey2019pyg,
+  author  = {Matthias Fey and Jan Eric Lenssen},
+  title   = {Fast Graph Representation Learning with {PyTorch Geometric}},
+  journal = {ICLR Workshop on Representation Learning on Graphs and Manifolds},
+  year    = {2019},
+}
+
+% ----- Node embeddings ------------------------------------------
+
+@inproceedings{grover2016node2vec,
+  author    = {Aditya Grover and Jure Leskovec},
+  title     = {node2vec: Scalable Feature Learning for Networks},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on
+               Knowledge Discovery and Data Mining},
+  pages     = {855--864},
+  year      = {2016},
+}
+
+@inproceedings{perozzi2014deepwalk,
+  author    = {Bryan Perozzi and Rami Al-Rfou and Steven Skiena},
+  title     = {DeepWalk: Online Learning of Social Representations},
+  booktitle = {Proceedings of the 20th ACM SIGKDD International Conference on
+               Knowledge Discovery and Data Mining},
+  pages     = {701--710},
+  year      = {2014},
+}
+
+@inproceedings{mikolov2013word2vec,
+  author    = {Tomas Mikolov and Ilya Sutskever and Kai Chen and Greg Corrado
+               and Jeffrey Dean},
+  title     = {Distributed Representations of Words and Phrases and their
+               Compositionality},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  pages     = {3111--3119},
+  year      = {2013},
+}
+
+% ----- Graph adversarial attacks --------------------------------
+
+@inproceedings{zugner2018adversarial,
+  author    = {Daniel Zügner and Amir Akbarnejad and Stephan Günnemann},
+  title     = {Adversarial Attacks on Neural Networks for Graph Data},
+  booktitle = {Proceedings of the 24th ACM SIGKDD International Conference on
+               Knowledge Discovery and Data Mining},
+  pages     = {2847--2856},
+  year      = {2018},
+}
+
+@inproceedings{dai2018adversarial,
+  author    = {Hanjun Dai and Hui Li and Tian Tian and Xin Huang and Lin Wang
+               and Jun Zhu and Le Song},
+  title     = {Adversarial Attack on Graph Structured Data},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning (ICML)},
+  pages     = {1115--1124},
+  year      = {2018},
+}
+
+@inproceedings{chen2019ga,
+  author    = {Jinyin Chen and Yangyang Wu and Xuanheng Xu and Yixian Chen
+               and Haibin Zheng and Qi Xuan},
+  title     = {GA Based {Q}-Attack on Community Detection},
+  booktitle = {IEEE Transactions on Computational Social Systems},
+  year      = {2019},
+}
+
+% ----- Privacy & network security -------------------------------
+
+@article{narayanan2009deanonymizing,
+  author  = {Arvind Narayanan and Vitaly Shmatikov},
+  title   = {De-anonymizing Social Networks},
+  journal = {IEEE Symposium on Security and Privacy},
+  pages   = {173--187},
+  year    = {2009},
+}
+
+@article{Fire2014privacynetworks,
+  author  = {Michael Fire and Roy Goldschmidt and Yuval Elovici},
+  title   = {Online Social Networks: Threats and Solutions},
+  journal = {IEEE Communications Surveys \& Tutorials},
+  volume  = {16},
+  number  = {4},
+  pages   = {2019--2036},
+  year    = {2014},
+}
+
+% ----- RL on graphs ---------------------------------------------
+
+@article{mazyavkina2021rl,
+  author  = {Nina Mazyavkina and Sergey Sviridov and Sergei Ivanov
+             and Evgeny Burnaev},
+  title   = {Reinforcement Learning for Combinatorial Optimization:
+             A Survey},
+  journal = {Computers \& Operations Research},
+  volume  = {134},
+  pages   = {105400},
+  year    = {2021},
+}
+
+@article{tang2021rl_graphs,
+  author  = {Chao Tang and Xinyu Li and Peng Lu and Wei Wei},
+  title   = {Reinforcement Learning on Graphs: A Survey},
+  journal = {arXiv preprint arXiv:2204.06127},
+  year    = {2021},
+}
+
+% ----- Graph basics & centrality --------------------------------
+
+@book{newman2010networks,
+  author    = {M.~E.~J. Newman},
+  title     = {Networks: An Introduction},
+  publisher = {Oxford University Press},
+  year      = {2010},
+}
+
+@article{freeman1977betweenness,
+  author  = {Linton C.\ Freeman},
+  title   = {A Set of Measures of Centrality Based on Betweenness},
+  journal = {Sociometry},
+  volume  = {40},
+  number  = {1},
+  pages   = {35--41},
+  year    = {1977},
+}
+
+@article{watts1998smallworld,
+  author  = {Duncan J.\ Watts and Steven H.\ Strogatz},
+  title   = {Collective dynamics of `small-world' networks},
+  journal = {Nature},
+  volume  = {393},
+  pages   = {440--442},
+  year    = {1998},
+}
+
+@article{barabasi1999scalefree,
+  author  = {Albert-László Barabási and Réka Albert},
+  title   = {Emergence of Scaling in Random Networks},
+  journal = {Science},
+  volume  = {286},
+  number  = {5439},
+  pages   = {509--512},
+  year    = {1999},
 }

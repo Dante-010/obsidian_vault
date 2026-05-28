@@ -15,7 +15,7 @@ Ver [[A tener en cuenta]] para algunos datos y conceptos importantes a la hora d
 
 [[README_main]] explica de manera excelente el concepto de [[Community Membership Hiding]], [[README_main|Advantage Actor-Critic (A2C)]] y los comandos necesarios para replicar los resultados que obtuvieron.
 
-Ver [[Código]] para entender qué hace cada módulo y saber cómo determinar qué queremos correr y [[Experimentos]] para ver alternativas explorados junto a sus resultados. 
+Ver [[Código]] para entender qué hace cada módulo y saber cómo determinar qué queremos correr y [[Experimentos]] ([[Nuevos Experimentos (POST PAPER JAIIO)]]) para ver alternativas explorados junto a sus resultados. 
 
 En [[Variables, Parámetros y Ecuaciones]], hay breves explicaciones de las partes "formales" del problema.
 

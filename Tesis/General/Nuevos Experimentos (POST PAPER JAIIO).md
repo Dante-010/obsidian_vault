@@ -1,0 +1,1 @@
+Pequeño resumen: trabajamos con la arquitectura **Dual-Agent Actor Critic GATv2**, con las nuevas [[Heuristicas]].

@@ -110,4 +110,3 @@ A partir de ahora, realizamos los experimentos con este nuevo agente.
 ![[F1_allDatasets_evaluation_node_hiding_louvain_multiAgents.png]]
 
 El agente supera los modelos anteriores por un margen considerable.
-
