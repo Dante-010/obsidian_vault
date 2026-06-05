@@ -8,7 +8,7 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[spanish]{babel}
+\usepackage[spanish, es-nosectiondot]{babel}
 \usepackage[left=3cm,right=3cm,bottom=3.5cm,top=3.5cm]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{hyperref}
@@ -17,6 +17,7 @@
 \usepackage{float}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{subcaption}
 \usepackage[backend=biber,style=numeric,sorting=nyt]{biblatex}
 
 \addbibresource{tesis.bib}
@@ -26,6 +27,21 @@
 % Entornos matemáticos
 \newtheorem{definition}{Definición}[chapter]
 \newtheorem{remark}{Observación}[chapter]
+\newtheorem{proposition}{Proposición}[chapter]
+
+% Figura de marcador: \figplaceholder{ancho}{texto del epígrafe}
+\newcommand{\figplaceholder}[2]{%
+  \begin{figure}[H]
+    \centering
+    \fbox{\begin{minipage}{#1}
+      \centering
+      \vspace{1.5cm}
+      {\large\textit{[Figura de marcador: #2]}}
+      \vspace{1.5cm}
+    \end{minipage}}
+    \caption{#2}
+  \end{figure}%
+}
 
 % Abreviaturas de notación
 \newcommand{\G}{\mathcal{G}}
@@ -96,7 +112,8 @@ inadvertidamente afiliaciones sensibles---tendencias políticas, creencias relig
 condiciones de salud o asociaciones ideológicas---a partir únicamente de su posición
 estructural, sin ninguna revelación explícita de dicha información. Esta preocupación no
 es meramente teórica: la detección de comunidades ha sido utilizada en la práctica para
-identificar grupos políticos en redes online y para perfilar individuos en grafos sociales.
+identificar grupos políticos en redes online \cite{narayanan2009deanonymizing} y para
+perfilar individuos en grafos sociales \cite{Fire2014privacynetworks}.
 
 Para contrarrestar esto, el concepto de \emph{Community Membership Hiding} (CMH) fue
 introducido por \textcite{bernini-2024}. El objetivo del CMH es modificar
@@ -115,6 +132,12 @@ evalúa la red de forma \emph{global}, sin condicionar explícitamente en la ide
 nodo objetivo. Como consecuencia, el agente no puede aprender una política que dependa de
 quién es el objetivo; en cambio, aprende una estrategia genérica de reorganización de
 comunidades que desplaza al nodo objetivo de su comunidad como efecto secundario.
+
+\figplaceholder{0.8\textwidth}{%
+  Un grafo con tres comunidades (codificadas por color). El nodo objetivo $u$ (marcado
+  con una estrella) pertenece inicialmente a la comunidad azul. Tras la reconexión de
+  aristas, $u$ migra a la comunidad roja.%
+}
 
 \section*{Contribuciones}
 
@@ -164,6 +187,7 @@ El Capítulo~\ref{ch:architecture} describe la arquitectura propuesta.
 El Capítulo~\ref{ch:experiments} presenta la evaluación experimental.
 El Capítulo~\ref{ch:conclusions} concluye con una discusión y direcciones de trabajo
 futuro.
+Los Apéndices~\ref{app:hyperparams}--\ref{app:results} contienen material suplementario.
 
 
 % ============================================================
@@ -349,8 +373,11 @@ reconexión. Esta es una de las limitaciones que abordamos en nuestra propuesta.
 % ============================================================
 
 En este capítulo damos una definición formal del problema de Community Membership
-Hiding, especificando las restricciones, el objetivo, la estructura de recompensas y las
-métricas de evaluación.
+Hiding. La Sección~\ref{sec:formal} introduce la condición de engaño, el presupuesto
+de modificaciones y el espacio de acciones admisibles. Las Secciones~\ref{sec:similitud}
+y~\ref{sec:nmi} definen las medidas de similitud a nivel de grafo y de comunidad
+utilizadas a lo largo del trabajo. La Sección~\ref{sec:metrics} presenta las métricas
+de evaluación (SR, NMI, F1).
 
 \section{Definición Formal}
 \label{sec:formal}
@@ -402,6 +429,7 @@ comunidad actual de $u$:
 \end{definition}
 
 \section{Similitud de Grafo}
+\label{sec:similitud}
 
 Además de la condición de engaño a nivel de comunidad, medimos la distorsión estructural
 global introducida por la reconexión mediante la \emph{similitud de Jaccard} sobre los
@@ -411,6 +439,7 @@ conjuntos de aristas:
 \]
 
 \section{Información Mutua Normalizada}
+\label{sec:nmi}
 
 Para cuantificar el impacto de la reconexión sobre la \emph{estructura de comunidades}
 en su conjunto, utilizamos la Información Mutua Normalizada (NMI) \cite{strehl2003cluster}
@@ -443,6 +472,14 @@ F_1 = \frac{2 \cdot \SR \cdot \NMI}{\SR + \NMI}.
 \label{ch:related}
 % ============================================================
 
+Este capítulo revisa los trabajos más directamente relacionados con nuestras
+contribuciones. La Sección~\ref{sec:bernini} describe el agente CMH basado en DRL de
+\textcite{bernini-2024}, que constituye nuestra referencia principal. La
+Sección~\ref{sec:nabla} presenta los métodos basados en gradientes de
+\textcite{silvestri2025righthidemaskingcommunity}, que forman un segundo conjunto de
+baselines fuertes. La Sección~\ref{sec:evasion} sitúa nuestro trabajo en el contexto
+más amplio de los problemas de evasión en grafos.
+
 \section{El Agente CMH Original (Bernini et al., 2024)}
 \label{sec:bernini}
 
@@ -471,6 +508,7 @@ competitivas con una huella estructural bien controlada. Utilizamos ambos como
 baselines fuertes en nuestra evaluación.
 
 \section{Problemas de Evasión en Grafos}
+\label{sec:evasion}
 
 El CMH es parte de una familia más amplia de \emph{problemas de evasión en grafos}, en
 los que se busca una modificación estructural para engañar a un algoritmo que opera
@@ -487,7 +525,13 @@ internos del algoritmo de detección.
 % ============================================================
 
 En este capítulo analizamos primero el agente DRL original e identificamos sus
-limitaciones principales. Luego describimos paso a paso la arquitectura propuesta.
+limitaciones principales (Sección~\ref{sec:analisis}). Luego describimos paso a paso
+las mejoras propuestas: características conscientes del nodo objetivo
+(Sección~\ref{sec:features}), el codificador de grafo basado en GATv2
+(Sección~\ref{sec:codificador}), la Arquitectura Dual (Sección~\ref{sec:dual}), y el
+Subgrafado Guiado por Política (Sección~\ref{sec:subgrafo}). La
+Sección~\ref{sec:entrenamiento} describe el procedimiento de entrenamiento y la
+estructura de recompensas.
 
 % ------------------------------------------------------------
 \section{Análisis del Agente Original}
@@ -663,6 +707,15 @@ estructural excesiva.
 \label{ch:experiments}
 % ============================================================
 
+Este capítulo evalúa todas las contribuciones propuestas frente a los baselines
+descritos en el Capítulo~\ref{ch:related}. La Sección~\ref{sec:config} describe el
+entorno experimental. La Sección~\ref{sec:datasets} introduce los datasets de benchmark
+y la Sección~\ref{sec:baselines} define los baselines. La Sección~\ref{sec:protocolo}
+especifica el protocolo de evaluación. La Sección~\ref{sec:resultados} reporta los
+resultados, organizados en: comparación con el agente original, comparación con los
+métodos basados en gradientes, estudio de ablación y evaluación en el escenario
+asimétrico.
+
 \section{Configuración}
 \label{sec:config}
 
@@ -760,7 +813,13 @@ comparando:
 \label{ch:conclusions}
 % ============================================================
 
+Este capítulo cierra la tesis. La Sección~\ref{sec:resumen} resume las contribuciones
+y los principales resultados experimentales. La Sección~\ref{sec:limitaciones} discute
+las limitaciones del trabajo actual, y la Sección~\ref{sec:futuro} esboza las
+direcciones más prometedoras para investigación futura.
+
 \section{Resumen}
+\label{sec:resumen}
 
 En esta tesis estudiamos el problema de Community Membership Hiding e identificamos una
 limitación crítica en el enfoque DRL del estado del arte: el agente original no conoce
@@ -779,6 +838,7 @@ a los métodos existentes en todos los datasets, algoritmos de detección y conf
 de parámetros.
 
 \section{Limitaciones}
+\label{sec:limitaciones}
 
 Varias limitaciones persisten en nuestro trabajo actual:
 \begin{itemize}
@@ -791,6 +851,7 @@ Varias limitaciones persisten en nuestro trabajo actual:
 \end{itemize}
 
 \section{Trabajo Futuro}
+\label{sec:futuro}
 
 \paragraph{Comunidades solapadas.}
 Extender la formulación del problema y la arquitectura para manejar comunidades
@@ -819,5 +880,101 @@ e intuiciones teóricas sobre cuándo y por qué el método tiene éxito.
 % ============================================================
 
 \printbibliography
+
+% ============================================================
+\appendix
+% ============================================================
+
+% ============================================================
+\chapter{Detalles de Hiperparámetros}
+\label{app:hyperparams}
+% ============================================================
+
+Este apéndice lista el conjunto completo de hiperparámetros utilizados en los
+experimentos. Todos los valores fueron seleccionados mediante búsqueda en grilla sobre
+la partición de validación de \texttt{words}, salvo indicación contraria.
+
+\begin{table}[H]
+\centering
+\caption{Hiperparámetros de la arquitectura propuesta.}
+\label{tab:hyperparams}
+\begin{tabular}{ll}
+\toprule
+Hiperparámetro & Valor \\
+\midrule
+Tasa de aprendizaje (Adam)    & $7 \times 10^{-4}$ \\
+Factor de descuento $\gamma$  & ---                \\
+Coeficiente de entropía $c_e$ & ---                \\
+Coeficiente de valor $c_v$    & ---                \\
+Capas de GATv2                & ---                \\
+Dimensión oculta de GATv2     & ---                \\
+Cabezas de atención           & ---                \\
+Dimensión oculta del actor    & ---                \\
+Dimensión oculta del crítico  & ---                \\
+Episodios de entrenamiento    & 10.000             \\
+Saltos del subgrafo $K$       & 2                  \\
+Compromiso de recompensa $\alpha$ & ---            \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% TODO: completar valores de hiperparámetros al finalizar los experimentos
+
+
+% ============================================================
+\chapter{Descripción de los Datasets}
+\label{app:datasets}
+% ============================================================
+
+Este apéndice provee información adicional sobre los cinco datasets de benchmark
+utilizados en la evaluación.
+
+\paragraph{\texttt{words}.}
+Red de co-ocurrencia de palabras extraída de un corpus de texto. Los nodos representan
+palabras y las aristas conectan palabras que co-ocurren en la misma oración. Este dataset
+se usa exclusivamente para entrenamiento.
+
+\paragraph{\texttt{kar} (Club de Karate).}
+La red del Club de Karate de Zachary \cite{newman2010networks}, un benchmark clásico
+para la detección de comunidades. Contiene 34 nodos que representan miembros de un club
+de karate universitario, con aristas correspondientes a interacciones sociales fuera del
+club.
+
+\paragraph{\texttt{vote}.}
+Red de votación política donde los nodos representan legisladores y las aristas
+representan registros de votación alineados.
+
+\paragraph{\texttt{pow} (Red Eléctrica).}
+Red de alta tensión donde los nodos son generadores, transformadores y subestaciones, y
+las aristas son líneas de suministro eléctrico. Esta red tiene una estructura
+fundamentalmente distinta a las redes sociales, proveyendo una prueba heterogénea de
+generalización.
+
+\paragraph{\texttt{fb-75}.}
+Un subgrafo del dataset de redes ego de Facebook, seleccionado por su mayor tamaño
+relativo a los otros benchmarks. Este dataset es el principal banco de pruebas para la
+evaluación de escalabilidad del Subgrafado Guiado por Política.
+
+
+% ============================================================
+\chapter{Resultados Suplementarios}
+\label{app:results}
+% ============================================================
+
+Este apéndice contiene tablas de resultados completas para todas las combinaciones de
+$\tau$, $\beta_{\mathrm{mul}}$, dataset y algoritmo de detección, complementando los
+resultados resumidos presentados en el Capítulo~\ref{ch:experiments}.
+
+\noindent\textit{[Tablas a agregar al completar la ejecución experimental completa.]}
+
+\figplaceholder{0.9\textwidth}{%
+  Resultados completos de SR en todos los datasets, valores de $\tau$, multiplicadores
+  de presupuesto y algoritmos de detección (escenarios simétrico y asimétrico).%
+}
+
+\figplaceholder{0.9\textwidth}{%
+  Resultados completos de NMI en todos los datasets, valores de $\tau$, multiplicadores
+  de presupuesto y algoritmos de detección.%
+}
 
 \end{document}

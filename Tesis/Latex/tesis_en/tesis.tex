@@ -110,8 +110,8 @@
 
 The modern science of networks has brought significant advances to our understanding of
 complex systems. One of the most relevant structural features of graphs representing
-real-world phenomena---ranging from social media platforms to biological interaction
-networks---is their \emph{community structure}: the tendency for nodes to cluster into
+real-world situations, ranging from social media platforms to biological interaction
+networks, is their \emph{community structure}: the tendency for nodes to cluster into
 densely connected groups that are only sparsely connected to the rest of the network.
 Community detection algorithms that uncover this structure have proven highly effective
 \cite{Fortunato-2010}, and are now routinely deployed in large-scale platforms to
@@ -119,8 +119,8 @@ characterize users, personalize content, and target advertisements.
 
 However, this functionality carries a fundamental privacy risk. When a graph encodes
 social relationships, the community a node belongs to may inadvertently reveal sensitive
-affiliations---political leanings, religious beliefs, health conditions, or ideological
-associations---purely from its structural position, without any explicit disclosure of
+affiliations (political leanings, religious beliefs, health conditions, or ideological
+associations) purely from its structural position, without any explicit disclosure of
 such information. This concern is not merely theoretical: community detection has been
 used in practice to identify political groups in online networks
 \cite{narayanan2009deanonymizing} and to profile individuals in social graphs
@@ -128,7 +128,7 @@ used in practice to identify political groups in online networks
 
 To counter this, the concept of \emph{Community Membership Hiding} (CMH) was introduced
 by \textcite{bernini-2024}. The goal of CMH is to strategically modify the topology of a
-network---by adding or removing a small number of edges adjacent to a target node $u$---so
+network, by adding or removing a small number of edges adjacent to a target node $u$, so
 that $u$ is no longer assigned to its original community by a detection algorithm, while
 keeping overall graph disruption minimal. The detection algorithm is treated as a
 \emph{black box}, meaning that no knowledge of its internals is exploited.
@@ -136,7 +136,7 @@ keeping overall graph disruption minimal. The detection algorithm is treated as 
 Bernini et al.\ formulated CMH as a Markov Decision Process (MDP) and solved it via Deep
 Reinforcement Learning (DRL) using an Actor-Critic architecture (A2C). While that work
 demonstrated the viability of the DRL approach, it exhibits notable performance
-degradation on larger graphs, and---as we show in this thesis---harbors a critical
+degradation on larger graphs, and, as we show in this thesis, harbors a critical
 architectural flaw: the agent evaluates the network \emph{globally}, without explicitly
 conditioning on the identity of the target node. As a consequence, the agent cannot learn
 a policy that depends on who the target is; it instead learns a generic
@@ -168,7 +168,7 @@ In this thesis, we make the following contributions:
 
     \item \textbf{Dual-Agent Architecture.}
           We extend the single-agent system into a Dual-Agent Architecture that maintains
-          two specialized agents---one for edge addition and one for edge deletion---with
+          two specialized agents, one for edge addition and one for edge deletion, with
           separate policy networks and learning dynamics. We show that this specialization
           leads to improved performance and learning stability.
 
@@ -316,7 +316,7 @@ under a random null model.
 \label{sec:community-detection}
 % ------------------------------------------------------------
 
-A large number of algorithms for community detection have been proposed in the literature
+Many community detection algorithms have been proposed in the literature
 \cite{Fortunato-2010}. In this thesis, we focus on three widely used methods, all
 of which are treated as \emph{black boxes} by our agent.
 
@@ -644,7 +644,7 @@ walks.
 \paragraph{Limitation in the CMH context.}
 In the original CMH architecture \cite{bernini-2024}, node2vec embeddings are computed
 \emph{once} on the original graph $\G$ and reused throughout the entire episode. As the
-rewiring process modifies the graph, the embeddings become increasingly stale. Furthermore,
+rewiring process modifies the graph, the embeddings become increasingly stale, and
 computing node2vec requires a full random-walk preprocessing step that is expensive for
 large graphs. One of our proposed improvements is to replace these static embeddings with
 dynamic structural features recomputed at each step.
@@ -662,9 +662,12 @@ dynamic structural features recomputed at each step.
 \label{ch:problem}
 % ============================================================
 
-In this chapter we give a formal definition of the Community Membership Hiding problem,
-specifying the constraints, the objective, the reward structure, and the evaluation
-metrics.
+In this chapter we give a formal definition of the Community Membership Hiding problem.
+Section~\ref{sec:formal} introduces the deception condition, the edge-modification budget,
+and the admissible action set. Sections~\ref{sec:similarity}--\ref{sec:nmi} define the
+graph-level and community-level similarity measures used throughout. Section~\ref{sec:metrics}
+presents the evaluation metrics (SR, NMI, F1), and Section~\ref{sec:mdp} closes with the
+MDP formulation adopted by the DRL agent.
 
 % ------------------------------------------------------------
 \section{Formal Definition}
@@ -737,6 +740,7 @@ up-to-date.
 \end{remark}
 
 \section{Graph Similarity}
+\label{sec:similarity}
 
 Beyond the community-level deception condition, we also measure the global structural
 distortion introduced by the rewiring. Following the original paper, we use the
@@ -748,6 +752,7 @@ A high Jaccard similarity indicates that the modified graph closely resembles th
 original, i.e., the structural cost of hiding is low.
 
 \section{Normalized Mutual Information}
+\label{sec:nmi}
 
 To quantify the impact of the rewiring on the \emph{community structure} as a whole,
 we use the Normalized Mutual Information (NMI) \cite{strehl2003cluster} between the
@@ -774,8 +779,8 @@ condition (Definition~\ref{def:deception}) is satisfied:
 \paragraph{NMI.} The average NMI between $f(\G)$ and $f(\Gnew)$ across all test
 instances. Higher NMI indicates less structural distortion.
 
-\paragraph{F1 score.} Since SR and NMI are competing objectives---higher SR typically
-requires more aggressive rewiring, which lowers NMI---we report their harmonic mean:
+\paragraph{F1 score.} Since SR and NMI are competing objectives (higher SR typically
+requires more aggressive rewiring, which lowers NMI), we report their harmonic mean:
 \[
 F_1 = \frac{2 \cdot \SR \cdot \NMI}{\SR + \NMI}.
 \]
@@ -787,6 +792,7 @@ F_1 = \frac{2 \cdot \SR \cdot \NMI}{\SR + \NMI}.
 }
 
 \section{MDP Formulation}
+\label{sec:mdp}
 
 We formalize the CMH problem as an MDP $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$:
 
@@ -811,6 +817,15 @@ We formalize the CMH problem as an MDP $(\mathcal{S}, \mathcal{A}, P, R, \gamma)
 \label{ch:related}
 % ============================================================
 
+This chapter surveys the work most directly related to our contributions.
+Section~\ref{sec:bernini} describes the original DRL-based CMH agent of
+\textcite{bernini-2024}, which serves as our primary baseline.
+Section~\ref{sec:nabla} presents the gradient-based methods of
+\textcite{silvestri2025righthidemaskingcommunity}, which constitute a second set of
+strong baselines. Sections~\ref{sec:adversarial}--\ref{sec:rl-combi} situate our work
+in the broader context of adversarial attacks on graphs, privacy in social networks,
+and reinforcement learning for combinatorial optimization on graphs.
+
 \section{The Original CMH Agent (Bernini et al., 2024)}
 \label{sec:bernini}
 
@@ -828,10 +843,10 @@ consists of:
 The agent is trained on the \texttt{words} dataset using the \texttt{greedy} community
 detection algorithm, and is evaluated for transferability to other datasets and algorithms.
 
-Notably, the original agent achieves success rates significantly above the random and
+The original agent achieves success rates significantly above the random and
 degree-based baselines in standard evaluation scenarios. However, it degrades
-substantially on larger graphs, and---as we establish in
-Chapter~\ref{ch:architecture}---it suffers from a fundamental architectural limitation
+substantially on larger graphs; as we establish in
+Chapter~\ref{ch:architecture}, it also suffers from a fundamental architectural limitation
 regarding the role of the target node.
 
 \section{The Right to Hide (Silvestri et al., 2025)}
@@ -845,6 +860,7 @@ computationally efficient and achieve competitive hiding rates with a well-contr
 structural footprint. We use both as strong baselines in our evaluation.
 
 \section{Adversarial Attacks on Graphs}
+\label{sec:adversarial}
 
 CMH belongs to a broader literature on \emph{adversarial attacks on graphs}, where the
 objective is to modify graph structure so as to fool a downstream algorithm. The most
@@ -859,6 +875,7 @@ algorithms. Unlike CMH, which focuses on a single target node, Q-attack targets 
 global community structure.
 
 \section{Privacy in Social Networks}
+\label{sec:privacy}
 
 The privacy motivation for CMH connects to a large body of work on network anonymization
 and deanonymization. \textcite{narayanan2009deanonymizing} showed that social networks
@@ -872,6 +889,7 @@ actively protect their structural privacy, rather than relying solely on anonymi
 the platform.
 
 \section{RL for Combinatorial Optimization}
+\label{sec:rl-combi}
 
 Solving combinatorial optimization problems with RL is an active research area
 \cite{mazyavkina2021rl}. CMH is a combinatorial problem (finding an optimal subset of
@@ -887,8 +905,12 @@ designed for graph-structured problems.
 \label{ch:architecture}
 % ============================================================
 
-In this chapter we first analyze the original DRL agent and identify its key limitations.
-We then describe our proposed architecture step by step.
+In this chapter we first analyze the original DRL agent and identify its key limitations
+(Section~\ref{sec:analysis}). We then describe our proposed improvements step by step:
+target-aware node features (Section~\ref{sec:features}), the GATv2-based graph encoder
+(Section~\ref{sec:encoder}), the Dual-Agent Architecture (Section~\ref{sec:dual}), and
+Policy-Guided Subgraphing (Section~\ref{sec:subgraph}). Section~\ref{sec:training}
+describes the training procedure and reward structure.
 
 \figplaceholder{0.9\textwidth}{%
   Overview of the proposed architecture. The target node indicator is injected into the
@@ -936,8 +958,8 @@ neither efficient nor reliable, especially when the budget $\beta$ is small.
 The original architecture uses node2vec embeddings computed \emph{once} on the original
 graph $\G$ and reused throughout the entire episode. As the rewiring process modifies
 the graph, the embeddings become increasingly stale and fail to reflect the current
-topology. Furthermore, computing node2vec requires a separate preprocessing step and is
-itself computationally expensive for large graphs.
+topology, and computing node2vec requires a separate preprocessing step that is itself
+expensive for large graphs.
 
 \subsection{Undifferentiated Action Space}
 
@@ -1113,6 +1135,16 @@ preservation.
 \label{ch:experiments}
 % ============================================================
 
+This chapter evaluates all proposed contributions against the baselines described in
+Chapter~\ref{ch:related}. Section~\ref{sec:setup} describes the experimental environment.
+Section~\ref{sec:datasets} introduces the benchmark datasets and Section~\ref{sec:baselines}
+defines the baselines. Section~\ref{sec:protocol} specifies the evaluation protocol.
+Section~\ref{sec:results} reports the results, organized as follows: comparison with the
+original agent (Section~\ref{sec:res-agent}), comparison with gradient-based methods
+(Section~\ref{sec:res-grad}), an ablation study (Section~\ref{sec:ablation}), a
+scalability analysis (Section~\ref{sec:scalability}), and evaluation in the asymmetric
+setting (Section~\ref{sec:asymmetric}).
+
 \section{Setup}
 \label{sec:setup}
 
@@ -1194,6 +1226,7 @@ original DRL agent on SR, NMI, and F1 across all datasets and configurations. Fi
 tables and figures will be included upon completion of the full experimental run.]}
 
 \subsection{Comparison with the Original Agent}
+\label{sec:res-agent}
 
 \figplaceholder{0.9\textwidth}{%
   SR, NMI, and F1 comparison between the original DRL agent and the proposed
@@ -1202,6 +1235,7 @@ tables and figures will be included upon completion of the full experimental run
 }
 
 \subsection{Comparison with Gradient-Based Methods}
+\label{sec:res-grad}
 
 \figplaceholder{0.9\textwidth}{%
   F1 comparison between the proposed architecture, $\nabla$-CMH, and
@@ -1209,6 +1243,7 @@ tables and figures will be included upon completion of the full experimental run
 }
 
 \subsection{Ablation Study}
+\label{sec:ablation}
 
 To isolate the contribution of each component, we conduct an ablation study comparing:
 \begin{enumerate}
@@ -1239,6 +1274,7 @@ Original               & --- & --- & --- & --- & --- & --- \\
 \end{table}
 
 \subsection{Scalability}
+\label{sec:scalability}
 
 \figplaceholder{0.75\textwidth}{%
   Runtime and F1 comparison on \texttt{fb-75} with and without Policy-Guided
@@ -1250,6 +1286,7 @@ Original               & --- & --- & --- & --- & --- & --- \\
 to be included.]}
 
 \subsection{Asymmetric Evaluation}
+\label{sec:asymmetric}
 
 \figplaceholder{0.9\textwidth}{%
   Asymmetric evaluation: SR and NMI when the agent trained on \texttt{greedy} is tested
@@ -1262,7 +1299,13 @@ to be included.]}
 \label{ch:conclusions}
 % ============================================================
 
+This chapter closes the thesis. Section~\ref{sec:summary} summarizes the contributions
+and the main experimental findings. Section~\ref{sec:limitations} discusses the
+limitations of the current work, and Section~\ref{sec:future} outlines the most
+promising directions for future research.
+
 \section{Summary}
+\label{sec:summary}
 
 In this thesis we studied the Community Membership Hiding problem and identified a
 critical limitation in the state-of-the-art DRL approach: the original agent is unaware
@@ -1278,6 +1321,7 @@ performance, and the full architecture consistently outperforms existing methods
 datasets, detection algorithms, and parameter configurations.
 
 \section{Limitations}
+\label{sec:limitations}
 
 Several limitations remain in the current work:
 \begin{itemize}
@@ -1292,6 +1336,7 @@ Several limitations remain in the current work:
 \end{itemize}
 
 \section{Future Work}
+\label{sec:future}
 
 Several directions for future research are natural extensions of this work:
 

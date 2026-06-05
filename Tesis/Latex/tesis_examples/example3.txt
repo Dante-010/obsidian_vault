@@ -1,0 +1,3768 @@
+Universidad Nacional de Luján
+
+Estimación y Corrección de Distancias
+en Grafos Masivos
+
+Tesina de grado presentada para optar al tı́tulo de
+Licenciado en Sistemas de Información
+
+Luis Andrés Giordano
+
+Director: Gabriel H. Tolosa
+2020
+
+A mis padres,
+a mi novia y mi hermano,
+a mis abuelas y toda mi familia...
+
+AGRADECIMIENTOS
+
+En primer lugar, agradezco a mis padres, Daniel y Claudia, por su apoyo incondicional
+durante toda mi carrera como estudiante, por aceptar mis decisiones y por sus concejos
+que hicieron que hoy pueda escribir este trabajo.
+A Noelia, mi novia, quien me acompaña desde el principio de mi carrera y con su interminable paciencia me ayudó a atravesar todo este camino, apoyándome en los buenos y
+malos momentos, siempre.
+A mi hermano, Juan, quien siempre brindó palabras de apoyo y concejos que me han
+ayudado a ser un mejor profesional, dı́a a dı́a.
+A mis abuelas, quienes están siempre presentes en mi vida, siempre me han cuidado y
+durante toda mi adolescencia me han apoyado para llegar a este momento.
+A mi director, Gabriel Tolosa, quien con su enorme profesionalismo y conocimiento ha
+sabido guiarme en este trabajo, siempre brindando una mano y estando dispuesto en todo
+momento a resolver mis inquietudes y consultas. Además, quiero agradecer por su apoyo
+durante mi última etapa como estudiante, con quien he compartido otros proyectos y por
+sus consejos que hoy en dı́a me ayudan a tomar mejores decisiones.
+
+iii
+
+ESTIMACIÓN Y CORRECCIÓN DE DISTANCIAS
+EN GRAFOS MASIVOS
+
+Una red es la estructura que modela las interacciones en una gran variedad de situaciones
+y sistemas tales como las interacciones sociales, la estructura de la Web, rutas terrestres y
+aéreas, etc. Su modelo formal es un grafo y, en muchos casos, principalmente en el mundo
+digital, las dimensiones son muy grandes, albergando millones de entidades y relaciones.
+En grafos de estas caracterı́sticas el desarrollo de algoritmos y procesos escalables y eficientes es una de las metas más difı́ciles y requeridas, convirtiéndose en un tópico donde
+la comunidad cientı́fica pone sostenida atención. Por ejemplo, la complejidad en el cálculo
+exacto de la distancia entre dos nodos ha resultado de interés desde el auge de las redes sociales y otras que también se han tornado masivas. Técnicas como la estimación
+han sido propuestas como alternativas al tiempo y costo computacional inviable. En este
+sentido, este trabajo propone nuevas técnicas de selección de nodos llamados landmarks
+que se utilizan para estimar la distancia entre dos nodos. Los resultados muestran que las
+nuevas estrategias consiguen un mejor desempeño que las estrategias baseline. Además,
+se propone una novedosa técnica de corrección de los valores estimados que logra reducir
+considerablemente el error, llegando a una disminución de hasta el 50 % en el mejor de los
+casos.
+
+v
+
+Índice general
+
+1.. Introducción . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.1. La importancia y el uso de la distancia en redes masivas . . . . . . . . . . .
+1.1.1. Cálculo de distancias . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.1.2. La estimación como alternativa al computo exacto . . . . . . . . . .
+1.2. Motivación y objetivos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+1
+3
+4
+5
+6
+
+2.. Preliminares . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1. Grafos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1.1. Camino . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1.2. Distancia . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1.3. Componente conexa . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1.4. Métricas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.2. Estimación usando landmarks . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.2.1. Desigualdad triangular . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.2.2. Metodologı́a de estimación . . . . . . . . . . . . . . . . . . . . . . .
+2.2.3. Calidad de la estimación . . . . . . . . . . . . . . . . . . . . . . . . .
+2.3. Normalización . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.4. Regresión lineal simple . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.5. Trabajos Relacionados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+9
+9
+9
+10
+10
+10
+12
+12
+12
+14
+14
+15
+15
+
+3.. Metodologı́a . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3.1. Técnicas propuestas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3.1.1. Nuevos landmarks . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3.2. Corrección por error absoluto promedio . . . . . . . . . . . . . . . . . . . .
+3.3. Generación de muestras . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+19
+20
+22
+22
+26
+
+4.. Experimentos y resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.1. Datasets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.2. Nuevas técnicas de selección de landmarks . . . . . . . . . . . . . . . . . . .
+4.2.1. Resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.3. Corrección de la estimación . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.3.1. Resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4.3.1.1. Efectos del muestreo en las funciones de corrección . . . . .
+4.3.1.2. Resultados de corrección . . . . . . . . . . . . . . . . . . .
+4.3.1.3. Corrección con landmarks elegidos al azar . . . . . . . . . .
+
+29
+29
+30
+32
+38
+40
+40
+41
+48
+
+5.. Conclusiones y trabajo futuro . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49
+5.1. Trabajos futuros . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+
+vii
+
+1. INTRODUCCIÓN
+
+Una red es la estructura que modela las interacciones en una gran variedad de aplicaciones tales como las interacciones sociales [6], la Web [16], rutas terrestres y aéreas
+[24], redes de comunicación (routers), biológicas (interacción entre proteı́nas) [14]. En muchos de estos casos, las dimensiones son muy grandes, albergando millones de entidades y
+relaciones, haciéndose presente no solo en compañı́as de gran envergadura como Google,
+Amazon, Facebook y Twitter sino también en pequeñas y medianas empresas que utilizan
+estas estructuras para el desarrollo cotidiano de sus actividades [35]. Debido al enorme
+crecimiento, se ha puesto el foco de atención en investigar como se pueden hacer más
+eficientes los algoritmos que las procesan para dar servicio a millones de usuarios.
+En particular, en las ultimas 2 décadas, las redes digitales han mostrado un continuo
+crecimiento sin lı́mites debido al uso diario de millones de personas quienes generan nuevos
+usuarios (nodos) y establecen vı́nculos con el resto (enlaces). En este sentido, han surgido
+una gran cantidad de nuevas redes sociales que persiguen esta tendencia como WeChat,
+SnapChat, Pinterest y Twitch.
+No solo las redes sociales han evolucionado en tamaño sino también las profesionales
+como LinkedIn, GitHub o ResearchGate donde cada vez son más los usuarios que se
+unen para compartir contenido profesional, buscar u ofrecer trabajo. Algunos estudios [52]
+indican que estos tipos de redes tienen un incremento exponencial en sus inicios y luego
+se ajustan a una ley de potencias. Uno de los casos más sobresalientes es Facebook. En
+2011, un análisis sobre esta red social indica que la cantidad de usuarios en ese momento
+era de 721 millones de usuarios, es decir, el 10 % de la población mundial en ese año [45].
+En 2015, Chin [11] indica que a esa fecha Facebook posee un total de 1.39 mil millones
+de usuarios con 400 mil millones de relaciones, y que la red Twitter posee 288 millones de
+usuarios activos al mes con un promedio de 208 seguidores, es decir, un total estimado de
+60 mil millones de enlaces.
+Este fenómeno no solo se ve en las redes digitales sino también en las redes formadas
+por rutas terrestres y aéreas. El incremento de la densidad y nivel de urbanización en
+las ciudades a nivel mundial y la necesidad de generar interconexiones entre éstas es
+acompañado por el desarrollo de nuevas calles, rutas y autopistas [40]. Un estudio reciente
+sobre la ciudad de Zurich [10] muestra que desde 1955 la cantidad de nodos y aristas de
+esta red de rutas crece en promedio un 3.4 % y 3.2 % respectivamente. Por otra parte,
+las estructuras de datos que utilizan los sistemas de administración de mapas crecen a
+medida que se realizan cambios en los caminos. Por ejemplo, OpenStreetMap muestra un
+crecimiento exponencial en el registro de cantidad de caminos solo en la ciudad de Beijing
+desde el año 2009 a 2019. Este sistema, hoy en dı́a, posee un total de 5.6 mil millones de
+nodos y 625 millones de caminos. 1 .
+Además, también se deben tener en cuenta las redes formadas por las relaciones entre
+documentos. El ejemplo saliente es la Web, la cual está formada por miles de millones
+de documentos y es otro caso de crecimiento exponencial durante los últimos años [28].
+Wikipedia es otro caso interesante ya que aquı́ los documentos que contienen información
+sobre cierto tema son enlazados por otros documentos que hablan sobre un tópico similar o
+simplemente necesitan usarlo como definición sobre algún concepto secundario pero aún ası́
+relacionado. Hoy en dı́a cuenta con un total de 49 millones de documentos 2 . Los sistemas
+1
+2
+
+https://www.openstreetmap.org/stats/data stats.html
+https://en.wikipedia.org/wiki/Wikipedia:Size of Wikipedia
+
+1
+
+2
+
+1. Introducción
+
+que administran documentos cientı́ficos también han tenido una evolución importante.
+De estos datos se puede obtener redes de co-autorı́a o citación. Un caso es DBLP donde
+existen indexados al 2019 casi 5 millones de documentos3 .
+Los cambios en las dimensiones de estas estructuras generan la necesidad de calcular
+métricas de una manera algorı́tmica eficiente. Además, se requiere determinar cuáles son
+los nuevos requisitos en cuanto a hardware para sustentar el cómputo de ciertas métricas
+y procesos cuyo costo computacional se vuelve cada vez más alto [7, 53, 17].
+A la par del incremento en el tamaño de las redes los requisitos de sus usuarios fueron
+también cambiando. Las necesidades en cuanto al tiempo de respuesta de las funciones que
+proveen estos sistemas también ha incrementado encontrándonos hoy en dı́a con usuarios
+cada vez más exigentes. Es por esto que el desafı́o no solo es mantener el mismo desempeño
+en los algoritmos que procesan estas estructuras a lo largo de los años (escalabilidad) sino
+superarlo para cumplir nuevos requisitos de velocidad para los usuarios. Un ejemplo es
+el tiempo de respuesta en las búsquedas. El estudio hecho por Miller [29] en 1968 indica
+que un usuario espera solo 2 segundos por una respuesta. En 1993, Jakob Nielsen [31]
+indica que el usuario soporta un retraso de entre 0,1 y 1 segundos, mientras que estudios
+recientes muestran que el tiempo promedio de respuesta de una consulta en Google es de
+0.4 milisegundos [26], lo cual marca una clara tendencia de decremento en las necesidades
+de tiempo de respuesta para mantener un servicio aceptable. Si bien los tiempos de la red
+influyen en el tiempo de respuesta final no está al alcance poder modificar ese factor y
+por otro lado las velocidades han aumentado considerablemente durante la ultima década.
+Es por esto que la única forma de mejorar la eficiencia es modificando los algoritmos que
+resuelven o participan de la generación de la respuesta final.
+Por otro lado, estos sistemas ejecutan procesos que no están a la vista del usuario. Un
+caso concreto son los sistemas de recomendación los cuales, en base a ciertas caracterı́sticas como la similitud en contenido y/o la distancia, generan un ranking de usuarios que
+serán recomendados a otro. Dado que la recomendación es para cada usuario en particular,
+estos algoritmos (junto con la métricas de la red que utilizan) deben computar de forma
+eficiente dada la cantidad de usuarios que participan de estos sistemas.
+Modelar las redes como un grafo es el enfoque natural y ampliamente utilizado para
+representar y analizar las estructuras de sistemas complejos de cualquier tipo permitiendo
+estudiar el comportamiento de sus entidades y relaciones [8]. Un grafo G = (V, E) es un
+conjunto de nodos V y aristas E que conectan estos primeros. En las redes sociales esto
+se puede ver como los usuarios y sus relaciones. Además, según el sentido de sus aristas,
+éstos pueden ser dirigidos o no. Un grafo no dirigido es aquel que no denota un sentido
+en la relación entre dos nodos. Por ejemplo, en Facebook la relación de “amistad” entre
+dos usuarios genera un grafo no dirigido ya que el link puede crearse únicamente si estos
+dos usuarios están de acuerdo en conectarse. Por otro lado, el caso de Instagram deriva
+un grafo dirigido ya que un usuario puede seguir a otro pero no necesariamente debe ser
+recı́proco.
+En el ejemplo de redes terrestres y aéreas para representar correctamente los enlaces
+se debe indicar, además de la conexión entre dos ciudades o aeropuertos, la distancia fı́sica
+entre los dos puntos. De esta manera, estableciendo valores en las aristas aparecen los
+grafos ponderados. Además, en el caso de las redes etiquetadas, los nodos son tipificados
+para poder soportar la búsqueda por tales tipos. Este es el caso de los mapas donde ciertos
+lugares como restaurantes, negocios, estaciones de servicio son etiquetadas para que los
+usuarios puedan buscar directamente por tipos y ası́ obtener un subconjunto de nodos
+3
+
+https://dblp.org/statistics/recordsindblp.html
+
+1.1. La importancia y el uso de la distancia en redes masivas
+
+3
+
+que cumplen esta caracterı́stica, pero que, además se encuentran relativamente cerca de
+la ubicación del usuario [23, 21].
+En grafos de estas caracterı́sticas el desarrollo de algoritmos y procesos escalables
+y eficientes es una de las metas más difı́ciles y requeridas, convirtiéndose en un tópico
+donde la comunidad cientı́fica pone sostenida atención. Debido al gran crecimiento, el
+procesamiento eficiente del grafo subyacente a estas redes se ha vuelto una tarea más que
+desafiante y compleja en términos computacionales.
+Algoritmos como la detección de comunidades y la recomendación de usuarios se basan
+en esta estructura [51, 37]. La forma en que la información fluye en las redes digitales a
+través de los enlaces y la detección de nodos “influencers” también ha sido de gran interés
+para las campañas de marketing [18, 42]. Encontrar el subconjunto de nodos del grafo que
+puede de alguna manera “controlar” al resto también es un problema cuya solución parte
+del análisis del mismo [50].
+Todas estas estas áreas de investigación enfocan el desarrollo de nuevas técnicas analizando grafos y basándose en la teorı́a asociada a este tipo de estructura de datos. Es
+por esto que incluyen en sus algoritmos métricas basadas en caracterı́sticas de los nodos
+(closeness centrality, betweenness centrality) o la distancia entre dos nodos para lograr una
+precisión más alta en sus resultados.
+La ejecución online de estos procesos es una de las tareas más complicadas teniendo
+en cuenta los requisitos de tiempo que exigen los usuarios hoy en dı́a. Un ejemplo son las
+búsquedas de usuarios en redes sociales que implican el cómputo de alguna métrica que
+debe ser resuelta en el orden de los microsegundos. Esto se debe no solo a la necesidad
+del usuario de ver una respuesta rápida sino que, además, si a esto se le suma la cantidad
+de consultas por segundo que deben resolver estos sistemas, la necesidad de ser altamente
+eficiente en el cómputo es aún mayor.
+La distancia d(u, v) entre dos nodos u, v ∈ V del grafo G se define como la longitud del
+camino más corto que los une, navegando por un conjunto de aristas ei ∈ E. Es una de las
+métricas más básicas y es usada en múltiples aplicaciones. La complejidad en el cálculo
+exacto de esta métrica ha resultado de interés desde el auge de las redes sociales y otras
+que también se han tornado masivas. Técnicas como la estimación han sido propuestas
+como alternativas al tiempo y costo computacional inviable.
+
+1.1.
+
+La importancia y el uso de la distancia en redes masivas
+
+La métrica d(u, v) forma parte de varios algoritmos que se ejecutan sobre redes digitales masivas hoy en dı́a. Por ejemplo, Google muestra que la distancia entre dos URL’s,
+obtenida del grafo de la Web, sirve para determinar el ranking del conjunto de páginas
+que componen la respuesta de una consulta (query) recibida por un motor de búsqueda4 .
+En redes de co-autorı́a, esta métrica permite saber que tan relacionado están los temas
+que investigan dos personas, permitiendo categorizar los trabajos, describir el interés en
+común de los individuos o recomendar artı́culos académicos “cercanos”, filtrando por tipo
+de contenido.
+En redes sociales la distancia entre dos nodos también es usada en múltiples áreas. Por
+ejemplo, los usuarios tienden a formar comunidades con otros usuarios cercanos (seguidores
+de mis seguidores o amigos de mis amigos) por ende la distancia entre estos individuos es
+de principal importancia para determinar si pertenecen o no a una misma comunidad [22].
+Otro caso es el de las búsquedas por contexto, en donde los resultados son nodos del grafo y
+la consulta se responde en base a un nodo (context node) en particular. Luego, el algoritmo
+4
+
+https://patents.google.com/patent/US9165040B1/en
+
+4
+
+1. Introducción
+
+que genera el ranking de resultados puede tomar en cuenta la distancia que existe entre el
+nodo que realiza la consulta y el correspondiente al resultado. En este sentido, se puede
+asignar mayor valor a aquellos que se encuentren más cerca [32].
+Un ejemplo es socially-sensitive search [47]. Se trata de un uso muy conocido en redes
+sociales donde el nodo que origina el query es un usuario (context node) que realiza una
+consulta sobre otro (por ejemplo, buscando por su nombre) y espera que el resultado se
+encuentre ordenado según la cercanı́a. Un caso real es la red social LinkedIn donde la
+distancia entre nodos es usada para filtrar los resultados de acuerdo a la vecindad del
+usuario. En redes de textos, como por ejemplo Wikipedia, los artı́culos se relacionan entre
+si por los hipervı́nculos que generan los autores. En este caso el “nodo contextual” puede
+ser un artı́culo y el resultado esperado al ingresar una consulta son los textos más cercanos
+(en clicks) que hablen del tema buscado.
+Además, la distancia en la teorı́a de grafos es usada para el cómputo de otras métricas
+que también resultan de interés. Una de ellas es la distancia promedio de un nodo al resto de
+la red conocida como closeness centrality, la cual ha sido explorada en varios trabajos [38,
+46, 36]. Uno de los usos posibles es identificar aquellos nodos que distribuyen la información
+en la menor cantidad de saltos posibles. Esto permite establecer a cuáles nodos conviene
+enviarle cierta información para que se propague rápidamente. Otra métrica relacionada
+con las distancias es el diámetro, que consiste en la más larga de todas las distancias
+más cortas entre cualquier par de nodos u, v ∈ V . Ésta se puede usar, por ejemplo, para
+establecer la cantidad mı́nima de saltos que se debe dar para distribuir información por
+toda la red [1].
+
+1.1.1.
+
+Cálculo de distancias
+
+El diseño y desarrollo de algoritmos eficientes para calcular la longitud del camino más
+corto ha recibido mucha atención en las ciencias de la computación y juega un rol central
+en esta literatura, tanto el enfoque teórico como práctico. En grafos pequeños y medianos
+(del orden de miles de aristas) los algoritmos clásicos (BFS, Dijkstra, etc.) siguen siendo
+aplicables. Sin embargo, el problema surge cuando la red a procesar posee miles de millones
+de aristas. Este es el caso de las redes sociales hoy en dı́a, donde el cálculo exacto de esta
+métrica es computacionalmente prohibitivo requiriendo un gran espacio para almacenar
+estructuras que lo transforman para lograr hacer el cálculo en un tiempo prudencial [5].
+Para este problema se han desarrollado diferentes métodos, los cuales se aplican, en
+general, a diferentes escenarios. El algoritmo clásico y más intuitivo es la búsqueda en
+amplitud (BFS). Consiste en partir de uno de los dos nodos, u o v, y expandir sus vecinos.
+Si v no se encuentra entre estos nodos explorados se sigue explorando por los vecinos
+de los vecinos. De esta manera se expande de a un nivel a la vez hasta encontrar a v. La
+complejidad de este algoritmo es de O(|V |+|E|)) [13], es decir, en el peor de los casos todos
+los nodos y aristas de la red van a ser exploradas. Si se toma en cuenta una instancia del
+año 2012 de la red de co-autoria obtenida de DBLP 5 el costo serı́a de 317,080 + 1,049,866
+de iteraciones. Esto resulta inviable cuando el calculo requiere hacerse en forma rápida.
+En grafos ponderados el algoritmo de Dijkstra logra resolver el problema en O((|E| +
+|V |)log|V |) [13] (si se usan colas de prioridad) buscando expandir solo aquellos nodos que
+representan la menor suma de pesos. En el caso de que los pesos sean enteros positivos
+el algoritmo de Thorup [43] en el peor de los casos tiene que recorrer todas las aristas.
+En grafos dirigidos ponderados existen varias implementaciones para obtener el camino
+máscorto entre dos nodos entre las que se encuentran el algoritmo de Gabow y el de
+5
+
+https://snap.stanford.edu/data/com-DBLP.html
+
+1.1. La importancia y el uso de la distancia en redes masivas
+
+5
+
+Bellman-Ford [13]. El algoritmo A* resulta eficiente cuando se elige una buena heurı́stica
+(por ejemplo, la distancia entre el nodo y el destino) que permita llegar rápido al objetivo.
+Aún ası́, este algoritmo tiene una complejidad exponencial O(bd ) [34] siendo b el grado
+promedio de la red o el factor de ramificación y d la profundidad de la solución. Estos
+métodos quedaron obsoletos para los grafos de las dimensiones que se manejan hoy en dı́a.
+Los trabajos más recientes en esta área han realizado mejoras sustanciales sobre los
+tiempos y la complejidad de cómputo de los algoritmos mencionados anteriormente. El
+aumento en las capacidades de cómputo como la cantidad de computadoras en un cluster, la
+cantidad de núcleos por procesador y/o la cantidad y bajo costo de memoria RAM, hacen al
+desarrollo de otros enfoques que explotan estas caracterı́sticas. Por ejemplo, la construcción
+de un ı́ndice completamente cargado en memoria [4] para obtener directamente la distancia
+o la distribución del problema del camino más corto es uno de los enfoques explorados
+[19]. No obstante, cargar un grafo por completo en memoria o incluso usar gran porcentaje
+de los procesadores solo al computo de una métrica es un costo demasiado alto. Es por
+esto que la búsqueda de métodos eficientes sigue siendo un tópico de investigación en la
+actualidad.
+
+1.1.2.
+
+La estimación como alternativa al computo exacto
+
+En general, las métricas que se calculan sobre estructuras masivas pueden ser estimadas. Ante el impedimento computacional de procesar estas métricas de forma rápida existe
+como alternativa diseñar alguna técnica de estimación que sea más eficiente en tiempo y
+suficientemente precisa para el problema a resolver. Si bien de esta manera se acelera el
+cálculo, existe siempre un error asociado y el desafı́o se encuentra en optimizar estas técnicas buscando la manera de reducir este error lo más posible sin perder la velocidad en el
+cálculo.
+La distancia en redes masivas es una métrica ampliamente usada y existen técnicas
+para estimarla. Una de las formas de medir el error de estimación en este caso es usando
+la diferencia absoluta entre la distancia real y la estimada.
+Como se explicó anteriormente, el cálculo exacto con algoritmos tradicionales (BFS,
+Dijkstra, A*, entre otros) resulta demasiado lento y costoso para grafos masivos. Una
+opción es estimarla ejecutando la consulta sobre un subconjunto de nodos del grafo
+(|V 0 | << |V |). En los últimos años se han desarrollado estrategias que logran transformar
+eficientemente grafos de millones de nodos en una nueva estructura que permite realizar
+las consultas (con resultados exactos) de forma eficiente [3, 5]. A pesar de esto, la opción
+de estimar la distancia todavı́a sigue resultando más eficiente dado que las dimensiones
+actuales de las redes sociales, redes de rutas, la Web, entre otros, se encuentran en los
+miles de millones de aristas o más, lo cual limita la aplicación de estas técnicas.
+Un método para aproximar la longitud del camino más corto es recolectar cierta información del grafo de forma offline y luego usarla para ejecutar el cálculo de forma eficiente.
+Esta “información” se obtiene a partir de un subconjunto de nodos, llamados landmarks,
+los cuales son usados para estimar la distancia. Este enfoque tiene un rendimiento muy
+bueno en la práctica [12, 32, 44] logrando (en teorı́a) escalar para grafos de miles de millones de nodos ya que el subconjunto de landmarks puede ser obtenido fácilmente. Hay que
+tener en cuenta que este tipo de métodos requiere de espacio de almacenamiento adicional
+por lo que existe un tradeoff entre cuánta información almacenar y el error de estimación.
+Una forma de mejorar la aproximación en estos métodos es elegir cada vez un subconjunto más grande de landmarks de forma aleatoria. Este enfoque es eficaz y logra reducir
+cada vez más el error de estimación aunque no escala respecto de las dimensiones de las
+redes. Otra técnica es seleccionar alguna métrica caracterı́stica de los nodos que asegure de
+
+6
+
+1. Introducción
+
+alguna manera que los primeros k nodos logren un error mucho menor respecto de elegir
+k nodos de forma aleatoria. Por ejemplo, un método posible y ya explorado por Potamias
+et. al [32] es tomar los k nodos de mayor grado. En este sentido, la búsqueda de nuevas
+métricas de la red o de los nodos en particular que “seleccionen” mejores landmarks todavı́a es de interés dada la rapidez con que se puede resolver una consulta de distancia
+con estas transformaciones o “ı́ndices” de los grafos.
+Los estimadores, en general, tienen variaciones asociadas al error. Estas pueden ser
+diferencias constantes, o determinables mediante algún modelo, que se sostienen entre el
+valor estimado y el real (el error). Además, en algunos casos, estas diferencias se mantienen entre los valores estimados para cualquier muestra respecto de la población. Cuando
+esto ocurre, la ventaja es que las variaciones pueden modelarse y es posible realizar una
+corrección del estimador.
+En particular, no se han encontrado trabajos en la literatura donde se haya diseñado
+y probado un método de corrección de valores en esta clase de estimadores. Algunos
+resultados preliminares sobre este problema indican que el error de estimación no respeta
+una distribución uniforme sino que es función de la distancia real entre los nodos [32].
+
+1.2.
+
+Motivación y objetivos
+
+Como se dijo anteriormente, muchas de las aplicaciones que se usan hoy en dı́a como las
+redes sociales, sistemas de mapas y geolocalización, utilizan la distancia entre dos nodos
+para computar alguna métrica de similitud, recomendar enlaces o filtrar búsquedas. La
+complejidad del cómputo de esta métrica sobre estas estructuras masivas junto con la
+necesidad de una resolución rápida debido a la cantidad de usuarios interactuando con los
+sistemas, que a su vez tienen requisitos estrictos en cuanto a tiempos de respuesta, son las
+caracterı́sticas más motivadoras del problema. Esto es de especial interés dado que tanto
+las redes como la cantidad de usuarios se encuentra en constante crecimiento.
+Además, teniendo en cuenta que el método de estimación por landmarks es uno de
+los enfoques más eficientes y que, además, existen técnicas [3, 15] que no solo aceleran el
+proceso de indexación sino que también tienen en cuenta la dinámica con que evolucionan las redes hace que la búsqueda de mejorar esta técnica, en términos de complejidad
+computacional y espacio de almacenamiento, sea aún más motivante.
+Por último, no se han encontrado en la literatura trabajos que estudien y modelen
+las variaciones del error en estas estimaciones, que apliquen métodos de corrección de la
+estimación derivados de estos modelos y que finalmente demuestren una reducción del error
+sobre esta técnica. Es por esto que la búsqueda de alguna técnica eficiente de corrección
+directa sobre los valores estimados también resulta de interés y es otra de las motivaciones
+de este trabajo.
+A partir del escenario presentado, los objetivos de este trabajo son:
+Definir y evaluar nuevas técnicas de selección de landmarks que logren reducir el error
+de estimación de la distancia entre un par de nodos de la red respecto de las técnicas
+ya experimentadas en otros trabajos de la literatura, combinando caracterı́sticas de
+los nodos.
+Modelar, definir y evaluar funciones eficientes de corrección de los valores estimados
+basadas en caracterı́sticas del grafo, derivadas de un subconjunto de nodos o incluso
+del comportamiento mismo de la técnica de estimación.
+Analizar las caracterı́sticas y experimentar las técnicas propuestas sobre instancias
+de redes masivas reales.
+
+1.2. Motivación y objetivos
+
+7
+
+El resto del trabajo se organiza de la siguiente manera. En el Capı́tulo 2 se presentan los
+conceptos básicos para entender las metodologı́as propuestas y los trabajos relacionados
+con los objetivos planteados en este capı́tulo. El Capı́tulo 3 presentan las metodologı́as
+desarrolladas para cumplir con los objetivos. En el Capı́tulo 4 se describen los experimentos
+diseñados para validar las propuestas del Capı́tulo 3, junto con sus respectivos resultados
+y análisis. Por último, el Capı́tulo 5 presenta las conclusiones finales del trabajo y abre
+nuevas lı́neas de investigación.
+
+8
+
+1. Introducción
+
+2. PRELIMINARES
+
+En esta Sección se presenta la teorı́a básica sobre grafos y métricas que se computan
+sobre los nodos y son usadas por las técnicas presentadas en la metodologı́a. Además, se
+explica la estimación de distancias por landmarks junto con sus propiedades. También
+se hace una breve descripción de las técnicas de normalización utilizadas y la teorı́a de
+regresiones lineales. Finalmente se presentan los trabajos relacionados con los objetivos
+propuestos, en los cuales se hace uso de la mayorı́a de los conceptos explicados en este
+capı́tulo.
+
+2.1.
+
+Grafos
+
+Se define un grafo como un par G = hV, Ei donde V es un conjunto de vértices y
+E ⊂ {{x, y} | x, y ∈ V, x 6= y} es el conjunto de aristas. En las redes sociales esto se puede
+ver como el conjunto de los usuarios y sus relaciones. Existen diferentes tipos de grafos:
+ponderados y no ponderados, dirigidos y no dirigidos.
+La diferencia entre grafos dirigidos y no dirigidos se encuentra en el sentido de la arista
+o arco. Formalmente, un grafo dirigido o un digrafo D consiste en una colección de vértices
+V , y una colección de arcos A, denotado por D = hV, Ai. Cada arco a = h−
+u,→
+vi une un
+vértice u ∈ V con otro vértice (no necesariamente diferente) v ∈ V [39]. Los arcos indican
+la navegabilidad de un nodo hacia otro nodo. En el caso de que un arco entre dos nodos
+u y v pertenezca a A (denotado por (u, v) ∈ A) entonces se puede navegar desde el nodo
+u hacia v pero no al revés, a menos que también (v, u) ∈ A. En los grafos no dirigidos no
+existe sentido para una arista (u, v) ∈ E y la navegabilidad es posible en ambos sentidos.
+Un grafo ponderado G es un grafo para el cual cada arista e ∈ E tiene asociado un
+valor w(e) ∈ R llamado peso [39]. En los no ponderados las aristas no tienen peso o se dice
+que éste es igual a 1 para todas. Este valor indica de alguna manera el costo de transitar
+por el enlace o la importancia de la relación entre los nodos que une.
+
+2.1.1.
+
+Camino
+
+En grafos no dirigidos, dados dos vértices u, v ∈ V siendo u 6= v, se define a
+πu,v = hu, s1 , s2 , . . . , s`−1 , vi
+como un camino posible entre los nodos u y v, con {(u, s1 ), (s1 , s2 ), .., (s`−1 , v)} ∈ E. El
+conjunto de los n caminos entre u y v se define como
+Πu,v = {π1 , π2 , . . . , πn }
+En grafos dirigidos, la definición es similar solo se considera que cada vértice u ∈ πu,v
+se encuentra unido por un arco a ∈ A. Luego, {(u, s1 ), (s1 , s2 ), .., (s`−1 , v)} ∈ A.
+En grafos no ponderados la longitud de un camino se define como la cantidad de aristas
+|πu,v | = ` que lo componen. En grafos ponderados la longitud está dada por la suma de
+los pesos de las aristas pertenecientes a πu,v .
+Se define al camino más corto entre dos nodos u y v como aquel camino cuya longitud
+` es la mı́nima en Πu,v . De acuerdo con las definiciones anteriores puede existir más de
+un camino corto entre dos nodos u y v. Luego, existe un conjunto de caminos cortos para
+cada par de nodos cuya notación es Γu,v ⊆ Πu,v . De ahora en más, por simplicidad, se le
+9
+
+10
+
+2. Preliminares
+
+Figura 2.1: Ejemplo de un grafo simple donde el par de nodos u, v posee más de 1 camino corto.
+Se marcan dos caminos cortos posibles: uno en naranja y el otro en azul, ambos de
+longitud igual a 3. Para el camino azul existe la variante reemplazando (s3 , s4 ), (s4 , v)
+por (s3 , s2 ), (s2 , v).
+
+llamará camino a cualquiera de los posibles caminos cortos entre un par de nodos. En la
+Figura 2.1 se muestra un ejemplo de un grafo simple donde existen al menos dos caminos
+cortos entre u y v.
+
+2.1.2.
+
+Distancia
+
+Se define la distancia d(u, v) como la longitud de un camino más corto existente entre
+dos nodos u, v ∈ V . Una de las formas de obtenerla entre dos nodos de un grafo no
+dirigido y no ponderado es ejecutar una búsqueda en amplitud (BFS) tomando como punto
+de partida alguno de los dos nodos. En grafos ponderados se puede aplicar el algoritmo
+Dijkstra para resolver este problema de forma eficiente [13].
+
+2.1.3.
+
+Componente conexa
+
+En un grafo no dirigido se dice que dos vértices u y v están conectados si existe un
+camino entre ellos. Un grafo es conexo si existe un camino para cada par u, v ∈ V . Luego,
+una componente conexa es un subgrafo conexo G0 = hE 0 , V 0 i, obtenido a partir de G,
+para el cual no existe un par de nodos conectados u, v tal que u ∈ V 0 ∧ v ∈ (V − V 0 ). Es
+decir, los nodos de una componente conexa solamente se encuentran conectados con nodos
+pertenecientes a esa componente y no con el resto del grafo. Los grafos dirigidos pueden ser
+fuertemente conexos si existe un camino para cada par de vértices, o débilmente conexos
+si estos caminos existen únicamente cuando se considera al grafo como no dirigido [8].
+
+2.1.4.
+
+Métricas
+
+A continuación se presentan algunas de las métricas que se computan sobre los nodos
+de una red y que son usadas en este trabajo.
+Grado. El grado (o degree, en inglés) de un nodo es la cantidad de aristas incidentes que
+tiene a otros nodos de la red. Se denota deg(u) como el grado del nodo u ∈ V . El costo de
+esta métrica depende de cómo se implementa el almacenamiento de los datos. Por ejemplo, utilizando listas de adyacencias para representar un grafo, se puede usar un vector
+adicional para almacenar el valor del atributo de un nodo. En tal caso, la complejidad es
+O(1) ya que el valor de esta métrica se obtiene accediendo con el ı́ndice correspondiente
+al nodo u [13]. En caso de usar la lista de adyacencias de un nodo, la complejidad varı́a
+según la forma en que el lenguaje de programación implementa el cálculo de longitud de
+
+2.1. Grafos
+
+11
+
+esta estructura1 .
+Closeness. La cercanı́a de un nodo u es comúnmente conocida como closeness o closeness
+centrality. Esta métrica explica el valor recı́proco de la distancia promedio del nodo u al
+resto de los nodos de la red para los cuales existe un camino. La Ecuación 2.1 muestra
+cómo se computa esta centralidad, donde d(v, u) es la distancia entre v y u, y n es la
+cantidad de nodos que se pueden alcanzar desde u por caminos cortos. Cuando el valor se
+acerca a 1, ésta métrica indica que el nodo u se encuentra a distancias muy chicas respecto
+del resto de los nodos y viceversa. Se vuelve 1 cuando u es adyacente a los n − 1 nodos
+restantes.
+n−1
+clos(u) = Pn−1
+v=1 d(v, u)
+
+(2.1)
+
+Esta métrica además se puede normalizar multiplicando por la siguiente fórmula:
+r−1
+|V | − 1
+
+(2.2)
+
+donde r es el número de nodos a los que se puede llegar desde u. Entonces, cuando
+el grafo no es conexo el valor de esta métrica se calcula de forma relativa a la componente conexa a la cual pertenece el nodo. Notar que cuando un grafo es conexo el valor
+de esta normalización es siempre 1. En este trabajo Closeness se calcula utilizando esta
+normalización.
+La complejidad computacional de esta métrica se encuentra en el cálculo de la distancia hacia los n − 1 nodos. Para reducir este costo, Closeness puede estimarse eligiendo
+previamente un conjunto pequeño de nodos muestreados de forma aleatoria y uniforme de
+la red. Luego, n se transforma en la cantidad de nodos muestreados y la centralidad de
+cada nodo u se computa sobre este conjunto.
+Betweenness Centrality. La centralidad por intermediación o betweenness centrality
+expresa la proporción de caminos cortos que atraviesan por un nodo v. La formula para
+calcular esta métrica es la siguiente:
+betw(v) =
+
+X |Γs,t (v)|
+s,t∈V
+s6=v6=t
+
+|Γs,t |
+
+(2.3)
+
+donde Γs,t (v) es el conjunto de caminos cortos entre s y t que pasan por v. La suma
+itera sobre todos los pares de nodos del grafo siendo s 6= v 6= t.
+Cobertura. La cobertura de un nodo v indica la cantidad de pares de nodos que poseen
+un camino corto a través de v. La fórmula que determina esta métrica es:
+cob(v) =
+
+X
+
+(Γs,t (v) > 0)
+
+(2.4)
+
+s,t∈V
+s6=v6=t
+
+donde Γs,t (v) > 0 resulta 1 en caso de ser verdadero y 0 en caso contrario.
+1
+
+En caso de implementarse en c++, usando el compilador C++11, el costo sigue siendo O(1). http:
+//www.cplusplus.com/reference/list/list/size/
+
+12
+
+2. Preliminares
+
+2.2.
+
+Estimación usando landmarks
+
+En la Sección 2.1.2 se define la distancia exacta entre dos nodos de una red. Sin
+embargo, existen diferentes técnicas para aproximar el valor de d(u, v). Un método para
+estimar este valor consiste en seleccionar un conjunto de nodos llamados landmarks los
+cuales son usados luego como puntos de referencia para calcular la distancia estimada
+d0 (u, v) entre dos nodos cualesquiera.
+
+2.2.1.
+
+Desigualdad triangular
+
+Cualquier nodo de la red puede ser usado como landmark para aproximar la distancia
+entre otros dos vértices tomando como base una propiedad llamada “desigualdad triangular”. En redes, ésta indica que para cualquier par de nodos (u, v) y un tercer nodo l, las
+siguientes inecuaciones se cumplen:
+d(u, v) ≤ d(u, l) + d(l, v)
+
+(2.5)
+
+d(u, v) ≥ |d(u, l) − d(l, v)|
+
+(2.6)
+
+De la primera ecuación se deriva que si l ∈ πu,v ⊂ Γu,v entonces d(u, v) = d(u, l)+d(l, v)
+(por ejemplo, el par s2 , s7 con l1 en la Figura 2.2). En la segunda, la igualdad se mantiene
+si u ∈ πv,l ⊂ Γv,l o v ∈ πu,l ⊂ Γu,l , es decir, u y v se encuentran en el mismo camino hacia
+l (por ejemplo, el par s6 , s7 con l1 en la Figura 2.2).
+Por ejemplo, considerando los vértices s1 y s7 (Figura 2.2) la distancia entre estos dos
+nodos es de 2 siendo el camino más corto πs1 ,s7 = hs1 , s8 , s7 i. Suponiendo que no se conoce
+la existencia de s8 , esta métrica se puede aproximar por un camino alternativo a través
+de l1 , de dos formas diferentes:
+Sumando las distancias de los nodos a este “punto de referencia”. De este modo el
+camino se transforma en πs1 ,s7 = hs1 , l1 , s6 , s7 i lo que indica d0 (u, v) = 3 con una
+diferencia de 1 arista. En este caso se cumple la Inecuación 2.5.
+Restando las distancias. Si d(s1 , l1 ) y d(l1 , s7 ) se restan entonces d0 (u, v) = 1, cumpliendo ası́ con la Inecuación 2.6.
+Notar que cuanto mejor ubicado se encuentre li en el grafo, mejor será la aproximación
+de la distancia. Una técnica posible para ubicar estos “buenos” landmarks es encontrar
+aquellos que participen en la mayor cantidad de caminos cortos. Existen dos métricas dedicadas especı́ficamente a esta propiedad de los nodos: betweenness centrality y la cobertura
+de un nodo. Esta última es más precisa [25] y simple de calcular que betweenness, pero
+ambas son problemas NP-hard [32].
+
+2.2.2.
+
+Metodologı́a de estimación
+
+En la sección anterior se dan ejemplos simples acerca de los fundamentos teóricos
+matemáticos en cual se basa esta técnica de estimación y se muestra cómo se comporta
+en el caso de usar un nodo landmark. En el caso en que la cantidad de nodos landmarks
+sea más de uno (k > 1), obtener la distancia estimada es un tanto más compleja que una
+simple resta o una suma. En estos casos la distancia exacta entre dos nodos se encuentra
+contenida dentro de dos valores extremos: lower-bound (LB) y upper-bound (UB).
+
+2.2. Estimación usando landmarks
+
+13
+
+Figura 2.2: Ejemplo de un grafo donde se eligen de forma arbitraria dos nodos landmarks l1 y l2
+
+.
+Estos valores se derivan de la desigualdad triangular. Partiendo de la Inecuación 2.6
+y suponiendo un k > 1, ésta debe completarse con los k componentes que indican las
+diferencias entre las distancias de los nodos u y v a cada uno de los landmarks:
+|d(u, l3 ) − d(l3 , v)| ≤ ... ≤ |d(u, lk ) − d(lk , v)| ≤ |d(u, l10 ) − d(l10 , v)| ≤ d(u,v)
+
+(2.7)
+
+Notar que, por la misma propiedad de la desigualdad triangular, ninguno de los componentes agregados puede ser mayor que d(u, v) y deben ordenarse de tal manera que
+cumplan con la inecuación (se muestra un ordenamiento ficticio). De esta misma se deriva
+que el componente que más se acerca a la distancia real es el mayor de todos llegando ası́
+al valor de LB:
+max(|d(u, li ) − d(li , v)|) ≤ d(u,v)
+
+(2.8)
+
+De una forma similar se llega al valor de UP. Agregando los componentes a la inecuación
+2.5, se obtiene:
+d(u,v) ≤ d(u, l4 ) + d(l4 , v) ≤ d(u, l7 ) + d(l7 , v) ≤ ... ≤ d(u, lk ) + d(lk , v)
+De nuevo los componentes deben ser ordenados para cumplir con la inecuación (se
+muestra un ordenamiento ficticio). En este caso ninguno de los elementos agregados a la
+inecuación puede ser menor a d(u, v). Luego, el que más se acerca es el menor de todos
+marcando el valor de UB:
+d(u,v) ≤ min(d(u, li ) + d(li , v))
+
+(2.9)
+
+Finalmente, uniendo ambas inecuaciones queda:
+max(|d(u, li ) − d(li , v)|) ≤ d(u,v) ≤ min(d(u, li ) + d(li , v))
+
+(2.10)
+
+Por ejemplo, si se estima la distancia por UB entre los nodos s5 , s3 (Figura 2.2) entonces d0 (u, v) = 2 ya que mı́nimo de las distancias hacia los landmarks se obtiene con l2 . Si
+se estima por LB d0 (u, v) = 1 ya que el máximo de las diferencias está dado por el camino
+a través de l1 .
+Según los experimentos realizados en el trabajo de referencia [32] se ha demostrado que la técnica que mejor resultados alcanza es UB. De ahora en más cada vez que en
+
+14
+
+2. Preliminares
+
+este trabajo se use d0 (u, v) se debe asumir que la metodologı́a utilizada para estimar es UB.
+Considerando L = l1 , l2 , .., lk el subconjunto de nodos landmarks ordenados mediante
+alguna métrica, esta metodologı́a consiste entonces en generar un vector por cada nodo
+u ∈ V en el que se almacenan las distancias a cada uno de los landmarks:
+θu = {d(u, l1 ), d(u, l2 ), .., d(u, lk )}
+Estos vectores forman ahora una nueva estructura resumen del grafo original G = hV, Ei
+llamada “ı́ndice” y se denota como I = hV, θi, donde cada nodo u ∈ V es representado
+por su vector caracterı́stico θu . El ı́ndice reúne la información necesaria para estimar la
+distancia entre dos nodos cualesquiera s y t usando el valor de UB.
+
+2.2.3.
+
+Calidad de la estimación
+
+A todo estimador existe asociado un error que expresa de alguna manera la diferencia
+entre el valor real y el estimado. Para evaluar la precisión de la estimación en distancias en
+particular se utilizan dos métricas bien conocidas [32, 16]: Absolute Error (AE) y Relative
+Error (RE). Dados dos nodos s, t el error absoluto (AE) se expresa como la diferencia
+absoluta entre la distancia estimada y real (Eq. 2.11), y el error relativo (RE) es el error
+absoluto sobre la distancia real (Eq. 2.12).
+AEs,t = d(s, t) − d0 (s, t)
+REs,t =
+
+AE
+d(s, t)
+
+(2.11)
+(2.12)
+
+Notar que cuando RE toma valores bajos d(s, t) y d0 (s, t) se acercan, indicando una
+mejor calidad de la estimación. Valores más altos de RE indican una peor calidad.
+
+2.3.
+
+Normalización
+
+Comúnmente las variables o métricas involucradas en algún cálculo toman valores en
+diferentes rangos entre sı́. Si el objetivo del uso de dos o más métricas con diferentes rangos
+es compararlas entonces es necesario aplicar algún proceso de normalización que las lleve
+a un mismo rango de valores (que puede ser, por ejemplo, 0 y 1 o -1 y 1). El objetivo
+final de esta técnica es que aquellas variables de mayor magnitud no opaquen las de menor
+magnitud.
+En el área de minerı́a de datos diferentes técnicas de clasificación y/o clustering usan
+el proceso de normalización como parte de la etapa de pre-procesamiento de los datos, es
+decir, que son aplicadas previo a la ejecución de los algoritmos [20].
+En grafos, por ejemplo, el grado de un nodo y el valor de Closeness son difı́ciles de
+comparar dado que el grado toma valores muy grandes (en DBLP [49] el grado máximo
+es de 343) y la cercanı́a de un nodo tiene un rango entre 0 y 1. Aplicar algún método de
+normalización hace que se combinen en una nueva métrica magnitudes comparables.
+Existen diferentes técnicas para transformar o re-escalar una variable a un nuevo rango
+especı́fico. En esta sección se presentarán las dos técnicas usadas en este trabajo: NormMax y ZScore.
+NormMax. Esta técnica consiste en dividir a todos los valores por el máximo absoluto.
+Transforma el rango de una variable X a [0,1] en el caso de ser todos números enteros
+
+2.4. Regresión lineal simple
+
+15
+
+positivos. En el caso de haber valores negativos el rango de salida es [-1,1]. La siguiente
+fórmula muestra cómo se calculan los valores normalizados:
+x0 =
+
+x
+max(abs(X))
+
+(2.13)
+
+ZScore [20]. Aquı́ los valores de la métrica o variable X son normalizados usando la media
+X y el desvı́o standard σX . Esta técnica transforma los valores originales de tal manera
+que pasen a representar la cantidad de desvı́os standard a la que se encuentran de X. La
+forma en que se computa un valor normalizado x0 es la siguiente:
+x0 =
+
+2.4.
+
+x−X
+σX
+
+(2.14)
+
+Regresión lineal simple
+
+La “regresión” o “análisis de regresión” es una técnica que ajusta un conjunto de datos
+a una función que los describe, generando ası́ un modelo que permite predecir o pronosticar
+el comportamiento de una variable.
+Un ejemplo son las regresiones lineales simples. Dada una variable de predicción X y
+una variable de respuesta Y , esta técnica encuentra una función lineal y 0 = a+x∗b = f 0 (x)
+que minimiza la suma de cuadrados de las diferencias entre los valores de Y y los valores
+otorgados por f 0 (x) [9].
+En este trabajo estas funciones son usadas para determinar valores de corrección que
+se aplican a las distancias estimadas. Las variables de predicción son obtenidas mediante
+un análisis del comportamiento de las técnicas de estimación sobre muestras de pares de
+nodos obtenidas del grafo.
+
+2.5.
+
+Trabajos Relacionados
+
+En esta sección se presentan los principales trabajos relacionados con las propuestas
+que se presentan en el trabajo.
+Potamias et al. [32] fue uno de los primeros trabajos donde se evaluó la precisión de
+estimación de distancias usando landmarks donde ofrecen una serie de heurı́sticas basadas
+en medidas de centralidad de los nodos del grafo destacando que el problema de la selección de los mejores nodos landmarks es NP-hard (betweenness centrality). Las métricas
+utilizadas y la cantidad de información almacenada determinan diferentes estrategias que
+ofrecen un error bajo y escalan a grafos masivos.
+Poco tiempo después, Das Sarma [16] propone otra técnica de estimación basada en
+landmarks. En el caso anterior los nodos landmarks son fijos para todos los nodos de la
+red. En este, cada nodo posee su propio conjunto de landmarks, denotado como Sketchu ,
+que son usados luego para estimar la distancia de la misma manera que lo hace Potamias.
+La selección de landmarks se hace de forma aleatoria en varias iteraciones seleccionando
+conjuntos de diferentes tamaños. Existe un landmark común a todos los nodos que asegura
+poder ejecutar el cálculo. Los resultados muestran una reducción del error al aumentar
+la cantidad de landmarks k que se usen al igual que Potamias. En particular, en esta
+propuesta aumentar el valor de k se torna aún más costoso (exponecial) por la metodologı́a
+de selección de landmarks.
+Tretyakov et. al [44] diseña nuevos algoritmos que reutilizan la información provista por
+los landmarks para mejorar el método de estimación. Estos métodos requieren almacenar
+el árbol de caminos más cortos o shortest-path tree (SPT) de cada landmark para mejorar
+
+16
+
+2. Preliminares
+
+el calculo utilizando aristas shortcut. Además, agrega una nueva estrategia de selección
+introduciendo el concepto de cobertura de un nodo comprobando que es la métrica que
+mejor determina que tan “bueno” resulta ser un landmark en términos de error de estimación. Los resultados son buenos en términos del bajo error relativo alcanzado. De todas
+maneras, los procesos resultan prohibitivos en tiempo de cómputo para grafos masivos.
+Takes et al. [41] proponen dos nuevas técnicas de selección de landmarks agregando más
+procesamiento a los rankings generados con la metodologı́a de Potamias [32]. Un método
+propone, por cada nodo landmark lk , calcular el aporte individual, es decir, cuantas veces
+aciertan la distancia real entre un par de nodos. Con este valor luego se reordena la lista de
+landmarks. El otro propone reemplazar cada nodo landmark por su h nodo más cercano
+con la métrica de centralidad más alta. Ambas técnicas mostraron un error más bajo
+(respecto de sus baselines) en varias redes experimentando con k = 100.
+La estimación usando 2 landmarks para un mismo par de nodos también ha sido
+explorada en la bibliografı́a. Welke et al. [48] propone una nueva metodologı́a, también
+basada en landmarks, llamada “three-hop” que consiste en conservar para cada nodo del
+grafo la distancia a un subconjunto de landmarks cercanos. Luego, la estimación d0 (u, v) se
+realiza mediante tres distancias reales o “tres saltos”: d(u, li ) + d(li , lj ) + d(lj , v). El costo
+agregado es el de buscar la mejor combinación de li , lj que logre el camino más corto,
+además de un costo extra en indexación. Los resultados muestran que esta metodologı́a
+supera a la introducida por Potamias [32] pero solo para caminos cortos.
+En el mismo sentido que [44], Maliah et al. [25] muestra que la cobertura (llamada
+landmark centrality en este caso) de un nodo como métrica es la más adecuada para
+seleccionar landmarks. En comparación con la centralidad del betweenness, esta última
+es beneficiada en muchos casos por múltiples caminos cortos de un mismo par de nodos
+que pasan por un mismo vértice. En cambio, la centralidad del landmark solo tiene en
+cuenta 1 camino de los N existentes entre un par de nodos. La complejidad sigue estando
+presente en el cómputo de los caminos cortos (ASP) el cual es NP-hard. Para resolver
+esto simplemente se eligen M nodos de forma aleatoria, se computa el arbol de caminos
+cortos (SPT) desde cada nodo elegido y se obtienen aquellos nodos con mayor cantidad
+de ocurrencias. Estos serán los nodos de mayor cobertura. Los resultados muestran que el
+nuevo método se desempeña mejor que betweenness centrality para algunos grafos y mejor
+que las métricas usadas por [32].
+El cómputo de la distancia exacta también ha sido explorado en la literatura. Si bien
+este trabajo trata únicamente la estimación de las distancias, existen otros que aportan
+algoritmos que también son aplicables a nuestra metodologı́a. Similar al ı́ndice generado
+para la estimación por landmarks, Akiba et. al [3, 5] desarrolla un algoritmo que logra
+agilizar la generación de esta estructura pero contemplando todos los nodos de la red,
+logrando ası́ un cálculo exacto de la distancia por UB. También aporta dos algoritmos
+para actualizar el ı́ndice ante la inserción de nuevos links en el grafo: uno que se adapta
+a la generación del ı́ndice tal cual [32] y otro especı́fico para el nuevo método propuesto
+en ese trabajo. Los tiempos de cómputo en consultas alcanza obviamente las velocidades
+logradas en el método de estimación de referencia, aunque el ı́ndice generado es de mayor
+tamaño. Dado que éste se genera de la misma manera, el algoritmo que agiliza el proceso de
+indexación también es aplicable para k < |V | landmarks por lo que se asegura siempre una
+velocidad de indexación mucho menor. Por otro lado, el problema abordado en el trabajo de
+Dangelo et al. [15] es el de la actualización de ı́ndice con eliminaciones de aristas. Cuando
+un enlace entre dos nodos se quita de un grafo deja inconsistente I; el ı́ndice que almacena
+las distancias exactas entre nodos y landmarks. El mayor inconveniente se encuentra en
+detectar cuáles son los caminos cortos que ya no existen dada la eliminación de esa arista y,
+
+2.5. Trabajos Relacionados
+
+17
+
+por ende, a cuales pares de (nodo, landmark) debe actualizarse la distancia. El algoritmo
+propuesto en ese trabajo realiza básicamente un recorrido en amplitud, desde los nodos
+adyacentes desconectados por la arista eliminada, detectando nodos que afectan otras
+distancias almacenadas en el ı́ndice. De esta manera, identifica y elimina las inconsistencias
+en él.
+Métodos de aprendizaje automático han sido explorados con éxito en [12] donde utilizan dos técnicas diferentes para aprender una función f que predice la distancia entre
+dos nodos aplicando una regresión lineal. Uno de los métodos implica representar todos
+los nodos del grafo mediante un vector de caracterı́sticas compuesto por: betweenness centrality, closeness centrality y primer, segundo y tercer grado del nodo. Luego, una función
+predice la distancia combinando éstas caracterı́sticas. El segundo método usa la misma
+técnica pero ahora el vector de caracterı́sticas está compuesto por las distancias estimadas
+mediante landmarks, las cuales se usan para entrenar la función. Los resultados logrados
+por ambos métodos son buenos. El primero logra reducir el error considerablemente en
+grafos medianos. En redes masivas los resultados varı́an llegando como máximo a reducir
+el error en 33 % a un costo elevado en el cálculo de los datos de entrenamiento. El segundo
+método se comporta de manera similar. En grafos masivos el error es reducido a la mitad
+en el mejor de los casos.
+
+18
+
+2. Preliminares
+
+3. METODOLOGÍA
+
+De acuerdo con los objetivos planteados en la Sección 1.2 se proponen diferentes técnicas de selección de landmarks, tomando propiedades pre-computadas de los nodos, los
+cuales son usados para el método de estimación descripto en el Capı́tulo 2.2.
+La búsqueda de estas nuevas estrategias se orienta a mejorar el error de estimación
+cuando k es un valor pequeño. Conforme crece k el error de estimación disminuye tendiendo
+a 0. Esto tiene una explicación muy sencilla y es que cuando k = |V | todo el grafo se
+encuentra indexado y el upper-bound siempre se calcula con un nodo perteneciente al
+camino más corto entre cualquier par de nodos u y v. Sin embargo, incrementar el valor
+de k no es un método viable debido a la complejidad de la consulta O(k)1 y de la indexación
+O(k ∗ (|V | + |E|)), por lo que se incrementa el tiempo de respuesta [33]. En este sentido,
+buscar un valor de k bajo es uno de los objetivos principales.
+
+Figura 3.1: Error de estimación para el grafo de DBLP usando Degree como criterio de elección
+de landmarks. El rectángulo rojo contiene los puntos de la serie que generan una caı́da
+rápida del error relativo. El verde contiene el resto de los puntos marcando como el
+aumento significativo de k no se traduce a un menor error proporcionalmente.
+
+Varios trabajos [32, 16, 25] muestran que aumentar considerablemente la cantidad de
+landmarks no se traduce a una reducción del error proporcional. En la Figura 3.1 se muestra como los primeros puntos de la serie, contenidos por el rectángulo rojo desde k = 0
+hasta k = 25, son los que generan la mayor reducción del error. A partir de k = 26 el
+error se reduce paulatinamente (rectángulo verde). Como se puede apreciar, los primeros
+landmarks son los que aportan mayor precisión. Esta observación es independiente del
+método de selección utilizado. En las figuras 3.2 y 3.3 se muestra el comportamiento de
+estas curvas para landmarks seleccionados por Degree y Closeness para 3 grafos diferentes.
+En todas las series se puede ver que hasta un cierto valor de k la reducción del error es
+considerablemente rápida y luego es cada vez más lenta.
+1
+
+En el peor de los casos se recorre θu y θv por completo para encontrar el mı́nimo de las sumas.
+
+19
+
+20
+
+3. Metodologı́a
+
+Figura 3.2: Error de estimación con landmarks elegidos por Degree. Se muestran resultados para
+los grafos DBLP, LiveJournal y Orkut hasta 100 landmarks.
+
+A partir de este análisis se determina como uno de los principales objetivos la búsqueda
+de técnicas que ordenen los nodos de la red intentando que aquellos landmarks que aporten
+mayor reducción en el error aparezcan en primer lugar. Esto permite estimar las distancias
+usando pocos landmarks alcanzando un error relativo considerablemente bajo. Además, el
+uso de un k cada vez más pequeño hace que el costo computacional de la estimación sea
+menor.
+
+3.1.
+
+Técnicas propuestas
+
+A partir de las estrategias de selección de landmarks Degree y Closeness presentadas en
+el Capı́tulo 2.1, se proponen en este trabajo tres nuevas técnicas denominadas: ClosDeg,
+DistTo00 y αClosDeg. En el trabajo de referencia [32] se muestra que las técnicas de
+selección anteriormente mencionadas tienen un mejor desempeño en comparación con la
+técnica de selección aleatoria. Por este motivo, las nuevas estrategias que presenta este
+trabajo se basan en estas dos métricas.
+Resulta intuitivo pensar que los mejores landmarks de ambas estrategias reducen el
+error aún más si se los ubican en los primeros k lugares en el ranking. Entonces, el objetivo
+de las nuevas técnicas es ponderar de maneras diferentes los valores de Degree y Closeness
+tal que aquellos nodos que tengan valores altos en ambas se ubiquen en los primeros lugares
+del ranking. Estas técnicas van en sentido con el objetivo de utilizar valores pequeños de
+k.
+Además, suponiendo que se utiliza Degree o Closeness como método de selección actual
+el costo que se agrega al implementar alguno de estos nuevos métodos es relativamente
+bajo (además, se computa offline). El mejor de los casos se da cuando se utiliza Closeness
+ya que el costo de obtener el grado de todos los nodos es de O(|V |). En el caso inverso,
+el costo queda atado al cómputo del Closeness aunque se ha mostrado previamente que la
+complejidad se puede reducir si se estima usando un subconjunto pequeño de nodos. Las
+
+3.1. Técnicas propuestas
+
+21
+
+Figura 3.3: Error de estimación con landmarks elegidos por Closeness. Se muestran resultados para
+los grafos de DBLP, LiveJournal y Orkut hasta 100 landmarks.
+
+operaciones que se realizan para unir ambas métricas marcan las diferencias entre las tres
+nuevas técnicas y se presentan a continuación.
+ClosDeg. Este método simplemente calcula el producto entre ambas métricas (Ecuación
+3.1). Además, usando los valores normalizados por ZScore y NormMax (Sección 2.3) de
+ambas métricas se obtienen dos nuevos métodos: ClosDeg Z y ClosDeg N, respectivamente.
+
+ClosDeg(u) = clos(u) · deg(u)
+
+(3.1)
+
+DistTo00. En este caso se utiliza Degree y Closeness como coordenadas para insertar
+los nodos en un sistema de ejes cartesianos. El valor de Degree se utiliza para el eje de
+abscisas y el de Closeness para el de ordenadas. Luego, el valor que toma esta métrica
+para un nodo u es la distancia de este punto al origen, es decir, al punto (0, 0) o viceversa.
+La métrica utilizada para calcular la distancia es la Euclı́dea y se define como:
+d(P, Q) =
+
+p
+(x2 − x1 )2 + (y2 − y1 )2
+
+donde P = (x1 , y1 ) y Q = (x2 , y2 ).
+Una forma más gráfica de expresar este valor es calculando la longitud de un vector con
+origen en (0, 0) y fin en el nodo. En la Figura 3.4 se muestra un ejemplo del cómputo de
+esta métrica sobre el grafo Orkut. Se pueden observar dos vectores que parten del origen
+y llegan hasta dos nodos diferentes. A simple vista se ve la diferencia entre las longitudes
+de los vectores rojo y negro. En conclusión, los nodos que se encuentran más cerca de la
+esquina superior derecha son aquellos que toman los mayores valores. En este caso también
+se usan los valores normalizados por ZScore y NormMax de ambas métricas y se obtienen
+dos nuevos métodos: DistTo00 Z y DistTo00 N, respectivamente.
+
+22
+
+3. Metodologı́a
+
+Figura 3.4: Técnica DistTo00 para selección de landmarks. Se muestra un ejemplo de los primeros
+100 nodos seleccionados por esta técnica obtenidos de una muestra de 100K nodos del
+grafo Orkut. Las métricas closeness y degree se encuentran normalizadas por NormMax.
+Se grafican dos vectores desde el origen a nodos diferentes. La longitud del vector rojo
+es de 0,857 y del azul es 1,351, marcando cual es el nodo favorecido por esta métrica.
+
+αClosDeg. Esta nueva técnica pondera el valor de ambas métricas usando el parámetro
+α. Los valores de Degree y Closeness son previamente normalizados por el método NormMax. En la Ecuación 3.2 se muestra la forma en que se combinan éstas dos en una nueva
+métrica que determina el ordenamiento de αClosDeg.
+
+αClosDeg(u) = (1 − α) · deg(u) + α · clos(u)
+
+3.1.1.
+
+(3.2)
+
+Nuevos landmarks
+
+Con las nuevas técnicas propuestas se logra un ordenamiento diferente de los nodos. Un
+análisis previo sobre uno de los grafos seleccionados para los experimentos (Orkut) indica
+que las nuevas técnicas ClosDeg N, DistTo00 N y αClosDeg generan un ranking diferente
+para los nodos.
+En cada uno de los gráficos (Figura 3.5) se compara una nueva técnica contra Degree
+y Closeness. En ellos se muestra la posición (y) de los nodos (c) en el ranking según
+cada técnica. La función identidad corresponde a la métrica por la cual fueron ordenados
+los nodos. Luego, las variaciones de Degree y Closeness respecto de ésta indican que el
+ordenamiento logrado es diferente justificando a priori el uso de de las nuevas técnicas
+propuestas.
+
+3.2.
+
+Corrección por error absoluto promedio
+
+Ha sido demostrado en varios trabajos que el método de estimación de distancias por
+landmarks logra un error relativo bastante aceptable [32, 16, 25]. No obstante, en algunos
+casos este error se puede reducir aún más. Sobre ciertos grafos el error absoluto respecto
+de la distancia real se mantiene constante lo cual permite realizar una corrección simple,
+por ejemplo restando una constante c al valor estimado. En la Figura 3.6 se observa como
+
+3.2. Corrección por error absoluto promedio
+
+(a)
+
+(b)
+
+23
+
+(c)
+
+Figura 3.5: Se muestran los primeros 100 nodos (landmarks) del ranking en el grafo de Orkut
+ordenados según la técnica (a) ClosDeg N, (b) αClosDeg (α = 0,9) y (c) DistTo00 N.
+Además, se muestran las posiciones de estos nodos en el ranking generado por Closeness
+y Degree (normalizados por NormMax) estableciendo y = 100 cuando se supera la
+centésima posición.
+
+en ambos gráficos las estimaciones con 5 y 10 landmarks elegidos por Closeness o Degree
+mantienen un error absoluto promedio (casi constante) de 1 salto. En este caso si se aplica
+una corrección fija con c = 1 el estimador pasarı́a a tener un comportamiento como el
+que se ve en la Figura 3.7. Este fenómeno también se observa en el trabajo realizado por
+Das Sarma [16] donde se muestra la distancia promedio estimada con k = 1 para cada
+distancia real. En este caso también se podrı́a aplicar una corrección constante buscando
+el mejor valor para c.
+
+Figura 3.6: Promedio de d0 (u, v) para cada distancia real. Se muestran dos gráficos: uno estimando
+con k = 5 (izquierda) y otro con k = 10 (derecha), sobre el grafo de DBLP. Los datos
+se computan sobre una muestra de 5000 pares de nodos. En ambos se observa una
+diferencia casi constante entre la estimación y la distancia real.
+
+Sin embargo, aplicar una corrección constante es inviable dado que el comportamiento
+de las estimaciones es variante según las caracterı́sticas de la red donde se está estimando.
+En la Figura 3.8 se nota cómo el cambio de red sobre la cual se aplica la estimación hace
+que el rendimiento varı́e disminuyendo el error hacia las distancias estimadas más grandes.
+En este caso el error medio absoluto deja de ser constante y pasa a ser variante para cada
+distancia. Esto dificulta la aplicación de una corrección fija.
+En estos casos una opción para corregir las distancias es lograr que el valor de corrección
+
+24
+
+3. Metodologı́a
+
+Figura 3.7: Promedio de d0 (u, v) para cada distancia real. Se muestran dos gráficos: uno estimando
+con k = 5 (izquierda) y otro con k = 10 (derecha), sobre el grafo de DBLP. Los datos
+se computan sobre una muestra de 5000 pares de nodos. En ambos casos la estimación
+es corregida usando c = 1. Se observa como la diferencia entre la distancia real y la
+estimada disminuye.
+
+Figura 3.8: Promedio de d0 (u, v) para cada distancia real. Se muestran dos gráficos: uno estimando
+con k = 5 (izquierda) y otro con k = 10 (derecha), sobre el grafo de Orkut. Los datos
+se computan sobre una muestra de 5000 pares de nodos. En ambos casos se observa
+una diferencia variable entre la distancia real y la estimada. En estos casos no se puede
+aplicar una corrección constante.
+
+λ sea función del valor estimado Esto es, que para cada valor estimado x exista un λ que lo
+corrija, pudiendo este último variar para diferentes valores del dominio (en otras palabras,
+no ser constante).
+Un ejemplo válido es medir cuantos saltos en promedio se está sobre-estimando una
+distancia x. Esto es, cual es en promedio la diferencia entre un valor estimado x y la
+distancia real, es decir, la distancia que se deberı́a haber estimado idealmente. Luego, partiendo de la regla de desigualdad triangular la cual explica que la distancia real siempre es
+menor o igual que la distancia estimada, este valor se puede usar para aproximar d(u, v).
+Por ejemplo, si cada vez que se estima el valor x = 3, en promedio se están agregando 2,5
+pasos a la distancia real, x puede ser corregido en 2 pasos dado que en promedio ese es
+el error de estimación para x = 3. Sin embargo, obtener el valor exacto del error medio
+absoluto para cada x implicarı́a estimar la distancia para todos los pares posibles de la
+red, lo cual también resulta inviable dada la cantidad de combinaciones posibles.
+Este método de corrección consiste entonces en usar el promedio del error absoluto
+(Mean Absolute Error o MAE, en inglés) de la distancia estimada para corregirla. Se
+
+3.2. Corrección por error absoluto promedio
+
+25
+
+parte de una muestra de pares de nodos del grafo obtenidos de forma uniforme y donde
+no existen repeticiones. Para cada par de nodos u, v de la muestra se computa la distancia
+real y la distancia estimada d0 (u, v) (ver Tabla 3.1). Luego, para cada distancia estimada
+en la muestra se computa el valor de MAE generando la tabla de corrección T ∗ (ver Tabla
+3.2). En el ultimo paso se ajusta una regresión lineal sobre los valores agregados logrando
+una función de corrección f ∗ (x) = y que depende de la distancia estimada x para obtener
+el valor de corrección a aplicar y (ver Fig. 3.9).
+u
+10
+2
+3
+15
+11
+9
+89
+
+v
+5
+23
+13
+1
+4
+28
+13
+
+d(u, v)
+3
+3
+2
+4
+3
+4
+4
+
+d0 (u, v)
+4
+3
+3
+6
+5
+5
+6
+
+AE
+1
+0
+1
+2
+2
+1
+2
+
+Tabla 3.1: Ejemplo de muestra de pares con
+distancia real y estimada computada. La ultima columna muestra
+el error absoluto para cada par.
+
+d0 (u, v)
+3
+4
+5
+6
+
+MAE
+0,5
+1
+1,5
+1,5
+
+Tabla 3.2: Ejemplo de T ∗ obtenida a partir
+de la muestra ejemplo de la Tabla 3.1. Se agregan las distancias
+estimadas y se computa el promedio del error absoluto (MAE) para cada una de ellas.
+
+La tabla T ∗ no puede ser usada directamente para corregir ya que la distancia estimada
+para algún par de nodos que no pertenece a la muestra podrı́a no estar en la tabla, por
+ende no habrá un valor de MAE para corregir. En cambio, la función que se obtiene de la
+regresión sı́ permite la existencia de un λ para cada x.
+Sin embargo, los valores que toma y pertenecen al conjunto de los números reales
+dado que predice valores de MAE. Por ende, la diferencia entre la distancia estimada y
+el valor de corrección y genera valores que no corresponden a distancias en estos tipos
+de redes: las distancias en grafos no ponderados son números naturales. Para solucionar
+este problema simplemente se aplica un redondeo a y obteniendo finalmente el valor de
+corrección λ = bye, donde be es la operación de redondeo.
+Entonces, cuando se estima la distancia para algún par de nodos (u, v), ésta se corrige
+substrayendo el valor que se obtiene de redondear el resultado de la función f ∗ (d0 (u, v)).
+La Ecuación 3.3 muestra cómo se calcula la distancia corregida d00 (u, v).
+
+
+d00 (u, v) = d0 (u, v) − f ∗ (d0 (u, v))
+
+(3.3)
+
+Cabe destacar que d00 (u, v) ya no asegura que la distancia real sea menor o igual a la
+estimada. Ahora, la estimación puede quedar por encima o por debajo del valor real.
+Esto tiene dos razones principales:
+1. Los valores de MAE se obtienen de una muestra por ende no representa los valores
+reales del grafo completo.
+2. La función f ∗ (d0 (u, v)) estima (con la regresión lineal) el valor de MAE obtenido de
+la muestra.
+Esto hace que los valores de corrección puedan estar por encima de la diferencia entre
+la estimación y la distancia real. En tales casos se cumple que d00 (u, v) < d(u, v).
+
+26
+
+3. Metodologı́a
+
+Figura 3.9: Se muestran las distancias estimadas y los valores de MAE de T ∗ (serie azul). Se ajustan
+los datos con una regresión lineal (serie roja) logrando la función de corrección f ∗ (x).
+
+Por ejemplo, cuando d0 (u, v) = d(u, v), se puede dar que f ∗ > 0,5 ⇒ λ > 1. Como la
+distancia estimada es igual a la real, la corrección lleva a d00 por debajo de d0 (u, v).
+
+3.3.
+
+Generación de muestras
+
+Tanto para evaluar las nuevas estrategias de selección como para generar las regresiones
+en la corrección, es necesario generar muestras de pares de nodos (u, v) de un grafo,
+llamadas Mi donde i es el número de muestra. Dentro de cada muestra se cumplen las
+siguientes propiedades:
+
+Los pares de nodos no se repiten.
+No existen pares de nodos invertidos: ∀u,v [u, v ∈ V ∧ (u, v) ∈ M ] ⇒ (v, u) ∈
+/ M]
+Un nodo puede ocurrir en más de 1 par.
+
+Las dos primeras propiedades no se cumplen entre muestras. Por ejemplo, entre las
+muestras Mi , Mj un par de nodos (u, v) puede ocurrir en ambas. Incluso puede darse el
+caso en el que (u, v) ocurra en Mi y (v, u) en Mj ; notar el cambio de orden en el par.
+Además, para cada uno de los pares se computa la distancia exacta d(u, v) necesaria para
+poder ejecutar los experimentos diseñados en la Sección 4. El Algoritmo 1 muestra un
+pseudocódigo de cómo se generan las muestras. La función sample obtiene un elemento de
+una lista de forma aleatoria utilizando una distribución uniforme.
+
+3.3. Generación de muestras
+
+Algorithm 1: Algoritmo de generación de muestras
+Input: V: nodos del grafo, Nm : cantidad de muestras a generar, Np : cantidad de
+pares por muestra
+Output: M: las Nm muestras generadas
+M ←∅
+for Nm do
+m←∅
+paresElegidos ← ∅
+x←0
+while x < Np do
+u ← sample(V )
+v ← sample(V )
+if u 6= v ∧ (u, v) ∈
+/ paresElegidos ∧ (v, u) ∈
+/ paresElegidos then
+a ← {u, v, d(u, v)}
+add a to m
+par ← (u, v)
+add par to paresElegidos
+x←x+1
+end
+end
+add m to M
+end
+
+27
+
+28
+
+3. Metodologı́a
+
+4. EXPERIMENTOS Y RESULTADOS
+
+En este capı́tulo se presentan los experimentos que ponen a prueba cada una de las
+metodologı́as presentadas en este trabajo, junto con sus resultados y su respectivo análisis.
+En la Sección 4.1 se presentan las redes sobre las cuales se ejecutaron los experimentos.
+Luego, en la Sección 4.2 se presentan los experimentos y resultados relacionados con las
+nuevas técnicas de selección de landmarks. Finalmente, en la Sección 4.3 se describen los
+experimentos y se analizan los resultados obtenidos para la metodologı́a de corrección de
+distancias.
+
+4.1.
+
+Datasets
+
+Para mostrar el desempeño de las técnicas de selección y corrección propuestas se
+seleccionan cinco datasets. Cada uno es una instancia de una red real no dirigida y no
+ponderada, y fueron usadas en otros trabajos con objetivos similares: tres obtenidas de
+redes sociales (Facebook, YouTube [12, 25, 15], Orkut [2, 48, 12, 44]), una red de blogs
+(LiveJournal [2, 41]1 ) y una red de co-autorı́a de trabajos de investigación (DBLP [32, 12,
+25]2 ). En la Tabla 4.1 se muestra en detalle las caracterı́sticas estructurales de cada una.
+Sobre éstas luego se computan las métricas necesarias para seleccionar landmarks (Closeness y Degree) y posteriormente se realiza el proceso de indexación.
+Facebook3 . Es una de las redes sociales más usadas hoy en dia donde los usuarios
+se siguen unos a otros. Este dataset se encuentra compuesto por listas de amigos en
+Facebook. Fue creado por McAuley et al. [27] en su trabajo sobre reconocimiento
+de cı́rculos sociales en redes. Los datos fueron recolectados a través de encuestas
+realizadas a usuarios de esta red social.
+DBLP4 . Es una base de datos online sobre artı́culos (papers) y revistas en el área
+de ciencias de la computación. Obteniendo datos sobre los autores de estos artı́culos
+J. Yang y J. Leskovec [49] construyeron una red de co-autorı́a donde dos autores se
+encuentran conectados si escribieron al menos 1 artı́culo en conjunto.
+Grafo
+Orkut
+LiveJournal
+Youtube
+DBLP
+Facebook
+
+|E|
+117.1 M
+34.6 M
+2.9 M
+1M
+88 K
+
+|V|
+3M
+3.9 M
+1.1 M
+317 K
+4K
+
+Diámetro
+9
+17
+20
+21
+8
+
+90-p diámetro efectivo
+4.8
+6.5
+6.5
+8.0
+4.7
+
+Tabla 4.1: Se describen los 5 grafos elegidos para llevar a cabo los experimentos de estimación y
+corrección. Estas propiedades muestran las caracterı́sticas principales de una red que
+permiten comprender la estructura de la misma.
+
+1
+
+Estos trabajos usan otra instancia de esta red.
+En este caso Potamias [32] usa otra instancia de esta red.
+3
+https://snap.stanford.edu/data/ego-Facebook.html
+4
+https://snap.stanford.edu/data/com-DBLP.html
+2
+
+29
+
+30
+
+4. Experimentos y resultados
+
+Youtube5 . Es una de las principales redes donde usuarios pueden compartir videos
+con la comunidad. En el año en que este dataset fué creado [30] los usuarios podı́an ser
+amigos de otros usuarios y formar grupos. Ahora éstos se forman con subscripciones
+de usuarios a canales.
+LiveJournal6 . Esta red es una comunidad donde los usuarios comparten blogs o
+noticias sobre sus vidas y donde pueden establecer amistades con otros usuarios.
+Este grafo también fué usado en el trabajo de J. Yang y J. Leskovec [49].
+Orkut7 . Es otra red social donde los usuarios forman amistades. Al igual que Youtube, este dataset fué recolectado por Alan Mislove et al. [30] en su trabajo sobre
+las redes sociales.
+
+4.2.
+
+Nuevas técnicas de selección de landmarks
+
+El primer objetivo propuesto en este trabajo es definir y evaluar nuevas técnicas de selección de landmarks basadas en caracterı́sticas de los nodos. En este sentido en la Sección
+3.1 se presentan 7 técnicas nuevas de selección de nodos landmarks: DistTo00, ClosDeg y
+αClosDeg junto con las formas normalizadas DistTo00 N, ClosDeg N, DistTo00 Z y ClosDeg Z, todas estas nuevas estrategias se basan en dos caracterı́sticas de los nodos (Degree
+y Closenees).
+Para su evaluación se diseñan experimentos que ponen a prueba la calidad de la estimación lograda usando la métrica del error relativo (Sección 2.2.3). Los baselines de este
+trabajo contra el cual se comparan los resultados obtenidos son las dos técnicas presentadas por Potamias [32]: Degree y Closeness. De esta forma se ve directamente el beneficio
+de combinarlas en una nueva.
+Los experimentos se dividen en dos etapas: generación de ı́ndices y testing. En la primera se generan los ı́ndices de cada uno de los grafos que son necesarios para poder calcular
+la distancia estimada. En la segunda, se generan las muestras de pares de nodos que son
+usadas para ejecutar los tests de los cuales se obtiene la calidad de la estimación lograda
+calculado la distancia por un método de selección m usando una cantidad k de landmarks.
+Generación de los ı́ndices. En esta etapa se generan tantos ı́ndices como combinaciones
+de estrategias y grafos existen. Se generan los 7 ı́ndices correspondientes a las nuevas más
+las 2 baseline, llegando a un total de 9 ı́ndices.
+Por cada grafo, en primer lugar, se obtienen las métricas base necesarias para computar
+la nuevas: degree y closeness centrality. Luego, se computan las nuevas tal cual se describen
+en la metodologı́a (Sección 3.1). El valor de α para αClosDeg se fija en 0,5. En particular,
+para el grafo YouTube se probaron valores en el rango [0,5; 0,9] en pasos de 0,1 por lo cual
+para esta métrica se generaron 5 ı́ndices.
+Una vez calculado el valor de una métrica para todos los nodos de un grafo éstos son
+ordenados por el valor de la misma. Luego, se toman los primeros k nodos como landmarks
+(se experimenta con 1, 5, 10, 20, 50 y 100) y se computan las distancias de cada u ∈ V a
+éstos obteniendo ası́ los vectores θu . De esta manera se genera el ı́ndice I = hV, θi de cada
+grafo.
+Una forma de almacenar esta estructura en disco es asignar a cada nodo la lista de
+distancias a los landmarks y por separado el id de los nodos landmarks usados pero con5
+
+https://snap.stanford.edu/data/com-Youtube.html
+https://snap.stanford.edu/data/com-LiveJournal.html
+7
+https://snap.stanford.edu/data/com-Orkut.html
+6
+
+4.2. Nuevas técnicas de selección de landmarks
+
+|V |
+j
+
+Facebook
+4.039
+12
+
+DBLP
+317.080
+19
+
+k
+1
+5
+10
+20
+50
+100
+
+0,01
+0,03
+0,05
+0,09
+0,21
+0,41
+
+1,07
+2,34
+3,92
+7,09
+16,61
+32,46
+
+YouTube
+1.134.890
+21
+
+LiveJournal
+3.997.962
+22
+
+Tamaño (MB)
+4,11
+8,65
+14,33
+25,68
+59,72
+116,47
+
+14,99
+30,98
+50,97
+90,95
+210,89
+410,79
+
+31
+
+Orkut
+3.072.441
+22
+
+11,52
+23,81
+39,17
+69,9
+162,07
+315,69
+
+Tabla 4.2: Se muestra el tamaño de los ı́ndices en MegaBytes (MB) conforme varı́a la cantidad de
+landmarks. Además, se muestra el valor de j y la cantidad total de nodos.
+
+servando el mismo orden de tal manera que la distancia en la posición i corresponda al
+landmark i + 1: la distancia en la posición 0 de la lista corresponde al primer landmark, la
+distancia en la posición 3 corresponde al landmark 4, etc. Una forma de hacerlo eficientemente es determinando la cantidad máxima de bits necesarios para almacenar el id de los
+nodos j: se obtiene encontrando el mı́nimo valor para el cual se cumple 2j > |V |, es decir,
+la cantidad de bits mı́nimos necesarios para representar el id más grande que existe en
+el grafo. La cantidad de bits necesarios para almacenar una distancia puede ser fijo: con
+1 byte (8 bits) se puede representar una distancia de hasta 256 aristas lo cual, teniendo
+en cuenta las caracterı́sticas de los grafos, es suficiente. Además, se deben almacenar los
+metadatos para poder recuperar esta estructura: 1 byte para j, 5 bytes para |V | (permite
+un grafo de más de un billón de nodos) y 1 byte para k. En total
+son: 7 mbytes fijos para
+l
+(j+k∗8)∗|V |
+metadatos, k ∗ j bytes para los id’s de los nodos landmarks y
+bytes para los
+8
+nodos y las distancias. La Tabla 4.2 muestra el tamaño de los ı́ndices conforme varı́a k.
+Generación de muestras y testing. Primero, para cada dataset, se generan 50 muestras
+cada una con 5 mil pares de nodos utilizando la metodologı́a descripta en la Sección 3.3.
+Recordar que en cada muestra se obtiene también la distancia exacta d(u, v), en este
+caso necesaria para poder calcular la calidad de la estimación mediante el Error Relativo
+(Sección 2.2.3).
+Con las muestras generadas para cada grafo se evalúan las técnicas de selección de
+landmarks. Por cada uno de los ı́ndices de un grafo (cantidad de k’s por técnicas) se
+recorren las 50 muestras generadas para éste y se computa el error relativo (Ecuación 2.12)
+para cada par de nodos. Luego, para cada muestra se obtiene el promedio del error relativo
+M REki , donde i es el número de muestra. Finalmente, a lo largo de todas las muestras se
+obtiene la media de estos valores M RE k que es usada para mostrar los resultados.
+La cantidad total de experimentos ejecutados está dado por el número de estrategias
+de selección, la cantidad de grafos, muestras y valores diferentes de k usados, siendo esto
+un total de 13.500.
+
+32
+
+4. Experimentos y resultados
+
+4.2.1.
+
+Resultados
+
+A continuación se presentan los resultados de los experimentos. Por cada uno de los
+datasets se muestra la tabla de resultados cuyos valores corresponden a M RE k . Además,
+se agrega un gráfico donde se comparan las técnicas baseline y las nuevas, eligiendo para
+ClosDeg y DistTo00 las que mejor desempeño tienen según X 20 . Este valor representa el
+promedio del error alcanzado por la técnica hasta k = 20 y va en sentido con el objetivo
+de buscar técnicas que sean más eficientes para valores de k pequeños.
+Grafo de Orkut. Según esta configuración experimental el método de selección baseline
+que tiene el menor error relativo promedio es Closeness logrando una diferencia de 25, 35 %
+en X 20 y de 25,14 % en X 100 respecto de Degree. La Tabla 4.3 muestra los resultados de
+estimación en esta instancia de la red.
+Con respecto a las nuevas estrategias de selección presentadas en este trabajo, αClosDeg
+logra la mejor calidad de estimación obteniendo los valores más bajos para X 20 = 0,2317
+y X 100 = 0,1915. En este caso en particular el valor establecido para α es de 0,9.
+Esta técnica mantiene el error relativo promedio por debajo de los valores alcanzados
+por Closeness: en X 20 la diferencia es de 0,64 % y en X 100 de 0,41 %. No obstante, el punto
+de máximo desempeño para αClosDeg es en k = 10 donde se logra disminuir M RE en un
+2,52 % respecto del baseline.
+k
+1
+5
+10
+20
+50
+100
+
+ClosDeg
+0,4590
+0,2954
+0,2738
+0,2155
+0,1489
+0,1154
+
+ClosDeg N
+0,4590
+0,2954
+0,2738
+0,2155
+0,1489
+0,1154
+
+ClosDeg Z
+0,4590
+0,2463
+0,2293
+0,2135
+0,1487
+0,1117
+
+DistTo00
+0,4590
+0,2990
+0,2760
+0,2155
+0,1577
+0,1343
+
+DistTo00 N
+0,4590
+0,2954
+0,2299
+0,2142
+0,1461
+0,1070
+
+DistTo00 Z
+0,4590
+0,2990
+0,2760
+0,2155
+0,1577
+0,1343
+
+αClosDeg
+0,3711
+0,2127
+0,1819
+0,1609
+0,1174
+0,1048
+
+Degree
+0,4590
+0,2990
+0,2760
+0,2155
+0,1577
+0,1343
+
+Closeness
+0,3711
+0,2133
+0,1866
+0,1616
+0,1183
+0,1027
+
+X 100
+X 20
+
+0,2513
+0,3109
+
+0,2513
+0,3109
+
+0,2347
+0,2870
+
+0,2569
+0,3124
+
+0,2419
+0,2996
+
+0,2569
+0,3124
+
+0,1915
+0,2317
+
+0,2569
+0,3124
+
+0,1923
+0,2332
+
+Tabla 4.3: Resultados de estimación en el grafo de Orkut. Cada celda corresponde al valor de
+M RE k . Se resaltan en negrita las métricas con mejor desempeño por cada valor de k.
+En αClosDeg, el parámetro α toma el valor 0,9.
+
+Las mejores técnicas ClosDeg y DistTo00 son ClosDeg Z y DistTo00 N respectivamente. En la Figura 4.1 se observa como conservan un M RE aún más bajo que Degree. Esto
+se debe a que ClosDeg Z y DistTo00 N ponderan el valor de Closeness, técnica que en este
+dataset tiene un desempeño superior a Degree.
+Por otro lado, αClosDeg es la única estrategia que supera a Closeness. Una de las ventajas es que permite ajustar el valor de α según el grafo sobre el cual se requiere aplicar
+esta técnica de selección de landmarks. En este caso se determinó experimentalmente un
+valor que le da más importancia a Closeness ya que es el baseline que menor MRE obtuvo
+a lo largo de las muestras.
+Grafo de Facebook. En esta red las nuevas técnicas en general tienen un mejor desempeño que las baseline. En la Tabla 4.4 se observa que tanto αClosDeg como ClosDeg Z y
+DistTo00 Z superan a las baseline en X 20 .
+Según estos experimentos la mejor estrategia baseline es Degree la cual reduce X 100
+en un 49,54 % y X 20 por un 47,97 % respecto de Closeness.
+Entre las nuevas técnicas de selección de landmarks se destaca ClosDeg Z logrando el
+menor error para k = 1, 5 y 10, llegando a los valores más bajos para X 100 y X 20 respecto
+del resto de las técnicas.
+
+4.2. Nuevas técnicas de selección de landmarks
+
+33
+
+Figura 4.1: Se comparan las mejores técnicas ClosDeg y DistTo00, y αClosDeg contra las estrategias baseline. Cada serie corresponde a una técnica diferente y muestra el valor de
+M RE alcanzado para un determinado valor de k.
+
+En comparación con Degree, ClosDeg Z logra una disminución del error en X 100 del
+4,3 % y un 2,8 % en X 20 . El punto de mejor desempeño es en k = 10 donde el error
+alcanzado es 0,0169 y se encuentra un 28,99 % por debajo de Degree.
+k
+1
+5
+10
+20
+50
+100
+
+ClosDeg
+0,2618
+0,0240
+0,0186
+0,0184
+0,0159
+0,0146
+
+ClosDeg N
+0,2618
+0,0240
+0,0186
+0,0184
+0,0159
+0,0146
+
+ClosDeg Z
+0,2618
+0,0240
+0,0169
+0,0161
+0,0154
+0,0128
+
+DistTo00
+0,2618
+0,0240
+0,0238
+0,0183
+0,0177
+0,0167
+
+DistTo00 N
+0,2618
+0,0914
+0,0178
+0,0161
+0,0152
+0,0149
+
+DistTo00 Z
+0,2618
+0,0240
+0,0186
+0,0176
+0,0154
+0,0099
+
+αClosDeg
+0,2618
+0,0240
+0,0179
+0,0159
+0,0152
+0,0143
+
+Degree
+0,2618
+0,0240
+0,0238
+0,0183
+0,0177
+0,0167
+
+Closeness
+0,2618
+0,1307
+0,1256
+0,1126
+0,0439
+0,0436
+
+X 100
+X 20
+
+0,0589
+0,0807
+
+0,0589
+0,0807
+
+0,0578
+0,0797
+
+0,0604
+0,0820
+
+0,0695
+0,0968
+
+0,0579
+0,0805
+
+0,0582
+0,0799
+
+0,0604
+0,0820
+
+0,1197
+0,1576
+
+Tabla 4.4: Resultados de estimación para en el grafo de Facebook. Cada celda corresponde al valor
+de M RE k . Se resaltan en negrita las métricas con mejor desempeño por cada valor de
+k. En αClosDeg, el parámetro α toma el valor 0,5.
+
+En este grafo las mejores técnicas ClosDeg y DistTo00 son ClosDeg Z y DisTo00 Z
+respectivamente. En la Figura 4.2 se observa que la técnica Closeness es mucho menos
+competitiva que el resto. No obstante, hasta k = 50 la reducción del error es proporcional a
+la cantidad de landmarks agregados, fenómeno que no ocurre con el resto de las estrategias
+en este grafo.
+Las nuevas técnicas analizadas en este gráfico superan a Degree (el mejor baseline). El
+comportamiento de αClosDeg, ClosDeg Z y DisTo00 Z es similar para todos los valores
+de k excepto en k = 100 donde se observa que DisTo00 Z se diferencia del resto llegando
+al menor valor de M RE.
+En este caso la ponderación de ambas métricas baseline introduce en las primeras
+posiciones del ranking aquellos nodos seleccionados por Closeness que generan la mayor
+
+34
+
+4. Experimentos y resultados
+
+reducción de M RE, ubicados entre 1 ≤ k ≤ 50, logrando ası́ superar al baseline Degree.
+
+Figura 4.2: Se comparan las mejores técnicas ClosDeg y DistTo00, y alphaClosDeg contra las
+estrategias baseline. Cada serie corresponde a una técnica diferente y muestra el valor
+de M RE alcanzado para un determinado valor de k.
+
+Grafo de DBLP. En este caso, Closeness es la mejor técnica baseline de selección siguiendo los criterios usados en los análisis anteriores. El error de estimación alcanzado por
+esta estrategia es inferior al obtenido por Degree en X 20 con una diferencia de 3,65 % y de
+0,67 % en X 100 . No obstante, el comportamiento de estas dos técnicas es diferente respecto
+a los grafos anteriores. Existe un valor de k a partir del cual una de las dos comienza a
+obtener un error inferior a la otra. Para k = 1, 5 y 10 Closeness experimenta un M RE
+menor que Degree con una diferencia del 7,19 %; 8,86 % y 1,65 % respectivamente. Luego,
+para k ≥ 20 Degree supera a Closeness, obteniendo su máximo desempeño en k = 50
+donde la diferencia entre estas dos técnicas es del 14,65 %. Los resultados para este grafo
+se muestran en la Tabla 4.5.
+Al igual que en el grafo de Facebook, ClosDeg Z experimenta el mı́nimo error para
+X 20 y X 100 respecto del resto de las técnicas nuevas. Otra estrategia que se destaca es
+DistTo00 N cuyo error en X 20 es de tan solo 0,2 % por encima de ClosDeg Z y un 3,08 %
+inferior en k = 20 logrando el error más bajo en este punto con M RE = 0,1603.
+En promedio ClosDeg Z supera a Closeness en X 100 llegando a un 2,15 % por debajo
+del error. Por el contrario, en X 20 el error es 1,2 % superior al baseline. No obstante, siguiendo el criterio de usar una cantidad pequeña de landmarks, existen 3 nuevas estrategias
+que reemplazan a Closeness. Por un lado, ClosDeg Z, DistTo00 N y αClosDeg obtienen
+los valores más bajos de M RE en k = 10 con 0,2045; 4,84 % inferior al baseline. Luego,
+DistTo00 N en k = 20 supera a Closeness y al resto de las técnicas con M RE 20 = 0,1603
+convirtiéndose en otra alternativa válida en términos del error relativo alcanzado y consistente con los criterios de elección de técnicas usados en este trabajo.
+En la Figura 4.3 se observa que las nuevas estrategias ClosDeg Z, DistTo00 N y
+αClosDeg superan a las técnicas baseline a partir de k ≥ 10. En k = 50 todas tiene
+
+4.2. Nuevas técnicas de selección de landmarks
+
+35
+
+k
+1
+5
+10
+20
+50
+100
+
+ClosDeg
+0,3757
+0,2753
+0,2084
+0,1699
+0,1192
+0,0974
+
+ClosDeg N
+0,3757
+0,2753
+0,2084
+0,1699
+0,1192
+0,0974
+
+ClosDeg Z
+0,3757
+0,2684
+0,2045
+0,1654
+0,1197
+0,0921
+
+DistTo00
+0,3757
+0,2753
+0,2185
+0,1699
+0,1208
+0,1010
+
+DistTo00 N
+0,3757
+0,2753
+0,2045
+0,1603
+0,1205
+0,0938
+
+DistTo00 Z
+0,3757
+0,2753
+0,2185
+0,1699
+0,1202
+0,1005
+
+αClosDeg
+0,3757
+0,2753
+0,2045
+0,1641
+0,1192
+0,0920
+
+Degree
+0,3757
+0,2753
+0,2185
+0,1703
+0,1206
+0,1010
+
+Closeness
+0,3487
+0,2509
+0,2149
+0,1873
+0,1413
+0,1096
+
+X 100
+X 20
+
+0,2077
+0,2573
+
+0,2077
+0,2573
+
+0,2043
+0,2535
+
+0,2102
+0,2599
+
+0,2050
+0,2540
+
+0,2100
+0,2599
+
+0,2052
+0,2549
+
+0,2102
+0,2600
+
+0,2088
+0,2505
+
+Tabla 4.5: Resultados de estimación en el grafo de DBLP. Cada celda corresponde al valor de
+M RE k . Se resaltan en negrita las métricas con mejor desempeño por cada valor de k.
+En αClosDeg, el parámetro α toma el valor 0,5.
+
+un error aproximado a 0,120; en este punto αClosDeg experimenta un error menor al resto
+de las estrategias siendo M RE = 0,1192. Además, esta última también supera al resto en
+k = 100 con M RE = 0,0920.
+Las nuevas técnicas resultan más competitivas para valores pequeños de k: en 10 y 20
+se aprecia aprecia una disminución alta de M RE para ClosDeg Z, DistTo00 N y αClosDeg
+respecto de Degree y Closeness.
+
+Figura 4.3: Se comparan las mejores técnicas ClosDeg y DistTo00, y αClosDeg contra las estrategias baseline. Cada serie corresponde a una técnica diferente y muestra el valor de
+M RE alcanzado para un determinado valor de k.
+
+Grafo de YouTube. En esta instancia de YouTube los experimentos ejecutados marcan
+que la nueva estrategia DistTo00 N es superior al resto de las técnicas, obtiene los valores
+más bajos para X 100 y X 20 con 0,0543 y 0,0686 respectivamente. Los resultados para esta
+red se muestran en la Tabla 4.6.
+Respecto a las técnicas baseline, ambas tienen un desempeño similar. Degree selecciona
+de forma más eficiente los nodos landmarks llegando a un error de 0,0562 en X 100 y de
+0,0719 en X 20 , 3,27 % y 1,77 % (respectivamente) por debajo de Closeness. La máxima
+
+36
+
+4. Experimentos y resultados
+
+diferencia entre estas dos técnicas se da estimando con 100 landmarks, en este punto el
+error obtenido por Degree es 15 % inferior a Closeness.
+La máxima diferencia entre DistTo00 N y Degree se obtiene en k = 20, llegando a un
+error 15,85 % inferior. Para los primeros 4 valores de k experimentados (1, 5, 10 y 20),
+DistTo00 N reduce el error de estimación en promedio 4,58 % y 3,38 % en X 100 . Además,
+para cada uno de estos valores de k, DistTo00 N supera al resto de las técnicas obteniendo
+los valores más bajos de M RE.
+k
+1
+5
+10
+20
+50
+100
+
+ClosDeg
+0,1331
+0,0603
+0,0514
+0,0429
+0,0287
+0,0206
+
+ClosDeg N
+0,1331
+0,0603
+0,0514
+0,0429
+0,0287
+0,0206
+
+ClosDeg Z
+0,1331
+0,0569
+0,0498
+0,0429
+0,0265
+0,0208
+
+DistTo00
+0,1331
+0,0603
+0,0513
+0,0429
+0,0294
+0,0204
+
+DistTo00 N
+0,1331
+0,0569
+0,0485
+0,0361
+0,0283
+0,0231
+
+DistTo00 Z
+0,1331
+0,0603
+0,0513
+0,0429
+0,0287
+0,0204
+
+αClosDeg
+0,1331
+0,0603
+0,0498
+0,0402
+0,0265
+0,0201
+
+Degree
+0,1331
+0,0603
+0,0513
+0,0429
+0,0294
+0,0204
+
+Closeness
+0,1331
+0,0616
+0,0540
+0,0440
+0,0320
+0,0240
+
+X 100
+X 20
+
+0,0562
+0,0719
+
+0,0562
+0,0719
+
+0,0550
+0,0707
+
+0,0562
+0,0719
+
+0,0543
+0,0686
+
+0,0561
+0,0719
+
+0,0550
+0,0708
+
+0,0562
+0,0719
+
+0,0581
+0,0732
+
+Tabla 4.6: Resultados de estimación en el grafo de YouTube. Cada celda corresponde al valor de
+M RE k . Se resaltan en negrita las métricas con mejor desempeño por cada valor de k.
+En αClosDeg, el parámetro α toma el valor 0,5.
+
+En la Figura 4.4 se observa el comportamiento de las técnicas ClosDeg Z, DistTo00 N
+y αClosDeg. En comparación con las técnicas , las nuevas siempre superan la calidad de
+estimación lograda por Closeness (la menos competitiva). Degree experimenta un error
+superior a las estrategias nuevas para 5 ≤ k ≤ 20 con algunas excepciones: en k = 5
+αClosDeg llega al mismo M RE y para k = 20 se da la misma situación con ClosDeg Z.
+
+Figura 4.4: Se comparan las mejores técnicas ClosDeg y DistTo00, y αClosDeg contra las estrategias
+baseline. Cada serie corresponde a una técnica diferente y muestra el valor de M RE
+alcanzado para un determinado valor de k.
+
+Dado el buen rendimiento alcanzado para valores bajos de k, las tres técnicas que
+muestra este gráfico son alternativas válidas a Degree y Closeness. No obstante, αClosDeg
+
+4.2. Nuevas técnicas de selección de landmarks
+
+37
+
+es la técnica más apropiada para seleccionar landmarks cuando k toma valores más grandes. En la Figura 4.4 se contempla cómo esta métrica supera al resto en k = 100. Además,
+utilizando 50 landmarks, ClosDeg Z y αClosDeg son las estrategias que llegan al error más
+bajo.
+Grafo de LiveJournal. Según estos experimentos el método de selección baseline que
+logra el menor error relativo promedio es Closeness obteniendo una diferencia de 9,1 %
+en X 20 y de 10,14 % en X 100 respecto de Degree. La máxima diferencia se da en k = 10
+donde el valor de M RE para Closeness es 0,1251; 20,16 % menor. Los resultados para este
+grafo se muestran en la Tabla 4.7.
+k
+1
+5
+10
+20
+50
+100
+
+ClosDeg
+0,2205
+0,1590
+0,1307
+0,1201
+0,0911
+0,0757
+
+ClosDeg N
+0,2205
+0,1590
+0,1307
+0,1201
+0,0911
+0,0757
+
+ClosDeg Z
+0,2205
+0,1475
+0,1249
+0,1040
+0,0820
+0,0709
+
+DistTo00
+0,2205
+0,1590
+0,1567
+0,1226
+0,1037
+0,0776
+
+DistTo00 N
+0,2205
+0,1475
+0,1221
+0,1021
+0,0779
+0,0693
+
+DistTo00 Z
+0,2205
+0,1590
+0,1567
+0,1226
+0,1037
+0,0776
+
+αClosDeg
+0,2205
+0,1475
+0,1249
+0,1065
+0,0823
+0,0689
+
+Degree
+0,2205
+0,1590
+0,1567
+0,1226
+0,1037
+0,0776
+
+Closeness
+0,2205
+0,1474
+0,1251
+0,1058
+0,0830
+0,0726
+
+X 100
+X 20
+
+0,1328
+0,1576
+
+0,1328
+0,1576
+
+0,1250
+0,1492
+
+0,1400
+0,1647
+
+0,1232
+0,1480
+
+0,1400
+0,1647
+
+0,1251
+0,1499
+
+0,1400
+0,1647
+
+0,1258
+0,1497
+
+Tabla 4.7: Resultados de estimación en el grafo de LiveJournal. Cada celda corresponde al valor
+de M RE k . Se resaltan en negrita las métricas con mejor desempeño por cada valor de
+k. En αClosDeg, el parámetro α toma el valor 0,5.
+
+Entre las nuevas técnicas de selección de landmarks se destaca DistTo00 N. Los nodos
+seleccionados por esta estrategia alcanzan el error más bajo para k = 1, 10, 20 y 50:
+0,2205; 0,1221; 0,1021 y 0,0779; respectivamente. Además, supera en promedio al resto de
+las técnicas con X 20 = 0,1480 y X 100 = 0,1232.
+
+Figura 4.5: Se comparan las mejores técnicas ClosDeg y DistTo00, y αClosDeg contra las estrategias
+baseline. Cada serie corresponde a una técnica diferente y muestra el valor de M RE
+alcanzado para un determinado valor de k.
+
+38
+
+4. Experimentos y resultados
+
+En comparación con Closeness, el error obtenido por DistTo00 N es más bajo. En X 100
+logra una diferencia a favor de 2,07 % y de 1,13 % en X 20 . El punto de máxima eficiencia
+se obtiene en k = 50 donde M RE se ubica 6,14 % por debajo del baseline.
+En la Figura 4.5 se observa a la técnica Degree como la menos competitiva de las 5,
+mientras que Closeness obtiene valores de M RE muy cercanos a las nuevas estrategias
+para k = 5, 10, 20 y 50. Se nota a DistTo00 N superar al resto para 10 ≤ k ≤ 50
+transformándose de esta manera en la mejor alternativa a las estrategias baseline.
+
+4.3.
+
+Corrección de la estimación
+
+El segundo objetivo de este trabajo es modelar y definir funciones de corrección de
+los valores estimados. Dado que las estimaciones presentan variaciones significativas para
+un mismo método (por ejemplo Degree, Closeness, DistTo00 N y αClosDeg en los grafos
+Orkut y LiveJournal) se considera interesante reducir tales comportamientos a partir de
+la corrección de las distancias estimadas.
+En la Sección 3.2 se propone una técnica de corrección de distancias que consiste en
+derivar una función de corrección utilizando un método de regresión lineal a partir de los
+resultados de estimación logrados por una estrategia de selección de landmarks. Con estos
+resultados se genera la tabla T ∗ que contiene el valor de MAE agrupado por las distancias
+estimadas. A partir de esta tabla se obtiene la función de corrección f ∗ que luego es usada
+para computar el valor de estimación corregido d00 (u, v) (ver Ecuación 3.3).
+Para validar esta propuesta se generan funciones de corrección a partir de las muestras
+obtenidas en los experimentos de estimación de distancias (Sección 4.2). Cada tabla T ∗ se
+calcula a partir de una muestra Mi correspondiente a un grafo G cuyo ı́ndice I (asociado
+a una técnica de selección de landmarks y un valor de k especı́fico) es usado para estimar
+la distancia d0 (u, v). Finalmente, se genera f ∗ a partir de esta tabla y se usa para corregir
+las distancias estimadas usando I.
+d0 (u, v)
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+M AE
+0,0000
+0,1597
+0,3430
+0,6962
+1,0111
+1,3102
+1,3675
+1,2778
+1,5000
+1,5000
+
+Tabla 4.8: Ejemplo de tabla T ∗ para la estrategia Degree con k = 10 sobre el grafo LiveJournal,
+obtenida de una muestra Mi .
+
+Por ejemplo, la Tabla 4.8 muestra una T ∗ calculada para una muestra concreta Mi
+del grafo de LiveJournal. El ı́ndice a partir del cual se computó d0 (u, v) corresponde a la
+técnica Degree utilizando 10 landmarks. A partir de esta tabla se obtiene la función f ∗ que
+es usada para determinar el valor de corrección redondeado a aplicar sobre d0 (u, v) (ver
+Figura 4.6). De ahora en adelante, el concepto de corrección realizada por una función
+hace referencia al valor de d00 (u, v).
+Por cada grafo se selecciona una muestra de entrenamiento y 5 muestras de testing
+
+4.3. Corrección de la estimación
+
+39
+
+Figura 4.6: Se grafican los valores de la Tabla 4.8 (T ∗ , serie azul) y la función de corrección (f ∗ ,
+serie roja). Además, se muestran los valores redondeados que se usan finalmente para
+corregir las distancias estimadas (bf ∗ e, serie verde).
+
+t
+M1−5
+(al azar). Luego, la función de corrección f ∗ se obtiene a partir de la muestra de
+entrenamiento y se usa para corregir las distancias estimadas en el conjunto de testing.
+Este experimento se repite tres veces con diferentes muestras para entrenamiento (E1 , E2
+y E3 ).
+
+Las técnicas de selección de landmarks usadas para estos experimentos son: Degree,
+Closeness y las dos estrategias nuevas de selección que logran el error de estimación más
+bajo en cada grafo según X 20 . Además, se agrega el método de selección Random que
+consiste en seleccionar k nodos landmarks de forma aleatoria. Los valores de k utilizados
+para ejecutar estas pruebas son 1, 5, 10 y 20, siguiendo la lógica de usar valores pequeños
+de k con el fin de generar una estimación aún más rápida.
+Además, se agrega una cuarta función de corrección f ∗ que se obtiene de los promedios
+de las tablas T ∗ obtenidas de las muestras 0 a la 45. El objetivo de este experimento es
+mostrar que no existen diferencias considerables entre usar una sola muestra y usar muchas,
+lo cual agrega un costo computacional extra e innecesario a esta técnica de corrección.
+Estos experimentos muestran que la técnica de corrección es efectiva, es decir, que el
+error de estimación se reduce al aplicar la corrección y que esta reducción no depende de
+los pares de nodos que componen la muestra que se usa para obtener f ∗ ni de la cantidad
+de muestras usadas para obtener la función.
+Para determinar la cantidad de experimentos ejecutados para un grafo el análisis se
+divide en varias partes. Primero, los valores de k usados, los métodos de selección y la
+cantidad de muestras de entrenamiento definen la cantidad de funciones de corrección
+generadas, siendo un total de 60. Agregando f ∗ se llega a un total de 80 funciones. Luego,
+cada una de estas funciones se utiliza para corregir las distancias de las 5 muestras de
+testing llegando a un total de 400 experimentos. Sumando los experimentos para los 5
+grafos la cantidad total es de 2000.
+
+40
+
+4. Experimentos y resultados
+
+4.3.1.
+
+Resultados
+
+A continuación se presentan los resultados de los experimentos de corrección de distancias. En la Sección 4.3.1.1 se analizan los efectos del muestreo de pares en las funciones de
+corrección generadas. Luego, se presentan los resultados sobre todas las redes y las estrategias de selección elegidas para estos experimentos en 4.3.1.2 y finalmente se muestran los
+resultados de los experimentos hechos con el método de selección de landmarks aleatorio
+en 4.3.1.3 .
+4.3.1.1.
+
+Efectos del muestreo en las funciones de corrección
+
+De acuerdo con los experimentos diseñados se ejecutan 4 experimentos de corrección
+para cada combinación de red, técnica de selección y cantidad de landmarks usados. Cada uno de éstos genera una función de corrección diferente, tres obtenidas de muestras
+seleccionadas al azar y la cuarta generada a partir del promedio de 45 muestras.
+Como primera observación se aprecia que las correcciones realizadas por estas funciones
+son semejantes en cada caso. En el grafo de LiveJournal (Figuras 4.7.a y 4.7.b) el valor
+de M RE alcanzado por las cuatro funciones en k = 1 es casi idéntico mientras que
+para 5 ≤ k ≤ 20 varı́a en el rango [0,078; 0,096]. En la red Orkut las variaciones son
+insignificantes. En las Figuras 4.7.c y 4.7.d las series correspondientes a las 4 funciones
+de corrección se ven prácticamente solapadas evidenciando una diferencia despreciable (y
+para algunos casos nula).
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+Figura 4.7: Resultados de corrección en los 4 experimentos ejecutados para las técnicas Degree y
+Closeness en los grafos LiveJournal (a, b) y Orkut (c, d).
+
+Estos resultados muestran que, independientemente del muestreo que se haga sobre el
+
+4.3. Corrección de la estimación
+
+41
+
+grafo, no solo las funciones obtenidas son similares sino que los resultados de la corrección
+sobre las muestras de testing también lo son. Por este motivo, los resultados completos que
+se presentan en la siguiente sección corresponden a las correcciones realizadas en último
+experimento (f ∗ ), es decir, los resultados de una sola función de las 4 generadas para cada
+caso.
+4.3.1.2.
+
+Resultados de corrección
+
+A continuación se presentan los resultados completos para todos los grafos. Por cada
+uno se muestra la tabla de resultados correspondientes al último experimento (f ∗ ) ejecutado para cada estrategia y valor de k. Además, se agrega el promedio del error (X)
+alcanzado por cada técnica. Para una mejor comprensión de los resultados, se agregan los
+gráficos correspondientes a los valores de cada una de las tabla. De ahora en más, por
+simplicidad, se refiere a la corrección aplicada sobre las distancias estimadas por el ı́ndice
+de técnica de selección como “estrategia o técnica de selección corregida”.
+Grafo de Orkut. Según los experimentos ejecutados, y de acuerdo con los resultados de
+la Sección 4.2.1, αClosDeg es la técnica que logra el error relativo más bajo con X = 0,2320
+y se ubica 0,56 % por debajo de Closeness. Los resultados para esta red se muestran en la
+Tabla 4.9.
+k
+1
+5
+10
+20
+
+Degree
+0,4600
+0,3018
+0,2786
+0,2166
+
+Closeness
+0,3732
+0,2126
+0,1862
+0,1614
+
+αClosDeg
+0,3732
+0,2128
+0,1816
+0,1606
+
+ClosDeg Z
+0,4600
+0,2474
+0,2306
+0,2144
+
+∗
+fDegree
+0,1214
+0,1180
+0,1218
+0,1250
+
+∗
+fCloseness
+0,1166
+0,1222
+0,1242
+0,1134
+
+∗
+fαClosDeg
+0,1166
+0,1178
+0,1246
+0,1102
+
+∗
+fClosDeg
+Z
+0,1214
+0,1172
+0,1208
+0,1258
+
+X
+
+0,3142
+
+0,2333
+
+0,2320
+
+0,2881
+
+0,1215
+
+0,1191
+
+0,1173
+
+0,1213
+
+Tabla 4.9: Resultados de corrección para el grafo de Orkut. Valores de M RE para cada técnica de
+selección de landmarks y valor de k experimentado. Las columnas f ∗ corresponden a
+los resultados obtenidos en f ∗ para cada estrategia. La fila X corresponde al promedio
+de los M RE alcanzados por cada técnica. En αClosDeg, el parámetro α toma el valor
+0,9.
+
+En cuanto a la corrección de distancias (f ∗ ), en todas las técnicas de selección se logra
+reducir significativamente el error de estimación llegando a los valores más bajos para
+X con 0,1215; 0,1191; 0,1173 y 0,1213, logrando una disminución del 61,32 %; 48,96 %;
+49,45 % y 57,9 % para Degree, Closeness, αClosDeg y ClosDeg Z, respectivamente. Estos
+resultados evidencian cómo las técnicas con la corrección aplicada sobrepasan el desempeño
+alcanzado por la metodologı́a original de estimación; independientemente de la estrategia
+de selección usada.
+∗
+Entre las estrategias de selección corregidas se destaca fαClosDeg
+. Los valores de d00 (u, v)
+(las distancias corregidas) logran el menor error en X respecto del resto de las técnicas.
+Los puntos de máxima eficiencia ocurren en k = 1 y 5 donde la diferencia obtenida es
+de 68,76 % y de 44,64 % respecto de αClosDeg. No obstante, el error más bajo se alcanza
+para k = 20 con M RE = 0,1102, disminuyendo el error por un 31,38 % en este punto.
+∗
+En particular, para k = 5 y 10 la técnica corregida con mejor desempeño es fClosDeg
+Z
+llegando al error más bajo en estos puntos con M RE = 0,1172 y 0,1208; 0,51 % y 3,05 %
+∗
+por debajo de fαClosDeg
+, respectivamente.
+El error relativo promedio alcanzado por d00 (u, v) en todos los casos se encuentra contenido en el rango [0,1102; 0,1258] . En promedio el valor de M RE obtenido por todas
+
+42
+
+4. Experimentos y resultados
+
+las técnicas corregidas es de 0,1198 con un desvı́o estándar muy bajo de 0,0042. Estos
+resultados indican que sin importar la estrategia de selección de landmarks ni el valor de
+k utilizado la calidad de estimación es aproximadamente la misma. Esto permite elegir
+técnicas sencillas (por ejemplo Degree) y aplicar la estrategia de corrección para reducir
+el error notoriamente.
+
+Figura 4.8: Valores de M RE para cada experimento de corrección ejecutado en el grafo de Orkut.
+Las estrategias corregidas se muestran con lineas punteadas mientras que las técnicas
+originales mantienen el estilo mostrado en los experimentos de estimación.
+
+En la Figura 4.8 se puede observar como las series correspondientes a las técnicas corregidas se encuentran solapadas. Esta caracterı́stica denota la consistencia de la metodologı́a
+de corrección aplicada para este grafo en particular.
+Otra de las observaciones que se puede realizar sobre este gráfico es que el error logrado por las técnicas corregidas no disminuye necesariamente conforme aumenta el valor
+∗
+∗
+∗
+∗
+y fClosDeg
+de k. Las cuatro estrategias (fDegree
+, fCloseness
+, fαClosDeg
+Z ) llegan a un error
+superior en k = 10 respecto del resto de los diferentes valores de k experimentados.
+Grafo de DBLP. En este caso, la técnica Closeness supera al resto de las estrategias sin
+corrección (Degree, αClosDeg y DistTo00 N) para k = 1 y 5 con M RE = 0,3514 y 0,2538;
+respectivamente, llegando a ser la mejor en promedio con X = 0,2531. Luego, para k = 10
+y 20 la técnica con mejor desempeño es DistTo00 N llegando a los valores más bajos en
+estos puntos con M RE = 0,2074 y 0,1626; 4,51 % y 14,42 % menor en comparación con
+Closeness. Los resultados se muestran en la Tabla 4.10.
+En este grafo, las técnicas corregidas (f ∗ ) logran disminuir en gran medida el error de
+estimación llegando nuevamente a los valores más bajos para X con 0,1156; 0,1085; 0,1126
+y 0,1130; logrando una reducción del 56,07 %; 57,11 %; 56,12 % y 56,08 % para Degree,
+Closeness, ClosDeg Z y DistTo00 N, respectivamente. Estos resultados agregan evidencia
+significativa del beneficio de aplicar esta técnica de corrección.
+∗
+Respecto a las técnicas de selección corregidas, fCloseness
+es la más eficiente obteniendo
+el valor más bajo para X. Los puntos de mayor desempeño se dan en k = 1 y 5, donde
+la diferencia lograda por los valores de d00 (u, v) llegan a un 67,39 % y 54,61 % menor en
+∗
+M RE en comparación con Closeness. Sin embargo, fDistT
+o00 N alcanza el error más bajo
+
+4.3. Corrección de la estimación
+
+43
+
+k
+1
+5
+10
+20
+
+Degree
+0,3802
+0,2790
+0,2210
+0,1724
+
+Closeness
+0,3514
+0,2538
+0,2172
+0,1900
+
+ClosDeg Z
+0,3802
+0,2712
+0,2074
+0,1680
+
+DistTo00 N
+0,3802
+0,2790
+0,2074
+0,1626
+
+∗
+fDegree
+0,1302
+0,1308
+0,1112
+0,0902
+
+∗
+fCloseness
+0,1146
+0,1152
+0,1068
+0,0976
+
+∗
+fClosDeg
+Z
+0,1302
+0,1270
+0,1028
+0,0906
+
+∗
+fDistT
+o00 N
+0,1302
+0,1308
+0,1028
+0,0882
+
+X
+
+0,2631
+
+0,2531
+
+0,2567
+
+0,2573
+
+0,1156
+
+0,1085
+
+0,1126
+
+0,1130
+
+Tabla 4.10: Resultados de corrección para el grafo de DBLP. Valores de M RE para cada técnica
+de selección de landmarks y valor de k experimentado. Las columnas f ∗ corresponden
+a los resultados obtenidos en f ∗ para cada estrategia. La fila X muestra el promedio
+de los M RE alcanzados por cada técnica.
+
+en k = 10 y 20 donde los valores de M RE se ven reducidos en un 50,43 % y 45,76 respecto
+∗
+∗
+a DistTo00 N; 3,74 % y 9,63 % menor a fCloseness
+. Cabe destacar también que fClosDeg
+Z
+∗
+obtiene los mismos resultados que fDistT o00 N para k = 1 y 10.
+Los valores de M RE alcanzado por todas las técnicas de selección corregidas para
+10 ≤ k ≤ 20 se encuentran en un rango muy pequeño ([0,0882; 0,1112]). En este caso, solo
+para estos valores particulares de k, no interesa la técnica de selección a elegir siempre y
+cuando la corrección sea aplicada. Seleccionando solo el primer o los primeros 5 landmarks
+∗
+.
+resulta más conveniente la técnica fCloseness
+
+Figura 4.9: Valores de M RE para cada experimento de corrección ejecutado en el grafo de DBLP.
+Las estrategias corregidas se muestran con lineas punteadas mientras que las técnicas
+originales mantienen el estilo mostrado en los experimentos de estimación.
+
+En la Figura 4.9 se puede observar como las series correspondientes a las técnicas corregidas se encuentran solapadas para k = 10 y 20. A diferencia de Orkut, en esta red la
+corrección sobre todas las técnicas de selección logra una reducción conforme aumenta el
+∗
+∗
+∗
+valor de k a partir de k = 5. Las estrategias fDegree
+, fαClosDeg
+y fDistT
+o00 N disminuyen
+el error en una proporción muy similar a la que lo hacen las técnicas Degree, αClosDeg y
+DistTo00 N, respectivamente, a partir de 5 landmarks.
+Grafo de LiveJournal. En esta red la técnica de selección DistTo00 N vuelve a tener el
+mejor desempeño entre las técnicas sin corrección. El valor de X alcanzado es de 0,1475,
+
+44
+
+4. Experimentos y resultados
+
+0,91 % por debajo de Closeness. Los puntos de mayor eficiencia ocurren en k = 1, 10 y
+20, al igual que en los experimentos de estimación presentados en la Sección 4.2.1. En
+estos experimentos, los valores de M RE alcanzados en dichos puntos son 0,22; 0,1216 y
+0,1018. No obstante, la estrategia Closeness supera al resto en k = 5, ubicándose 0,27 %
+por debajo de DistTo00 N. Los resultados para este grafo se muestran en la Tabla 4.11.
+k
+1
+5
+10
+20
+
+Degree
+0,2200
+0,1582
+0,1560
+0,1218
+
+Closeness
+0,2200
+0,1464
+0,1238
+0,1054
+
+DistTo00 N
+0,2200
+0,1468
+0,1216
+0,1018
+
+ClosDeg Z
+0,2200
+0,1468
+0,1238
+0,1034
+
+∗
+fDegree
+0,1050
+0,0854
+0,0854
+0,0918
+
+∗
+fCloseness
+0,1050
+0,0820
+0,0940
+0,0994
+
+∗
+fDistT
+o00 N
+0,1050
+0,0814
+0,0922
+0,0960
+
+∗
+fClosDeg
+Z
+0,1050
+0,0814
+0,0786
+0,0974
+
+X
+
+0,1640
+
+0,1489
+
+0,1475
+
+0,1485
+
+0,0919
+
+0,0951
+
+0,0936
+
+0,0906
+
+Tabla 4.11: Resultados de corrección para el grafo de LiveJournal. Se muestran los valores de
+M RE para cada técnica de selección de landmarks y valor de k experimentado. Las
+columnas f ∗ corresponden a los resultados obtenidos en f ∗ para cada estrategia. La
+fila X muestra el promedio de los M RE alcanzados por cada técnica.
+
+Los resultados muestran nuevamente una gran eficiencia en la corrección de distancias.
+En este caso, en comparación con las estrategias sin corrección, se alcanza una diferencia
+∗
+∗
+∗
+a favor en X de 43,96 %, 36,13 %, 36,53 % y 38,99 % para fDegree
+, fDistT
+, fCloseness
+o00 N y
+∗
+fClosDeg Z , respectivamente.
+En Orkut y DBLP las estrategias de selección corregidas con menor M RE se corresponden con sus versiones sin corrección en cada punto. En este grafo, dicha caracterı́stica
+∗
+no se cumple ya que fClosDeg
+Z logra los errores de estimación más bajos para k = 1, 5
+y 10, mientras que DistT o00 N es la técnica sin corrección que consigue el menor M RE
+∗
+promedio (X). Los valores de d00 (u, v) generados por fClosDeg
+Z tienen el error promedio
+más bajo con X = 0,0906. Los puntos de mayor eficiencia se dan en k = 1 y 5 donde la
+diferencia respecto de ClosDeg Z es de un 52,27 % y 44,55 %, respectivamente. El menor
+error lo alcanza en k = 10 con M RE = 0,0786.
+
+Figura 4.10: Valores de M RE para cada experimento de corrección ejecutado en el grafo de LiveJournal. Las estrategias corregidas se muestran con lineas punteadas mientras que las
+técnicas originales mantienen el estilo mostrado en los experimentos de estimación.
+
+4.3. Corrección de la estimación
+
+45
+
+La primera observación que se hace sobre la Figura 4.10 es que la corrección de la
+estimación, en todas las técnicas, logra disminuir el error al pasar de k = 1 a 5. Luego,
+∗
+∗
+∗
+para k > 5 en fDegree
+, fCloseness
+y fDistT
+o00 N la función de corrección no aplica mejoras
+∗
+dado que el error alcanzado se mantiene constante (fDegree
+en k = 10) o aumenta (el resto
+∗
+de los casos) respecto de k = 5. No ocurre lo mismo para fClosDeg
+Z en k = 10 que, como se
+dijo anteriormente, llega al punto de máxima eficiencia pero finalmente con 20 landmarks
+el error de estimación aumenta.
+La corrección de las distancias estimadas convierte a todas las estrategias de selección
+en alternativas sumamente competitivas para k = 5, logrando resultados incluso mejores
+que sus versiones sin corrección para k = 20. En sentido con la búsqueda de técnicas de
+estimación que funcionen bien usando pocos landmarks, otra vez la metodologı́a de corrección demuestra ser una opción válida.
+Grafo de YouTube. En esta red, en cuanto a las técnicas de selección de landmarks sin
+corrección, DistTo00 N logra estimar con el error más bajo. Obtiene un error promedio
+X = 0,0679 ubicándose 4,63 % por debajo de Degree; mejor métrica baseline (Sección
+4.2.1). Los resultados de los experimentos para este grafo se muestran en la Tabla 4.12.
+k
+1
+5
+10
+20
+
+Degree
+0,1324
+0,0598
+0,0506
+0,0422
+
+Closeness
+0,1324
+0,0608
+0,0530
+0,0432
+
+DistTo00 N
+0,1324
+0,0558
+0,0482
+0,0354
+
+ClosDeg Z
+0,1324
+0,0558
+0,0494
+0,0422
+
+∗
+fDegree
+0,0980
+0,0598
+0,0506
+0,0422
+
+∗
+fCloseness
+0,0980
+0,0608
+0,0530
+0,0432
+
+∗
+fDistT
+o00 N
+0,0980
+0,0558
+0,0482
+0,0354
+
+∗
+fClosDeg
+Z
+0,0980
+0,0558
+0,0494
+0,0422
+
+X
+
+0,0712
+
+0,0723
+
+0,0679
+
+0,0699
+
+0,0626
+
+0,0637
+
+0,0593
+
+0,0613
+
+Tabla 4.12: Resultados de corrección para el grafo de YouTube. Se muestran los valores de M RE
+para cada técnica de selección de landmarks y valor de k experimentado. Las columnas f ∗ corresponden a los resultados obtenidos en f ∗ para cada estrategia. La fila X
+muestra el promedio de los M RE alcanzados por cada técnica.
+
+En este caso, la corrección solo genera mejoras en el error de estimación para k = 1. En
+ese punto, las 4 técnicas de selección corregidas logran disminuir el error en un 25,98 %.
+La razón por la cual el porcentaje es el mismo es que todas las técnicas originales (Degree,
+Closeness, DistTo00 N y ClosDeg Z) ubican al mismo nodo landmark en el primer puesto
+del ranking. Luego, las tablas T ∗ son las mismas para todas las técnicas, por lo cual
+finalmente las funciones de corrección, y por ende los resultados, son iguales. Para el
+resto de los valores de k no existe diferencia entre una estrategia de selección corregida y
+su versión original. Estos resultados muestran, a priori, que ésta metodologı́a solo aplica
+correcciones donde el error puede reducirse aún más, sin empeorar los casos donde la
+calidad de la estimación lograda es muy buena.
+∗
+De las técnicas corregidas, fDistT
+o00 N es la que logra el error más bajo en X = 0,0593;
+12,66 % por debajo de DistTo00 N. El motivo por el cual esta técnica se convierte en la
+mejor alternativa es que, de nuevo, la corrección reduce el error en k = 1 y mantiene los
+resultados obtenidos por DistTo00 N para k ≥ 5, lo cual hace que el promedio se reduzca.
+En la Figura 4.11 se observan los valores de MAE obtenidos a partir de la muestra M1
+con la técnica DistTo00 N. El motivo por el cual las correcciones sólo reducen el error en
+k = 1 es que, en estos casos, f ∗ toma valores mayores a 0,5 a partir de d0 (u, v) pequeños
+(ver Figura 4.11.a, a partir de d0 (u, v) = 6). Esto hace que la corrección a aplicar (bf ∗ e)
+sea mayor a 0 y se haga efectiva en mayor cantidad de casos. Por esta razón, el error se
+ve reducido en gran porcentaje para todas las técnicas usando un solo landmark.
+Para k = 5 y 10 (b y c), f ∗ se mantiene por debajo de 0,5 hasta d0 (u, v) = 9 y 10, res-
+
+46
+
+4. Experimentos y resultados
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+Figura 4.11: Valores de T ∗ , obtenidos a partir de la muestra 1 de YouTube, para DistTo00 N k = 1,
+5, 10 y 20 (a, b, c y d). También se muestra la función de corrección (f ∗ , serie roja) y
+los valores redondeados que se usan finalmente para corregir (bf ∗ e). Para una mejor
+comparación, la escala de los valores del eje-y se mantiene igual para los 4 gráficos.
+
+pectivamente. Los casos donde se estiman distancias tan grandes como estas son escasos.
+Por este motivo, el aporte de la corrección es prácticamente nulo y los valores de d00 (u, v)
+no llegan a reducir el error relativo promedio M RE. En k = 20 la cantidad a corregir es 0
+para cada d0 (u, v), no existe corrección en ningún punto. El comportamiento visto en este
+ejemplo se repite para todas las técnicas.
+Facebook. En estos experimentos, con respecto a las técnicas sin corrección, ClosDeg Z
+es la que obtiene el mejor desempeño logrando el error más bajo para X = 0,0774, 2,76 %
+por debajo del error alcanzado por Degree. Sin embargo, para k = 20, αClosDeg es la
+técnica de mayor calidad con M RE = 0,0144; 1,37 % menor que ClosDeg Z.
+En cuanto a la corrección de distancias, al igual que en el grafo de Youtube, en todas
+las técnicas de selección se logra reducir el error de estimación para k = 1. Esta vez la
+diferencia que se obtiene es de un 2,41 % por debajo del error obtenido por las estrategias
+∗
+originales sin corregir. En particular, fClosDeg
+Z logra el mejor desempeño llegando al
+mı́nimo error para X = 0,0758 respecto del resto de las métricas, se mantiene 2 % por
+debajo de ClosDeg Z debido a la diferencia que obtiene en k = 1. Otras de las técnicas
+∗
+∗
+con corrección de distancias para las cuales se obtienen mejoras son fDegree
+y fαClosDeg
+,
+logrando reducir el error en X un 1,95 % y 2 % respecto de sus versiones no corregidas.
+Para Closeness la corrección empeora los resultados. Los valores de M RE aumentan
+∗
+en fCloseness
+para 5 ≤ k ≤ 20 en 60,45 %; 67,39 % y 86,06 % respecto a Closeness. De
+todos los experimentos ejecutados para todas las redes, estos son los únicos resultados
+desfavorables que muestra esta técnica de corrección de distancias.
+
+4.3. Corrección de la estimación
+
+47
+
+K
+1
+5
+10
+20
+
+Degree
+0,2574
+0,0222
+0,0220
+0,0168
+
+Closeness
+0,2574
+0,1254
+0,1202
+0,1076
+
+ClosDeg Z
+0,2574
+0,0222
+0,0154
+0,0146
+
+αClosDeg
+0,2574
+0,0222
+0,0164
+0,0144
+
+∗
+fDegree
+0,2512
+0,0222
+0,0220
+0,0168
+
+∗
+fCloseness
+0,2512
+0,2012
+0,2012
+0,2002
+
+∗
+fClosDeg
+Z
+0,2512
+0,0222
+0,0154
+0,0146
+
+∗
+fαClosDeg
+0,2512
+0,0222
+0,0164
+0,0144
+
+X
+
+0,0796
+
+0,1526
+
+0,0774
+
+0,0776
+
+0,0780
+
+0,2134
+
+0,0758
+
+0,0760
+
+Tabla 4.13: Resultados de corrección para el grafo de Facebook. Se muestran los valores de M RE
+para cada técnica de selección de landmarks y valor de k experimentado. Las columnas
+f ∗ corresponden a los resultados obtenidos en f ∗ para cada estrategia. La fila X muestra el promedio de los M RE alcanzados por cada técnica. En αClosDeg, el parámetro
+α toma el valor 0,5.
+
+El problema asociado a ésta técnica de selección de landmarks es que la regresión lineal
+no logra ajustar correctamente los valores de MAE. La Figura 4.12 muestra, al igual que
+para YouTube, los valores de MAE obtenidos a partir de la muestra M1 con la técnica
+Closeness. Estos gráficos evidencian que el ajuste que se hace sobre los datos es de baja
+calidad, pronosticando correcciones incorrectas como por ejemplo para d0 (u, v) = 4 y 5 en
+k = 5, 10 y 20.
+
+(a)
+
+(b)
+
+(c)
+
+(d)
+
+Figura 4.12: Valores de T ∗ , obtenidos a partir de la muestra 1 de Facebook, para Closeness k = 1,
+5, 10 y 20 (a, b, c y d). También se muestra la función de corrección (f ∗ , serie roja) y
+los valores redondeados que se usan finalmente para corregir (bf ∗ e). Para una mejor
+comparación, la escala de los valores del eje-y se mantiene igual para los 4 gráficos.
+
+48
+
+4. Experimentos y resultados
+
+4.3.1.3.
+
+Corrección con landmarks elegidos al azar
+
+Para verificar que la metodologı́a de corrección no se encuentra asociada a un método
+de selección de landmarks especı́fico, se ejecutan los experimentos de corrección sobre la
+técnica Random que consiste en elegir aleatoriamente k nodos del grafo como landmarks.
+Los resultados se muestran en la Tabla 4.14.
+k
+1
+5
+10
+20
+
+Orkut
+1,1120
+0,7772
+0,7228
+0,6222
+
+∗
+fOrkut
+0,1656
+0,1164
+0,1086
+0,1102
+
+LiveJournal
+0,9194
+0,6624
+0,6550
+0,6064
+
+∗
+fLiveJournal
+0,1688
+0,1260
+0,1204
+0,0942
+
+YouTube
+0,8502
+0,5686
+0,5538
+0,5450
+
+fY∗ ouT ube
+0,1248
+0,1404
+0,1320
+0,1512
+
+DBLP
+1,1334
+0,7854
+0,7026
+0,5646
+
+∗
+fDBLP
+0,1828
+0,1510
+0,1302
+0,1352
+
+Facebook
+0,6664
+0,6140
+0,5926
+0,5880
+
+fF∗ acebook
+0,2562
+0,2570
+0,2568
+0,2572
+
+X
+
+0,8085
+
+0,1252
+
+0,7108
+
+0,1273
+
+0,6294
+
+0,1371
+
+0,7965
+
+0,1498
+
+0,6152
+
+0,2568
+
+Tabla 4.14: Resultados de corrección en todas las redes usando la técnica Random. Se muestran
+los valores de M RE para cada grafo y valor de k experimentado. Las columnas f ∗
+corresponden a los resultados obtenidos en f ∗ . La fila X muestra el promedio de los
+M RE alcanzados en cada grafo por Random y su corrección.
+
+En todos los casos, la corrección logra reducir en gran medida el error de estimación
+alcanzado por Random. Las diferencias obtenidas en X son del 84,52 %; 82,08 %; 78,22 %;
+81,19 % y 58,26 % en Orkut, LiveJournal, YouTube, DBLP y Facebook, respectivamente.
+Los puntos de error (M RE) más bajos se dan en k = 10 para Orkut (0,1086) y DBLP
+(0,1302); en k = 1 para YouTube (0,1248) y Facebook (0,2562); mientras que para LiveJournal se da en k = 20 con M RE = 0,0942.
+En cuanto a los puntos de máxima eficiencia, para todos los grafos se dan en k = 1
+excepto en LiveJournal donde la máxima diferencia porcentual se da en k = 20 llevando
+el error de estimación 84,47 % por debajo de Random.
+
+Figura 4.13: Valores de M RE para cada grafo en la Tabla 4.11. Las correcciones se muestran con
+lineas punteadas mientras que la técnica Random para cada red se muestra en linea
+continua.
+
+En la Figura 4.13 se observa que en todos los grafos excepto Facebook la corrección
+obtiene valores de M RE similares para esta técnica; las series correspondientes a Orkut,
+LiveJournal, YouTube y DBLP se ven solapadas. Estos resultados aportan más evidencia
+sobre la consistencia del desempeño de esta técnica de corrección independientemente de
+las técnicas usadas y las redes sobre las cuales se apliquen.
+
+5. CONCLUSIONES Y TRABAJO FUTURO
+
+En este trabajo se presentan nuevas estrategias de selección de nodos landmarks para
+estimación de distancias en grafos, en conjunto con una novedosa metodologı́a de corrección
+de la estimación. Estas dos propuestas se validan ejecutando varios experimentos sobre
+instancias de redes masivas.
+La primer propuesta de este trabajo consiste en definir y evaluar nuevas técnicas de
+selección de landmarks combinando propiedades de los nodos. El principal objetivo es
+reducir el error de estimación de la distancia entre pares de nodos de una red respecto
+de las estrategias baseline presentadas en trabajos de referencia: Degree y Closeness. Una
+de las motivaciones de esta propuesta es la complejidad computacional de calcular las
+distancias exactas en redes masivas. La cantidad de usuarios que hoy en dı́a hacen uso
+de aplicaciones cuya estructura subyacente es un grafo (por ejemplo, redes sociales), y
+en cuyos procesos requieren el cálculo de la distancia entre dos usuarios (nodos), agrega
+más interés a la búsqueda de estas nuevas técnicas. También, se ha mostrado en trabajos
+relacionados que aumentar significativamente la cantidad de landmarks no se traduce a un
+error proporcional más bajo. Por este motivo, se busca que las nuevas estrategias aumenten
+la calidad de la estimación para k ≤ 20, donde k es la cantidad de landmarks; no obstante,
+se experimenta hasta k = 100 como un lı́mite “aceptable”. Además, esto permite una
+velocidad de estimación aún mayor al tener que procesar un ı́ndice de menor tamaño que,
+a su vez, requiere de poco espacio de almacenamiento en disco.
+En este sentido, se proponen tres nuevas técnicas de selección: ClosDeg, DistTo00 y
+αClosDeg. Cada una combina de forma diferente dos métricas de los nodos: Degree y
+Closeness. La ventaja en el uso de éstas es que se deben calcular para evaluar las técnicas
+baseline, por ende el costo computacional agregado por las nuevas estrategias es únicamente
+el de los procesos que se aplican para combinarlas. Además, se propone normalizar estas
+métricas utilizando NormMax y ZScore, por lo cual se agregan cuatro estrategias más
+(DistTo00 N, ClosDeg N, DistTo00 Z y ClosDeg Z). También, se ha propuesto una forma
+eficiente de guardar el ı́ndice en disco que expone el bajo costo de almacenamiento que se
+requiere para esta técnica.
+Las nuevas técnicas de estimación con mejor desempeño son DistTo00 N y αClosDeg.
+Estas logran obtener los valores más bajos en X 20 para los 3 grafos de mayor tamaño:
+YouTube, LiveJournal y Orkut. Cabe destacar también que ClosDeg Z se mantiene en
+segundo lugar para DBLP, YouTube y LiveJournal y llega a ser la técnica con menor error
+para Facebook (el grafo más chico).
+La normalización aplicada sobre las métricas tienen diferentes efectos según la técnica
+que luego se utiliza para combinarlas. En primer lugar, normalizar por NormMax no tiene
+efecto alguno sobre la técnica ClosDeg por lo cual no existe diferencia con ClosDeg N. Sin
+embargo, si se combinan por DistTo00 los resultados son positivos, ya que DistTo00 N es
+la técnica con menor error en YouTube y LiveJournal. Por otro lado, ZScore potencia la
+técnica ClosDeg Z ubicándola como la segunda mejor alternativa en YoutTube, LiveJournal y DBLP.
+Se ha propuesto una técnica para combinar Degree y Closeness que puede ajustarse
+según caracterı́sticas del grafo o del comportamiento mismo de las estrategias baseline:
+αClosDeg. Se ha probado empı́ricamente que en Orkut existe un valor de α (0,9) para
+el cual, por lo menos en esa red, ésta técnica supera a ambas por separado y al resto de
+las estrategias. Ese valor experimental busca darle más importancia a Closeness ya que
+49
+
+50
+
+5. Conclusiones y trabajo futuro
+
+obtiene un error mucho más bajo que Degree en ese grafo.
+Con estos resultados, se dejan un nuevos baselines en cuanto a estrategias de combinación de Degree y Closeness.
+La segunda propuesta consiste en generar y evaluar funciones eficientes de corrección
+de los valores estimados, siendo una opción derivarlas a partir del comportamiento de las
+técnicas de estimación sobre un subconjunto de nodos de la red. Según el relevamiento
+bibliográfico realizado, no existen otros trabajos donde se proponga corregir las distancias
+estimadas. En este sentido, se presenta la primer metodologı́a que propone una forma de
+resolver el problema en grafos masivos. Esta estrategia consiste en ajustar una regresión
+lineal a partir del error promedio absoluto que tiene una técnica de estimación sobre un
+subconjunto de nodos de la red.
+La función de corrección diseñada en este trabajo no solo a demostrado ser muy eficiente
+sino que su desempeño es consistente para todos los grafos y técnicas experimentadas.
+Además, la regresión lineal simple que se genera sobre los valores de MAE es una técnica
+muy sencilla de aplicar y no requiere de alto costo computacional dado que la cantidad
+de datos es muy baja. También, las muestras de pares de nodos que se utilizan para
+calcular el error medio absoluto se deben obtener previamente para evaluar las técnicas de
+selección de landmarks, por lo cual no existe costo computacional agregado a esta parte
+del procedimiento.
+El desempeño en los grafos de mayor tamaño es prometedor. En Orkut y LiveJournal
+reduce el error de estimación por casi un 50 % y 35 % en promedio, respectivamente;
+teniendo en cuenta todas las técnicas y valores de k experimentados.
+Los puntos de máxima eficiencia en Orkut se dan para la técnica baseline Degree donde
+en promedio se logra una disminución del 61,32 % del error. Sin embargo, el mı́nimo error
+∗
+en k = 20 con M RE = 0,1102; 31,38 % por debajo del
+se alcanza utilizando fαClosDeg
+error original. En LiveJournal, nuevamente se consigue la máxima eficiencia sobre Degree
+llegando a un 43,96 % por debajo del error original. No obstante, el mı́nimo M RE promedio
+∗
+se logra con fClosDeg
+Z con X = 0,0906. El error se reduce notablemente para k = 1, 5 y
+10, un 52,27 %; 44,55 % y 36,51 % por debajo del error original en esos puntos. En DBLP
+alcanza la máxima eficiencia en comparación con todos los grafos. El promedio del error
+reducido para todas las técnicas y valores de k es del 54,26 %. La máxima eficiencia se logra
+∗
+con fCloseness
+llegando a disminuir el error por un 57,11 % en promedio. Sobre YouTube
+y Facebook no existen mejoras sustanciales pero tampoco aumenta el error, excepto en
+un único caso donde la regresión lineal no ajusta correctamente los valores de MAE y
+la corrección no funciona. Además, se ha experimentado la corrección sobre la técnica
+de selección Random. El error, teniendo en cuenta todos los grafos, se ve reducido en
+promedio un 76,5 %.
+Los resultados muestran que esta metodologı́a funciona reduciendo el error de estimación considerablemente, no se encuentra atada a una estrategia de selección de landmarks
+especı́fica y deja el primer baseline en esta nueva lı́nea de investigación.
+
+5.1.
+
+Trabajos futuros
+
+A raı́z de los resultados de los experimentos ejecutados en este trabajo surgen nuevos
+interrogantes:
+El hecho de haber combinado Degree y Closeness, y que los resultados hayan sido
+positivos, indica que quizás exista alguna otra forma más eficiente de combinarlas
+respecto de las técnicas propuestas en este trabajo. Algunas pruebas realizadas in-
+
+5.1. Trabajos futuros
+
+51
+
+dican que calcular y elegir landmarks por el aporte individual que hacen al conjunto
+podrı́a resultar en una buena técnica de selección combinada.
+En la corrección de distancias se ha visto que una regresión lineal simple no siempre
+ajusta correctamente los valores de MAE. En algunos casos una doble regresión
+lineal podrı́a aumentar la eficiencia pero en otros quizás convenga buscar otro tipo
+de función.
+En los casos donde la regresión lineal se adapta correctamente a los datos se ha mostrado una gran eficiencia en la corrección. Esto podrı́a deberse a alguna propiedad
+que adquieren los ı́ndices en relación con la estructura del grafo. Por ejemplo, en
+grafos de gran tamaño MAE es más alto conforme aumenta d0 (u, v). Otro ejemplo
+puede ser que en grafos con un diámetro muy grande, y donde las técnicas de estimación tengan un error alto, la corrección funcione mejor. Resulta interesante abrir
+esta lı́nea de investigación porque, de encontrarse algún tipo de relación, se podrı́a
+predecir en qué casos esta técnica reduce el error efectivamente.
+Las distancias estimadas no se distribuyen equitativamente, en cuanto a su longitud,
+en una muestra. Para valores grandes de d0 (u, v) los pares de nodos son menores
+y esto impide establecer un MAE representativo del grafo. A priori, surgen dos
+opciones posibles: una es excluir de la corrección estos casos y la otra es tomar de la
+muestra la misma cantidad de pares para cada d0 (u, v). Esta linea de investigación
+busca determinar si alguna de las opciones aumenta la eficiencia de esta técnica.
+
+52
+
+5. Conclusiones y trabajo futuro
+
+BIBLIOGRAFı́A
+
+[1]
+
+Amir Abboud, Keren Censor-Hillel y Seri Khoury. ((Near-Linear Lower Bounds
+for Distributed Distance Computations, Even in Sparse Networks)). En: Distributed
+Computing - 30th International Symposium, DISC 2016, Paris, France, September
+27-29, 2016. Proceedings. Ed. por Cyril Gavoille y David Ilcinkas. Vol. 9888. Lecture
+Notes in Computer Science. Springer, 2016, págs. 29-42. doi: 10.1007/978-3-66253426-7\_3.
+
+[2]
+
+Rachit Agarwal y col. ((Shortest paths in less than a millisecond)). En: Proceedings
+of the 2012 ACM workshop on Workshop on Online Social Networks, WOSN 2012,
+Helsinki, Finland, August 17, 2012. Ed. por Balachander Krishnamurthy, Stefan
+Saroiu y Ben Zhao. ACM, 2012, págs. 37-42. doi: 10.1145/2342549.2342559.
+
+[3]
+
+Takuya Akiba, Yoichi Iwata y Yuichi Yoshida. ((Dynamic and Historical ShortestPath Distance Queries on Large Evolving Networks by Pruned Landmark Labeling)).
+En: Proceedings of the 23rd International Conference on World Wide Web. WWW
+’14. Seoul, Korea: Association for Computing Machinery, 2014, págs. 237-248. isbn:
+9781450327442.
+
+[4]
+
+Takuya Akiba, Yoichi Iwata y Yuichi Yoshida. ((Fast exact shortest-path distance
+queries on large networks by pruned landmark labeling)). En: Proceedings of the
+ACM SIGMOD International Conference on Management of Data, SIGMOD 2013,
+New York, NY, USA, June 22-27, 2013. Ed. por Kenneth A. Ross, Divesh Srivastava
+y Dimitris Papadias. ACM, 2013, págs. 349-360. doi: 10.1145/2463676.2465315.
+
+[5]
+
+Takuya Akiba y col. ((Efficient Top-k Shortest-Path Distance Queries on Large Networks by Pruned Landmark Labeling)). En: Proceedings of the Twenty-Ninth AAAI
+Conference on Artificial Intelligence. AAAI’15. Austin, Texas: AAAI Press, 2015,
+págs. 2-8. isbn: 0262511290.
+
+[6]
+
+Lars Backstrom y col. ((Group Formation in Large Social Networks: Membership,
+Growth, and Evolution)). En: Proceedings of the 12th ACM SIGKDD International
+Conference on Knowledge Discovery and Data Mining. KDD ’06. Philadelphia, PA,
+USA: Association for Computing Machinery, 2006, págs. 44-54. isbn: 1595933395.
+doi: 10 . 1145 / 1150402 . 1150412. url: https : / / doi . org / 10 . 1145 / 1150402 .
+1150412.
+
+[7]
+
+Shivam Bhardwaj, Rajdeep Niyogi y Alfredo Milani. ((Performance Analysis of an
+Algorithm for Computation of Betweenness Centrality)). En: Proceedings of the 2011
+International Conference on Computational Science and Its Applications - Volume
+Part V. ICCSA’11. Santander, Spain: Springer-Verlag, 2011, págs. 537-546. isbn:
+9783642219337.
+
+[8]
+
+Guido Caldarelli. Scale-Free Networks - Complex Webs in Nature and Technology.
+Oxford University Press, 2013. isbn: 978-0-19-966517-4.
+
+[9]
+
+George C Canavos y Edmundo Gerardo Urbina Medal. Probabilidad y estadı́stica:
+aplicaciones y métodos. OCLC: 634289242. México: MacGraw-Hill, 1990. isbn: 978968-451-856-8.
+
+[10]
+
+Ylenia Casali y Hans Rudolf Heinimann. ((A topological analysis of growth in the
+Zurich road network)). En: Computers, Environment and Urban Systems 75 (2019),
+págs. 244-253. doi: 10.1016/j.compenvurbsys.2019.01.010.
+53
+
+54
+
+BIBLIOGRAFÍA
+
+[11]
+
+Avery Ching y col. ((One Trillion Edges: Graph Processing at Facebook-Scale)). En:
+PVLDB 8.12 (2015), págs. 1804-1815. doi: 10.14778/2824032.2824077.
+
+[12]
+
+M. Christoforaki y T. Suel. ((Estimating pairwise distances in large graphs)). En: 2014
+IEEE International Conference on Big Data (Big Data). Oct. de 2014, págs. 335-344.
+doi: 10.1109/BigData.2014.7004250.
+
+[13]
+
+Thomas H. Cormen y col. Introduction to Algorithms, Third Edition. 3rd. The MIT
+Press, 2009. isbn: 0262033844.
+
+[14]
+
+P. Cui y col. ((A Survey on Network Embedding)). En: IEEE Transactions on Knowledge and Data Engineering 31.5 (mayo de 2019), págs. 833-852. issn: 2326-3865.
+doi: 10.1109/TKDE.2018.2849727.
+
+[15]
+
+Gianlorenzo D’Angelo, Mattia D’Emidio y Daniele Frigioni. ((Distance Queries in
+Large-Scale Fully Dynamic Complex Networks)). En: Combinatorial Algorithms 27th International Workshop, IWOCA 2016, Helsinki, Finland, August 17-19, 2016,
+Proceedings. Ed. por Veli Mäkinen, Simon J. Puglisi y Leena Salmela. Vol. 9843.
+Lecture Notes in Computer Science. Springer, 2016, págs. 109-121. doi: 10.1007/
+978-3-319-44543-4\_9.
+
+[16]
+
+Atish Das Sarma y col. ((A Sketch-Based Distance Oracle for Web-Scale Graphs)).
+En: Proceedings of the Third ACM International Conference on Web Search and
+Data Mining. WSDM ’10. New York, New York, USA: Association for Computing
+Machinery, 2010, págs. 401-410. isbn: 9781605588896. doi: 10 . 1145 / 1718487 .
+1718537. url: https://doi.org/10.1145/1718487.1718537.
+
+[17]
+
+N. A. Eapen y A. S. A. Beegom. ((A linear time pre-processing for optimization of
+shortest path and distance algorithms)). En: 2017 IEEE International Conference
+on Signal Processing, Informatics, Communication and Energy Systems (SPICES).
+Ago. de 2017, págs. 1-5. doi: 10.1109/SPICES.2017.8091313.
+
+[18]
+
+Christian Frey y col. ((Efficient Information Flow Maximization in Probabilistic
+Graphs)). En: CoRR abs/1701.05395 (2017). arXiv: 1701.05395.
+
+[19]
+
+Mohsen Ghaffari y Jason Li. ((Improved distributed algorithms for exact shortest
+paths)). En: Proceedings of the 50th Annual ACM SIGACT Symposium on Theory
+of Computing, STOC 2018, Los Angeles, CA, USA, June 25-29, 2018. Ed. por Ilias
+Diakonikolas, David Kempe y Monika Henzinger. ACM, 2018, págs. 431-444. doi:
+10.1145/3188745.3188948.
+
+[20]
+
+Jiawei Han, Micheline Kamber y Jian Pei. Data Mining: Concepts and Techniques,
+3rd edition. Morgan Kaufmann, 2011. isbn: 978-0123814791.
+
+[21]
+
+Itay Laish y Shay Mozes. ((Efficient Dynamic Approximate Distance Oracles for
+Vertex-Labeled Planar Graphs)). En: Theory of Computing Systems 63.8 (2019),
+págs. 1849-1874. doi: 10.1007/s00224-019-09949-5.
+
+[22]
+
+Kwan Hui Lim y Amitava Datta. ((A Topological Approach for Detecting Twitter
+Communities with Common Interests)). En: Ubiquitous Social Media Analysis - Third
+International Workshops, MUSE 2012, Bristol, UK, September 24, 2012, and MSM
+2012, Milwaukee, WI, USA, June 25, 2012, Revised Selected Papers. Ed. por Martin
+Atzmueller y col. Vol. 8329. Lecture Notes in Computer Science. Springer, 2012,
+págs. 23-43. doi: 10.1007/978-3-642-45392-2\_2.
+
+BIBLIOGRAFÍA
+
+55
+
+[23]
+
+Peiguang Lin, Yilong Yin y Peiyao Nie. ((K-Multi-Preference Query over Road Networks)). En: Personal Ubiquitous Comput. 20.3 (jun. de 2016), págs. 413-429. issn:
+1617-4909. doi: 10.1007/s00779-016-0913-0. url: https://doi.org/10.1007/
+s00779-016-0913-0.
+
+[24]
+
+Shuai Ma y col. ((Distance Landmarks Revisited for Road Graphs)). En: CoRR
+abs/1401.2690 (2014). arXiv: 1401.2690.
+
+[25]
+
+Shlomi Maliah, Rami Puzis y Guy Shani. ((Shortest path tree sampling for landmark
+selection in large networks)). En: J. Complex Networks 5.5 (2017), págs. 795-815. doi:
+10.1093/comnet/cnx008.
+
+[26]
+
+David Maxwell y Leif Azzopardi. ((Stuck in Traffic: How Temporal Delays Affect
+Search Behaviour)). En: Proceedings of the 5th Information Interaction in Context
+Symposium. IIiX ’14. Regensburg, Germany: Association for Computing Machinery,
+2014, págs. 155-164. isbn: 9781450329767. doi: 10.1145/2637002.2637021. url:
+https://doi.org/10.1145/2637002.2637021.
+
+[27]
+
+Julian J. McAuley y Jure Leskovec. ((Learning to Discover Social Circles in Ego Networks)). En: Advances in Neural Information Processing Systems 25: 26th Annual
+Conference on Neural Information Processing Systems 2012. Proceedings of a meeting held December 3-6, 2012, Lake Tahoe, Nevada, United States. Ed. por Peter L.
+Bartlett y col. 2012, págs. 548-556.
+
+[28]
+
+Robert Meusel y col. ((Graph structure in the web - revisited: a trick of the heavy
+tail)). En: 23rd International World Wide Web Conference, WWW ’14, Seoul, Republic of Korea, April 7-11, 2014, Companion Volume. Ed. por Chin-Wan Chung
+y col. ACM, 2014, págs. 427-432. doi: 10.1145/2567948.2576928.
+
+[29]
+
+Robert B. Miller. ((Response Time in Man-Computer Conversational Transactions)).
+En: Proceedings of the December 9-11, 1968, Fall Joint Computer Conference, Part
+I. AFIPS ’68 (Fall, part I). San Francisco, California: Association for Computing
+Machinery, 1968, págs. 267-277. isbn: 9781450378994. doi: 10 . 1145 / 1476589 .
+1476628. url: https://doi.org/10.1145/1476589.1476628.
+
+[30]
+
+Alan Mislove y col. ((Measurement and analysis of online social networks)). En: Proceedings of the 7th ACM SIGCOMM Internet Measurement Conference, IMC 2007,
+San Diego, California, USA, October 24-26, 2007. Ed. por Constantine Dovrolis
+y Matthew Roughan. ACM, 2007, págs. 29-42. doi: 10.1145/1298306.1298311.
+
+[31]
+
+Jakob Nielsen. Usability Engineering. San Francisco, CA, USA: Morgan Kaufmann
+Publishers Inc., 1993. isbn: 0125184050.
+
+[32]
+
+Michalis Potamias y col. ((Fast Shortest Path Distance Estimation in Large Networks)). En: Proceedings of the 18th ACM Conference on Information and Knowledge
+Management. CIKM ’09. Hong Kong, China: Association for Computing Machinery,
+2009, págs. 867-876. isbn: 9781605585123. doi: 10.1145/1645953.1646063. url:
+https://doi.org/10.1145/1645953.1646063.
+
+[33]
+
+Miao Qiao y col. ((Approximate Shortest Distance Computing: A Query-Dependent
+Local Landmark Scheme)). En: (2012). Ed. por Anastasios Kementsietsidis y Marcos
+Antonio Vaz Salles, págs. 462-473. doi: 10.1109/ICDE.2012.53.
+
+[34]
+
+Stuart J. Russell y Peter Norvig. Artificial Intelligence - A Modern Approach, Third
+International Edition. Pearson Education, 2010. isbn: 978-0-13-207148-2.
+
+56
+
+BIBLIOGRAFÍA
+
+[35]
+
+Siddhartha Sahu y col. ((The Ubiquity of Large Graphs and Surprising Challenges
+of Graph Processing)). En: Proc. VLDB Endow. 11.4 (dic. de 2017), págs. 420-431.
+issn: 2150-8097.
+
+[36]
+
+Akrati Saxena, Ralucca Gera y S. R. S. Iyengar. ((A heuristic approach to estimate
+nodes’ closeness rank using the properties of real world networks)). En: Social Netw.
+Analys. Mining 9.1 (2019), 3:1-3:16. doi: 10.1007/s13278-018-0545-7.
+
+[37]
+
+Michael T. Schaub y col. ((The many facets of community detection in complex
+networks)). En: Applied Network Science 2 (2017), pág. 4. doi: 10.1007/s41109017-0023-6.
+
+[38]
+
+Ingo Scholtes, Nicolas Wider y Antonios Garas. ((Higher-Order Aggregate Networks
+in the Analysis of Temporal Networks: Path structures and centralities)). En: CoRR
+abs/1508.06467 (2015). arXiv: 1508.06467.
+
+[39]
+
+Maarten van Steen. ((Graph Theory and Complex Networks: An Introduction)). En:
+(ene. de 2010).
+
+[40]
+
+Emanuele Strano y col. ((Elementary Processes Governing the Evolution of Road Networks)). En: Scientific reports 2 (mar. de 2012), pág. 296. doi: 10.1038/srep00296.
+
+[41]
+
+Frank W. Takes y Walter A. Kosters. ((Adaptive Landmark Selection Strategies
+for Fast Shortest Path Computation in Large Real-World Graphs)). En: International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies
+(IAT), Warsaw, Poland, August 11-14, 2014 - Volume II. IEEE Computer Society,
+2014, págs. 27-34. doi: 10.1109/WI-IAT.2014.13.
+
+[42]
+
+Xian Teng y col. ((Collective Influence of Multiple Spreaders Evaluated by Tracing
+Real Information Flow in Large-Scale Social Networks)). En: CoRR abs/1606.02740
+(2016). arXiv: 1606.02740.
+
+[43]
+
+Mikkel Thorup. ((Undirected Single-Source Shortest Paths with Positive Integer
+Weights in Linear Time)). En: J. ACM 46.3 (1999), págs. 362-394. doi: 10.1145/
+316542.316548.
+
+[44]
+
+Konstantin Tretyakov y col. ((Fast Fully Dynamic Landmark-Based Estimation of
+Shortest Path Distances in Very Large Graphs)). En: Proceedings of the 20th ACM
+International Conference on Information and Knowledge Management. CIKM ’11.
+Glasgow, Scotland, UK: Association for Computing Machinery, 2011, págs. 1785-1794.
+isbn: 9781450307178. doi: 10.1145/2063576.2063834. url: https://doi.org/
+10.1145/2063576.2063834.
+
+[45]
+
+Johan Ugander y col. ((The Anatomy of the Facebook Social Graph)). En: CoRR
+abs/1111.4503 (2011). arXiv: 1111.4503.
+
+[46]
+
+Alexander Veremyev, Oleg A. Prokopyev y Eduardo L. Pasiliao. ((Finding Critical
+Links for Closeness Centrality)). En: INFORMS Journal on Computing 31.2 (2019),
+págs. 367-389. doi: 10.1287/ijoc.2018.0829.
+
+[47]
+
+Monique V. Vieira y col. ((Efficient Search Ranking in Social Networks)). En: Proceedings of the Sixteenth ACM Conference on Conference on Information and Knowledge Management. CIKM ’07. Lisbon, Portugal: Association for Computing Machinery,
+2007, págs. 563-572. isbn: 9781595938039. doi: 10.1145/1321440.1321520. url:
+https://doi.org/10.1145/1321440.1321520.
+
+BIBLIOGRAFÍA
+
+57
+
+[48]
+
+Pascal Welke y col. ((Three-hop distance estimation in social graphs)). En: 2016
+IEEE International Conference on Big Data, BigData 2016, Washington DC, USA,
+December 5-8, 2016. Ed. por James Joshi y col. IEEE Computer Society, 2016,
+págs. 1048-1055. doi: 10.1109/BigData.2016.7840706.
+
+[49]
+
+Jaewon Yang y Jure Leskovec. ((Defining and Evaluating Network Communities
+Based on Ground-Truth)). En: (2012). Ed. por Mohammed Javeed Zaki y col.,
+págs. 745-754. doi: 10.1109/ICDM.2012.138.
+
+[50]
+
+Ahmet Yasin Yazicioglu, Waseem Abbas y Magnus Egerstedt. ((Graph Distances
+and Controllability of Networks)). En: IEEE Trans. Automat. Contr. 61.12 (2016),
+págs. 4125-4130. doi: 10.1109/TAC.2016.2546180.
+
+[51]
+
+Fei Yu y col. ((Network-based recommendation algorithms: A review)). En: CoRR
+abs/1511.06252 (2015). arXiv: 1511.06252.
+
+[52]
+
+Chengxi Zang, Peng Cui y Christos Faloutsos. ((Beyond Sigmoids: The NetTide
+Model for Social Network Growth, and Its Applications)). En: Proceedings of the 22nd
+ACM SIGKDD International Conference on Knowledge Discovery and Data Mining.
+KDD ’16. San Francisco, California, USA: Association for Computing Machinery,
+2016, págs. 2015-2024. isbn: 9781450342322. doi: 10.1145/2939672.2939825.
+
+[53]
+
+Yiming Zou y col. ((Shortest Paths on Evolving Graphs)). En: Computational Social
+Networks - 5th International Conference, CSoNet 2016, Ho Chi Minh City, Vietnam,
+August 2-4, 2016, Proceedings. Ed. por Hien T. Nguyen y Václav Snásel. Vol. 9795.
+Lecture Notes in Computer Science. Springer, 2016, págs. 1-13. doi: 10.1007/9783-319-42345-6\_1.
+
+
